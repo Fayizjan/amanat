@@ -1,67 +1,60 @@
-/* =========================================================
-   Service Worker — تطبيق الأمانات
-   ========================================================= */
-const CACHE_NAME = 'amanat-4';
-
-const ASSETS = [
-  '/Amanat/',
-  '/Amanat/index.html',
-  '/Amanat/manifest.json',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap'
+const CACHE_NAME = 'amanat-cache-v9';
+const ASSETS_TO_CACHE = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-/* ---- التثبيت: تخزين الملفات الأساسية ---- */
-self.addEventListener('install', (e) => {
-  console.log('🔧 تثبيت Service Worker...');
-  e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS).catch(err => console.log('⚠️ بعض الملفات فشل تخزينها:', err)))
-      .then(() => self.skipWaiting())
+// تثبيت الـ Service Worker وتخزين الملفات
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
+  self.skipWaiting();
 });
 
-/* ---- التنشيط: حذف الكاشات القديمة ---- */
-self.addEventListener('activate', (e) => {
-  console.log('✅ تنشيط Service Worker');
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => {
-          console.log('🗑️ حذف كاش قديم:', k);
-          return caches.delete(k);
-        })
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-/* ---- الجلب: من الكاش أولاً، ثم الشبكة ---- */
-self.addEventListener('fetch', (e) => {
-  // تجاهل الطلبات غير GET
-  if (e.request.method !== 'GET') return;
-
-  // تجاهل طلبات Chrome extension
-  if (!e.request.url.startsWith('http')) return;
-
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-
-      return fetch(e.request)
-        .then(response => {
-          // احفظ نسخة من الردود الناجحة
-          if (response && response.status === 200 && response.type === 'basic') {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+// تفعيل وتنظيف الكاش القديم (إذا وجد)
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
           }
+        })
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// جلب الملفات (استخدام الكاش إذا كان متاحاً أو جلبها من الشبكة)
+self.addEventListener('fetch', (event) => {
+  // تجاهل طلبات غير GET (مثل POST)
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse; // إذا كان الملف موجوداً في الكاش، استخدمه
+      }
+      return fetch(event.request).then((response) => {
+        // إذا كانت الاستجابة غير صالحة، ارجعها كما هي
+        if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
-        })
-        .catch(() => {
-          // عند انقطاع الإنترنت → أعد index.html للصفحات
-          if (e.request.mode === 'navigate') {
-            return caches.match('/Amanat-v3/index.html');
-          }
+        }
+        // احفظ نسخة في الكاش لاستخدامها لاحقاً
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
         });
+        return response;
+      });
     })
   );
 });
