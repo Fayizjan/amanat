@@ -4,9 +4,9 @@
 const CACHE_NAME = 'amanat-v3.4';
 
 const ASSETS = [
-  '/Amanat-v3/',
-  '/Amanat-v3/index.html',
-  '/Amanat-v3/manifest.json',
+  '/Amanat/',
+  '/Amanat/index.html',
+  '/Amanat/manifest.json',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap'
 ];
 
