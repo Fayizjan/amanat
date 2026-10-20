@@ -1,0 +1,27 @@
+{
+  "name": "الأمانات - نظام إدارة الودائع",
+  "short_name": "الأمانات",
+  "description": "نظام إدارة الودائع والنزلاء",
+  "start_url": "/Amanat-v3/",
+  "scope": "/Amanat-v3/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#f37021",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/Amanat-v3/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Amanat-v3/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
