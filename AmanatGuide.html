@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f37021">
+<title>دليل استخدام الأمانات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #f37021;
+    --primary-dark: #d95d15;
+    --primary-light: #fff3ec;
+    --primary-soft: #ffeadb;
+
+    --success: #10b981;
+    --success-dark: #059669;
+    --success-light: #ecfdf5;
+    --success-soft: #d1fae5;
+
+    --danger: #ef4444;
+    --danger-dark: #dc2626;
+    --danger-light: #fef2f2;
+    --danger-soft: #fee2e2;
+
+    --warning: #f59e0b;
+    --warning-light: #fffbeb;
+    --warning-soft: #fef3c7;
+
+    --info: #3b82f6;
+    --info-light: #eff6ff;
+    --info-soft: #dbeafe;
+
+    --text: #0f172a;
+    --text-soft: #475569;
+    --text-light: #94a3b8;
+    --border: #e2e8f0;
+    --border-soft: #f1f5f9;
+    --bg: #f8fafc;
+    --white: #ffffff;
+
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.05);
+    --shadow: 0 4px 12px rgba(15,23,42,0.08);
+    --shadow-md: 0 8px 24px rgba(15,23,42,0.1);
+    --shadow-lg: 0 16px 48px rgba(15,23,42,0.14);
+
+    --radius-sm: 10px;
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --sidebar-width: 280px;
+    --app-url: "https://fayizjan.github.io/amanat/";
+}
+
+body.dark {
+    --text: #f1f5f9;
+    --text-soft: #cbd5e1;
+    --text-light: #94a3b8;
+    --border: #334155;
+    --border-soft: #1e293b;
+    --bg: #0f172a;
+    --white: #1e293b;
+    --primary-light: #2a1e16;
+    --primary-soft: #3a281a;
+    --success-light: #0d2019;
+    --success-soft: #134e3a;
+    --danger-light: #2a1717;
+    --danger-soft: #4a1f1f;
+    --warning-light: #2a2010;
+    --warning-soft: #3a2a13;
+    --info-light: #0f1e33;
+    --info-soft: #1e3a5f;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+button, input, textarea, select { font-family: inherit; }
+
+body {
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+    transition: background var(--transition), color var(--transition);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* شريط تقدم القراءة */
+.reading-progress {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    z-index: 9999;
+    transition: width 0.1s ease;
+    box-shadow: 0 0 8px rgba(243,112,33,0.5);
+}
+
+/* ==========================================
+   الهيدر — معدل (زر القائمة يمين + رابط التطبيق)
+   ========================================== */
+.guide-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border-soft);
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    min-height: 62px;
+}
+
+/* يمين: زر القائمة + العنوان */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.menu-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    flex-shrink: 0;
+    transition: background var(--transition);
+}
+
+.menu-toggle:hover { background: var(--border-soft); }
+
+.menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2.5px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: all var(--transition);
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
+
+.header-brand-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(243,112,33,0.3));
+}
+
+.header-brand-text {
+    font-size: 16px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* يسار: أزرار الإجراءات */
+.header-left {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.hdr-btn-icon {
+    padding: 0;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.hdr-btn-icon:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+/* ==========================================
+   رابط التطبيق تحت العنوان
+   ========================================== */
+.app-url-bar {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px 10px;
+}
+
+.app-url-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary-light);
+    border: 1px solid var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    transition: all var(--transition);
+}
+
+.app-url-icon { font-size: 15px; flex-shrink: 0; }
+
+.app-url-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    direction: ltr;
+    text-align: right;
+    font-family: 'Cairo', monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.app-url-text:hover { text-decoration: underline; }
+
+.app-url-copy {
+    background: var(--white);
+    border: 1px solid var(--primary-soft);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    cursor: pointer;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+}
+
+.app-url-copy:hover { background: var(--primary); color: #fff; border-color: transparent; }
+.app-url-copy:active { transform: scale(0.95); }
+
+@media (max-width: 480px) {
+    .app-url-copy span.copy-text { display: none; }
+    .app-url-copy { padding: 5px 8px; }
+}
+
+/* ==========================================
+   التخطيط
+   ========================================== */
+.layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    gap: 32px;
+    padding: 24px 20px 60px;
+}
+
+/* ==========================================
+   القائمة الجانبية
+   ========================================== */
+.sidebar {
+    position: sticky;
+    top: 130px;
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.sidebar::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+.nav-section-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 14px 12px 6px;
+    margin-top: 8px;
+}
+
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 2px; }
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-soft);
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition);
+    border-right: 3px solid transparent;
+}
+
+.nav-link:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-soft) 100%);
+    color: var(--primary);
+    border-right-color: var(--primary);
+    font-weight: 800;
+}
+
+.nav-icon {
+    font-size: 16px;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   المحتوى الرئيسي
+   ========================================== */
+.content { min-width: 0; }
+
+/* ==========================================
+   فهرس المحتويات — بطاقات طويلة سطرين
+   ========================================== */
+.toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.toc-card {
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 62px;
+}
+
+.toc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-soft);
+}
+
+.toc-card-icon {
+    font-size: 22px;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.toc-card-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.toc-card-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.toc-card-desc {
+    font-size: 11.5px;
+    color: var(--text-light);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* على الجوال: عمود واحد بعرض كامل */
+@media (max-width: 640px) {
+    .toc-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .toc-card {
+        padding: 11px 13px;
+        min-height: 58px;
+    }
+    .toc-card-icon {
+        font-size: 20px;
+        width: 38px;
+        height: 38px;
+    }
+    .toc-card-title { font-size: 13.5px; }
+    .toc-card-desc { font-size: 11px; }
+}
+
+/* ==========================================
+   الأقسام
+   ========================================== */
+.guide-section {
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+    scroll-margin-top: 130px;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-soft);
+}
+
+.section-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(243,112,33,0.3);
+}
+
+.section-title-group { flex: 1; min-width: 0; }
+
+.section-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.section-subtitle {
+    font-size: 13.5px;
+    color: var(--text-soft);
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+/* الرسوم */
+.illustration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-soft) 100%);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    min-height: 180px;
+    overflow: hidden;
+    position: relative;
+}
+
+.illustration svg {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    filter: drop-shadow(0 6px 20px rgba(243,112,33,0.15));
+}
+
+/* الخطوات */
+.steps {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 22px;
+    counter-reset: step;
+}
+
+.step {
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--border-soft);
+    border-radius: var(--radius);
+    border-right: 4px solid var(--primary);
+    transition: all var(--transition);
+}
+
+.step:hover {
+    background: var(--primary-light);
+    transform: translateX(-2px);
+}
+
+.step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(243,112,33,0.3);
+}
+
+.step-body { flex: 1; min-width: 0; padding-top: 3px; }
+
+.step-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 3px;
+}
+
+.step-desc {
+    font-size: 13.5px;
+    color: var(--text-soft);
+    line-height: 1.7;
+}
+
+.step-desc strong { color: var(--text); font-weight: 800; }
+.step-desc code {
+    background: var(--white);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Cairo', monospace;
+    font-weight: 800;
+    color: var(--primary-dark);
+    font-size: 12.5px;
+    border: 1px solid var(--border);
+    direction: ltr;
+    display: inline-block;
+    margin: 0 2px;
+}
+
+/* صناديق النصائح */
+.callout {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    margin: 16px 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.7;
+    border: 1px solid;
+}
+
+.callout-icon { font-size: 20px; flex-shrink: 0; line-height: 1.4; }
+.callout-content { flex: 1; min-width: 0; }
+.callout-content strong { font-weight: 900; }
+.callout-content p { margin: 0; }
+.callout-content p + p { margin-top: 6px; }
+
+.callout.tip { background: var(--success-light); border-color: var(--success-soft); color: var(--success-dark); }
+.callout.warning { background: var(--warning-light); border-color: var(--warning-soft); color: #92400e; }
+body.dark .callout.warning { color: #fbbf24; }
+.callout.danger { background: var(--danger-light); border-color: var(--danger-soft); color: var(--danger-dark); }
+.callout.info { background: var(--info-light); border-color: var(--info-soft); color: #1e40af; }
+body.dark .callout.info { color: #93c5fd; }
+
+/* قوائم المميزات */
+.feature-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin: 14px 0;
+}
+
+.feature-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    background: var(--border-soft);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+
+.feature-list li::before {
+    content: '✓';
+    color: var(--success);
+    font-weight: 900;
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.feature-list li strong { color: var(--text); font-weight: 800; }
+
+/* الأكورديون */
+.faq-list { display: grid; gap: 10px; margin-top: 8px; }
+
+.faq-item {
+    background: var(--border-soft);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    transition: all var(--transition);
+}
+
+.faq-item.open { border-color: var(--primary-soft); background: var(--white); }
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 14.5px;
+    color: var(--text);
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: right;
+    font-family: inherit;
+    transition: background var(--transition);
+}
+
+.faq-question:hover { background: var(--primary-light); }
+
+.faq-arrow {
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 900;
+    transition: transform var(--transition);
+    flex-shrink: 0;
+}
+
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    color: var(--text-soft);
+    font-size: 13.5px;
+    line-height: 1.8;
+}
+
+.faq-item.open .faq-answer { max-height: 500px; }
+
+.faq-answer-inner {
+    padding: 0 18px 18px;
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+    margin: 0 4px;
+}
+
+.faq-answer-inner strong { color: var(--text); font-weight: 800; }
+
+/* الجداول */
+.simple-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13px;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.simple-table th {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 12px 14px;
+    text-align: right;
+    font-weight: 800;
+    font-size: 12.5px;
+    border-bottom: 2px solid var(--primary-soft);
+}
+
+.simple-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-soft);
+    font-weight: 600;
+}
+
+.simple-table tr:last-child td { border-bottom: none; }
+.simple-table tr:hover td { background: var(--border-soft); }
+
+/* الخاتمة */
+.closing {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    text-align: center;
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 32px rgba(243,112,33,0.25);
+}
+
+.closing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,0.2) 0%, transparent 45%),
+        radial-gradient(circle at 15% 85%, rgba(255,255,255,0.15) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.closing-content { position: relative; z-index: 1; }
+
+.closing h2 {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.closing p {
+    font-size: 14px;
+    opacity: 0.95;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.closing-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: #fff;
+    color: var(--primary-dark);
+    border-radius: var(--radius-full);
+    font-size: 15px;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: all var(--transition);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.closing-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.25); }
+
+.footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-light);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* زر العودة للأعلى */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(243,112,33,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all var(--transition);
+    z-index: 90;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.back-to-top:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(243,112,33,0.55); }
+
+/* ==========================================
+   الاستجابة للجوال
+   ========================================== */
+@media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; gap: 0; padding: 20px 14px 40px; }
+
+    .sidebar {
+        position: fixed;
+        top: 62px;
+        right: -320px;
+        width: 280px;
+        height: calc(100vh - 62px);
+        background: var(--white);
+        padding: 14px;
+        z-index: 200;
+        box-shadow: -8px 0 40px rgba(15,23,42,0.15);
+        transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 1px solid var(--border-soft);
+        top: 112px;
+        height: calc(100vh - 112px);
+    }
+
+    .sidebar.open { right: 0; }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 112px 0 0 0;
+        background: rgba(15,23,42,0.5);
+        backdrop-filter: blur(3px);
+        z-index: 199;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--transition);
+    }
+
+    .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+    .guide-section { padding: 22px 18px; margin-bottom: 20px; scroll-margin-top: 125px; }
+    .section-title { font-size: 18px; }
+    .section-number { width: 40px; height: 40px; font-size: 17px; }
+    .section-subtitle { font-size: 12.5px; }
+
+    .header-brand-text { font-size: 14px; }
+    .hdr-btn-icon { width: 36px; height: 36px; font-size: 15px; }
+
+    .closing { padding: 28px 20px; }
+    .closing h2 { font-size: 20px; }
+
+    .back-to-top { width: 44px; height: 44px; bottom: 20px; left: 20px; font-size: 18px; }
+
+    .step { padding: 13px 14px; }
+    .step-title { font-size: 13.5px; }
+    .step-desc { font-size: 12.5px; }
+}
+
+@media (max-width: 480px) {
+    .callout { padding: 12px 14px; font-size: 12.5px; }
+    .callout-icon { font-size: 18px; }
+    .header-brand-text { font-size: 13px; }
+}
+
+/* الطباعة */
+@media print {
+    .guide-header, .sidebar, .sidebar-overlay, .back-to-top, .reading-progress, .closing, .footer, .app-url-bar { display: none !important; }
+    .layout { display: block; padding: 0; }
+    .guide-section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; margin-bottom: 16px; }
+    body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- شريط تقدم القراءة -->
+<div class="reading-progress" id="readingProgress"></div>
+
+<!-- الهيدر -->
+<header class="guide-header">
+    <div class="header-inner">
+        <!-- يمين: زر القائمة + العنوان -->
+        <div class="header-right">
+            <button class="menu-toggle" id="menuToggle" aria-label="القائمة">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="#install" class="header-brand">
+                <span class="header-brand-icon">📖</span>
+                <span class="header-brand-text">دليل استخدام الأمانات</span>
+            </a>
+        </div>
+        <!-- يسار: أزرار -->
+        <div class="header-left">
+            <button class="hdr-btn-icon" id="darkToggle" aria-label="الوضع الليلي" title="الوضع الليلي">🌙</button>
+        </div>
+    </div>
+    <!-- رابط التطبيق -->
+    <div class="app-url-bar">
+        <div class="app-url-inner">
+            <span class="app-url-icon">🔗</span>
+            <a href="https://fayizjan.github.io/amanat/" target="_blank" rel="noopener" class="app-url-text" title="فتح التطبيق في تاب جديد">https://fayizjan.github.io/amanat/</a>
+            <button class="app-url-copy" id="copyUrlBtn" title="نسخ الرابط">
+                <span>📋</span>
+                <span class="copy-text">نسخ</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- طبقة الجوال -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- التخطيط الرئيسي -->
+<div class="layout">
+
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+        <div class="nav-section-title">🚀 البداية</div>
+        <ul class="nav-list">
+            <li><a href="#install" class="nav-link"><span class="nav-icon">📲</span>تثبيت التطبيق</a></li>
+            <li><a href="#quickstart" class="nav-link"><span class="nav-icon">⚡</span>البدء السريع</a></li>
+        </ul>
+
+        <div class="nav-section-title">📋 المهام الأساسية</div>
+        <ul class="nav-list">
+            <li><a href="#customers" class="nav-link"><span class="nav-icon">👥</span>إدارة النزلاء</a></li>
+            <li><a href="#deposit" class="nav-link"><span class="nav-icon">💰</span>تسجيل إيداع</a></li>
+            <li><a href="#withdraw" class="nav-link"><span class="nav-icon">💸</span>تسجيل سحب</a></li>
+            <li><a href="#edit-tx" class="nav-link"><span class="nav-icon">✏️</span>تعديل/حذف حركة</a></li>
+        </ul>
+
+        <div class="nav-section-title">📊 العرض والمتابعة</div>
+        <ul class="nav-list">
+            <li><a href="#stats" class="nav-link"><span class="nav-icon">📈</span>لوحة الإحصائيات</a></li>
+            <li><a href="#archive" class="nav-link"><span class="nav-icon">🗂️</span>الأرشيف</a></li>
+            <li><a href="#reports" class="nav-link"><span class="nav-icon">🖨️</span>التقارير والطباعة</a></li>
+        </ul>
+
+        <div class="nav-section-title">💾 الأدوات</div>
+        <ul class="nav-list">
+            <li><a href="#backup" class="nav-link"><span class="nav-icon">💾</span>النسخ الاحتياطي</a></li>
+            <li><a href="#preview" class="nav-link"><span class="nav-icon">🔍</span>وضع المعاينة</a></li>
+        </ul>
+
+        <div class="nav-section-title">🔒 الحماية</div>
+        <ul class="nav-list">
+            <li><a href="#pin" class="nav-link"><span class="nav-icon">🔐</span>رمز الحماية</a></li>
+            <li><a href="#recovery" class="nav-link"><span class="nav-icon">🔑</span>الاسترداد</a></li>
+            <li><a href="#settings" class="nav-link"><span class="nav-icon">⚙️</span>الإعدادات</a></li>
+        </ul>
+
+        <div class="nav-section-title">❓ مساعدة</div>
+        <ul class="nav-list">
+            <li><a href="#faq" class="nav-link"><span class="nav-icon">❓</span>أسئلة شائعة</a></li>
+        </ul>
+    </aside>
+
+    <!-- المحتوى -->
+    <main class="content">
+
+        <!-- ===== فهرس المحتويات ===== -->
+        <div class="toc-grid">
+            <a href="#install" class="toc-card">
+                <div class="toc-card-icon">📲</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">تثبيت التطبيق</div>
+                    <div class="toc-card-desc">ثبّته على جهازك</div>
+                </div>
+            </a>
+            <a href="#customers" class="toc-card">
+                <div class="toc-card-icon">👥</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">إدارة النزلاء</div>
+                    <div class="toc-card-desc">إضافة وبحث وتعديل</div>
+                </div>
+            </a>
+            <a href="#deposit" class="toc-card">
+                <div class="toc-card-icon">💰</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">تسجيل إيداع</div>
+                    <div class="toc-card-desc">استلام مبلغ من نزيل</div>
+                </div>
+            </a>
+            <a href="#withdraw" class="toc-card">
+                <div class="toc-card-icon">💸</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">تسجيل سحب</div>
+                    <div class="toc-card-desc">صرف مبلغ من الأمانات</div>
+                </div>
+            </a>
+            <a href="#stats" class="toc-card">
+                <div class="toc-card-icon">📈</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">لوحة الإحصائيات</div>
+                    <div class="toc-card-desc">فهم أرصدة الصندوق</div>
+                </div>
+            </a>
+            <a href="#archive" class="toc-card">
+                <div class="toc-card-icon">🗂️</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">الأرشيف</div>
+                    <div class="toc-card-desc">نقل أو إخلاء نزيل</div>
+                </div>
+            </a>
+            <a href="#reports" class="toc-card">
+                <div class="toc-card-icon">🖨️</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">التقارير</div>
+                    <div class="toc-card-desc">طباعة كشوف الحركات</div>
+                </div>
+            </a>
+            <a href="#backup" class="toc-card">
+                <div class="toc-card-icon">💾</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">النسخ الاحتياطي</div>
+                    <div class="toc-card-desc">حماية بياناتك من الفقدان</div>
+                </div>
+            </a>
+            <a href="#preview" class="toc-card">
+                <div class="toc-card-icon">🔍</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">وضع المعاينة</div>
+                    <div class="toc-card-desc">استعراض نسخة بأمان</div>
+                </div>
+            </a>
+            <a href="#pin" class="toc-card">
+                <div class="toc-card-icon">🔐</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">رمز الحماية</div>
+                    <div class="toc-card-desc">قفل التطبيق برقم سري</div>
+                </div>
+            </a>
+            <a href="#recovery" class="toc-card">
+                <div class="toc-card-icon">🔑</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">الاسترداد</div>
+                    <div class="toc-card-desc">إن نسيت رمز الحماية</div>
+                </div>
+            </a>
+            <a href="#settings" class="toc-card">
+                <div class="toc-card-icon">⚙️</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">الإعدادات</div>
+                    <div class="toc-card-desc">الوضع الليلي والإحصائيات</div>
+                </div>
+            </a>
+            <a href="#faq" class="toc-card">
+                <div class="toc-card-icon">❓</div>
+                <div class="toc-card-text">
+                    <div class="toc-card-title">أسئلة شائعة</div>
+                    <div class="toc-card-desc">إجابات لأكثر التساؤلات</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ============================================
+             القسم: تثبيت التطبيق
+             ============================================ -->
+        <section class="guide-section" id="install">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">📲 تثبيت التطبيق على جهازك</h2>
+                    <div class="section-subtitle">خطوة اختيارية لكنها تجعل استخدام التطبيق أسرع وأسهل بكثير</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gPhone" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#f37021"/>
+                            <stop offset="100%" stop-color="#d95d15"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="110" y="30" width="100" height="140" rx="14" fill="#fff" stroke="#0f172a" stroke-width="3"/>
+                    <rect x="115" y="40" width="90" height="120" rx="4" fill="#fff3ec"/>
+                    <rect x="140" y="34" width="40" height="4" rx="2" fill="#0f172a"/>
+                    <circle cx="160" cy="105" r="26" fill="url(#gPhone)"/>
+                    <text x="160" y="116" text-anchor="middle" fill="#fff" font-size="24" font-weight="900" font-family="Cairo, sans-serif">🏦</text>
+                    <circle cx="245" cy="60" r="20" fill="#10b981"/>
+                    <path d="M245 50 L245 68 M238 60 L245 70 L252 60" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M225 60 Q210 80 200 90" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 3" fill="none"/>
+                </svg>
+            </div>
+
+            <div class="callout info">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>لماذا نثبّت التطبيق؟</strong> عند التثبيت، سيصبح للأمانات أيقونة على شاشة جهازك مثل أي تطبيق عادي. تفتحه بنقرة واحدة دون الحاجة للبحث عن الرابط، ويعمل بكامل وظائفه <strong>حتى بدون إنترنت</strong> بعد التثبيت الأول.</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">📲 التثبيت (المرة الأولى فقط)</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 16px;">
+                تثبيت التطبيق يحتاج <strong>اتصالاً بالإنترنت مرة واحدة فقط</strong> (في المرة الأولى). بعدها يمكنك فتحه واستخدامه بدون إنترنت نهائياً.
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">افتح رابط التطبيق في المتصفح</div>
+                        <div class="step-desc">افتح متصفح جهازك (Chrome على أندرويد، Safari على آيفون، أو Edge على الكمبيوتر)، ثم اذهب إلى الرابط الموجود أعلى الصفحة. تأكد من وجود <strong>اتصال بالإنترنت</strong>.</div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">انتظر قليلاً حتى يكتمل التحميل</div>
+                        <div class="step-desc">في أول فتح، سيُحمّل التطبيق ملفاته كاملة. انتظر بضع ثوانٍ حتى تظهر الشاشة الرئيسية. <strong>لا تغلق المتصفح</strong> قبل اكتمال التحميل.</div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">أضف التطبيق للشاشة الرئيسية</div>
+                        <div class="step-desc">ستظهر رسالة تلقائية تسألك عن إضافة التطبيق. اضغط <strong>"تثبيت"</strong> أو <strong>"إضافة إلى الشاشة الرئيسية"</strong>.</div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">انتهى! التطبيق جاهز</div>
+                        <div class="step-desc">ستجد أيقونة "الأمانات" 🏦 على شاشة جهازك. افتحها في أي وقت — ستعمل حتى لو لم يكن هناك إنترنت.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 22px 0 14px;">🔧 إذا لم تظهر رسالة التثبيت</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 14px;">
+                بعض المتصفحات لا تُظهر رسالة التثبيت تلقائياً. يمكنك التثبيت يدوياً:
+            </p>
+
+            <table class="simple-table">
+                <thead>
+                    <tr>
+                        <th>الجهاز</th>
+                        <th>الخطوات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>📱 أندرويد (Chrome)</strong></td>
+                        <td>اضغط قائمة النقاط الثلاث (⋮) أعلى يمين → <strong>"تثبيت التطبيق"</strong> أو "إضافة إلى الشاشة الرئيسية"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🍏 آيفون / آيباد (Safari)</strong></td>
+                        <td>اضغط زر المشاركة (مربع مع سهم) في الأسفل → <strong>"إضافة إلى الشاشة الرئيسية"</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>💻 ويندوز / ماك (Chrome / Edge)</strong></td>
+                        <td>اضغط أيقونة التثبيت (شاشة صغيرة) في شريط العنوان يميناً → <strong>"تثبيت"</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-content">
+                    <p><strong>مهم:</strong> لا تحذف التطبيق بعد التثبيت مباشرة! افتحه أولاً مرة واحدة لتأكيد أنه يعمل، ثم يمكنك استخدامه بأمان في أي وقت.</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 22px 0 14px;">🔄 ماذا لو حذفت التطبيق؟</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                إذا حذفت أيقونة التطبيق من جهازك (بالخطأ أو لتوفير المساحة)، بياناتك تبقى محفوظة داخل المتصفح. لإعادة التثبيت:
+            </p>
+
+            <ul class="feature-list">
+                <li>افتح رابط التطبيق في المتصفح مرة أخرى (مع النت).</li>
+                <li>ستظهر لك رسالة التثبيت مجدداً، أو ثبّته يدوياً كما في الجدول أعلاه.</li>
+                <li>جميع بياناتك (نزلاء، حركات، أرشيف) ستعود كما كانت.</li>
+            </ul>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>نصيحة:</strong> بعد التثبيت، افتح التطبيق من الأيقونة دائماً (وليس من المتصفح) — سيكون أسرع وأفضل، وبياناتك ستبقى موحدة في مكان واحد.</p>
+                </div>
+            </div>
+
+            <div class="callout danger">
+                <span class="callout-icon">🚨</span>
+                <div class="callout-content">
+                    <p><strong>تحذير هام:</strong> إذا حذفت <strong>بيانات المتصفح</strong> (وليس أيقونة التطبيق)، ستفقد كل شيء. لذلك <strong>خذ نسخة احتياطية بانتظام</strong> — راجع قسم 💾 النسخ الاحتياطي لاحقاً.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: البدء السريع
+             ============================================ -->
+        <section class="guide-section" id="quickstart">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">⚡ البدء السريع</h2>
+                    <div class="section-subtitle">أول ثلاث خطوات لكي تكون جاهزاً للعمل في أقل من دقيقة</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="g1" x1="0" x2="1">
+                            <stop offset="0%" stop-color="#f37021"/>
+                            <stop offset="100%" stop-color="#d95d15"/>
+                        </linearGradient>
+                    </defs>
+                    <g transform="translate(40, 50)">
+                        <circle cx="40" cy="40" r="38" fill="url(#g1)" opacity="0.95"/>
+                        <text x="40" y="52" text-anchor="middle" fill="#fff" font-size="32" font-weight="900" font-family="Cairo, sans-serif">1</text>
+                        <text x="40" y="105" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="800" font-family="Cairo, sans-serif">افتح التطبيق</text>
+                    </g>
+                    <path d="M125 90 L155 90" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4"/>
+                    <polygon points="155,84 168,90 155,96" fill="#94a3b8"/>
+                    <g transform="translate(180, 50)">
+                        <circle cx="40" cy="40" r="38" fill="url(#g1)" opacity="0.95"/>
+                        <text x="40" y="52" text-anchor="middle" fill="#fff" font-size="32" font-weight="900" font-family="Cairo, sans-serif">2</text>
+                        <text x="40" y="105" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="800" font-family="Cairo, sans-serif">أضف نزيلاً</text>
+                    </g>
+                    <path d="M265 90 L295 90" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4"/>
+                    <polygon points="295,84 308,90 295,96" fill="#94a3b8"/>
+                    <g transform="translate(320, 50)">
+                        <circle cx="40" cy="40" r="38" fill="url(#g1)" opacity="0.95"/>
+                        <text x="40" y="52" text-anchor="middle" fill="#fff" font-size="32" font-weight="900" font-family="Cairo, sans-serif">3</text>
+                        <text x="40" y="105" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="800" font-family="Cairo, sans-serif">سجّل حركة</text>
+                    </g>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                تطبيق "الأمانات" مصمم ليكون بسيطاً ومباشراً. في أول دقيقة من استخدامك، اتبع هذه الخطوات الثلاث:
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">افتح التطبيق</div>
+                        <div class="step-desc">افتح رابط التطبيق في متصفحك. سترى الشاشة الرئيسية التي تعرض حركة اليوم. إذا فعّلت رمز الحماية مسبقاً، أدخل الرمز أولاً.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">أضف أول نزيل</div>
+                        <div class="step-desc">من القائمة الجانبية (☰) اضغط <strong>➕ نزيل جديد</strong>، أدخل اسم النزيل، واضغط <strong>حفظ</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">سجّل أول حركة</div>
+                        <div class="step-desc">من الشاشة الرئيسية اضغط <strong>💰 إيداع</strong>، ابحث عن النزيل، أدخل المبلغ، ثم اضغط <strong>حفظ</strong>. مبروك! أنت الآن جاهز للعمل.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>نصيحة:</strong> إذا كنت تستخدم التطبيق للمرة الأولى، ابدأ بإضافة جميع النزلاء أولاً، ثم ابدأ بتسجيل الحركات المالية عليهم.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: إدارة النزلاء
+             ============================================ -->
+        <section class="guide-section" id="customers">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">👥 إدارة النزلاء</h2>
+                    <div class="section-subtitle">كيف تضيف نزيلاً جديداً، تبحث عنه، وتعدّل بياناته</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="30" y="30" width="260" height="120" rx="14" fill="#fff" stroke="#ffeadb" stroke-width="2"/>
+                    <rect x="30" y="30" width="260" height="40" rx="14" fill="#fff3ec"/>
+                    <circle cx="62" cy="50" r="14" fill="#f37021"/>
+                    <text x="62" y="56" text-anchor="middle" fill="#fff" font-size="16" font-weight="900" font-family="Cairo, sans-serif">أ</text>
+                    <text x="86" y="56" fill="#0f172a" font-size="14" font-weight="800" font-family="Cairo, sans-serif">أحمد محمد</text>
+                    <rect x="230" y="42" width="48" height="18" rx="9" fill="#f37021"/>
+                    <text x="254" y="55" text-anchor="middle" fill="#fff" font-size="10" font-weight="800" font-family="Cairo, sans-serif">م1</text>
+                    <text x="48" y="98" fill="#475569" font-size="11" font-weight="700" font-family="Cairo, sans-serif">ل.س</text>
+                    <text x="72" y="98" fill="#f37021" font-size="13" font-weight="900" font-family="Cairo, sans-serif">150,000</text>
+                    <text x="160" y="98" fill="#475569" font-size="11" font-weight="700" font-family="Cairo, sans-serif">$</text>
+                    <text x="180" y="98" fill="#10b981" font-size="13" font-weight="900" font-family="Cairo, sans-serif">85</text>
+                    <line x1="48" y1="112" x2="272" y2="112" stroke="#f1f5f9" stroke-width="1"/>
+                    <text x="48" y="132" fill="#94a3b8" font-size="10" font-weight="600" font-family="Cairo, sans-serif">👤 نزيل نشط</text>
+                    <text x="272" y="132" text-anchor="end" fill="#f37021" font-size="11" font-weight="800" font-family="Cairo, sans-serif">عرض ←</text>
+                </svg>
+            </div>
+
+            <div class="callout info">
+                <span class="callout-icon">ℹ️</span>
+                <div class="callout-content">
+                    <p><strong>النزيل</strong> هو أساس التطبيق. كل حركة مالية (إيداع أو سحب) يجب أن تكون مرتبطة بنزيل معيّن. لذلك، أضف النزلاء أولاً قبل تسجيل أي حركة.</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">➕ إضافة نزيل جديد</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">افتح القائمة الجانبية</div>
+                        <div class="step-desc">اضغط على زر <strong>☰</strong> (ثلاثة خطوط) في أعلى يسار الشاشة.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر "نزيل جديد"</div>
+                        <div class="step-desc">ستظهر لك نافذة تحتوي على ثلاثة حقول: <strong>الفرز</strong>، <strong>الاسم</strong>، و<strong>الملاحظات</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل الاسم</div>
+                        <div class="step-desc">الاسم هو الحقل الوحيد <strong>الإلزامي</strong>. اكتب اسم النزيل الكامل. النظام يمنع تكرار الأسماء لتجنب الالتباس.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر الفرز (اختياري)</div>
+                        <div class="step-desc">الفرز هو تصنيف اختياري لتنظيم النزلاء (م0 إلى م8). اتركه <strong>م0</strong> إذا لم تحتجه.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">5</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "حفظ"</div>
+                        <div class="step-desc">سيظهر النزيل مباشرة في قائمة النزلاء، وسترى رسالة تأكيد خضراء.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🔍 البحث عن نزيل</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                اذهب إلى <strong>شاشة النزلاء</strong> من الشريط السفلي (أيقونة 👥)، ثم اكتب أي حرف من اسم النزيل في شريط البحث. ستظهر النتائج فوراً.
+            </p>
+
+            <ul class="feature-list">
+                <li><strong>البحث الفوري:</strong> لا تحتاج لكتابة الاسم كاملاً، أي جزء منه يكفي.</li>
+                <li><strong>الفرز بالنقر:</strong> اضغط على أي شريحة فرز (م1، م2...) لعرض نزلاء تلك الفئة فقط.</li>
+                <li><strong>عرض الرصيد:</strong> كل نزيل في القائمة يظهر تحته رصيده بالليرة والدولار مباشرة.</li>
+            </ul>
+
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-content">
+                    <p><strong>تنبيه:</strong> إذا حاولت إضافة نزيل بنفس اسم نزيل موجود مسبقاً، سيمنعك التطبيق. أضف تمييزاً للاسم (مثلاً: "أحمد محمد - الفرع الثاني").</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: تسجيل إيداع
+             ============================================ -->
+        <section class="guide-section" id="deposit">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">💰 تسجيل إيداع</h2>
+                    <div class="section-subtitle">كيف تستلم مبلغاً من نزيل وتضيفه لأماناته</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gGreen" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#10b981"/>
+                            <stop offset="100%" stop-color="#059669"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="90" y="60" width="140" height="90" rx="14" fill="url(#gGreen)" opacity="0.15" stroke="#10b981" stroke-width="2"/>
+                    <rect x="90" y="60" width="140" height="90" rx="14" fill="none" stroke="#10b981" stroke-width="2.5"/>
+                    <circle cx="160" cy="35" r="22" fill="#10b981"/>
+                    <path d="M160 28 L160 42 M152 36 L160 44 L168 36" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <text x="160" y="105" text-anchor="middle" fill="#059669" font-size="22" font-weight="900" font-family="Cairo, sans-serif">+</text>
+                    <text x="160" y="130" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="800" font-family="Cairo, sans-serif">إيداع جديد</text>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                الإيداع هو تسجيل استلام مبلغ مالي من نزيل، أو إضافة مبلغ إلى أماناته. هذا المبلغ سيزيد رصيد النزيل تلقائياً.
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط زر "إيداع"</div>
+                        <div class="step-desc">من الشاشة الرئيسية اضغط الزر الأخضر <strong>💰 إيداع</strong>. أو من صفحة أي نزيل: القائمة (⋮) ← <strong>إيداع</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر النزيل</div>
+                        <div class="step-desc">إذا فتحت الشاشة من الشاشة الرئيسية، اكتب اسم النزيل في حقل البحث واختره من النتائج. أما من صفحة النزيل فسيُختار تلقائياً.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل اسم المودع</div>
+                        <div class="step-desc">هذا الحقل <strong>إلزامي</strong> في الإيداع. اكتب اسم الشخص الذي سلّم المبلغ (قد يكون النزيل نفسه أو شخصاً آخر ينوب عنه).</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل المبلغ والعملة</div>
+                        <div class="step-desc">اكتب المبلغ بالأرقام، واختر العملة: <strong>ل.س</strong> (ليرة سورية) أو <strong>$</strong> (دولار).</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">5</div>
+                    <div class="step-body">
+                        <div class="step-title">المستلم (اختياري)</div>
+                        <div class="step-desc">اختر اسم الشخص الذي استلم المبلغ. القائمة قابلة للتعديل من خيار <strong>⚙️ إدارة المستلمين</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">6</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "حفظ"</div>
+                        <div class="step-desc">ستظهر رسالة نجاح خضراء، وسيُضاف المبلغ إلى رصيد النزيل فوراً.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>نصيحة:</strong> استخدم حقل <strong>الملاحظات</strong> لكتابة أي تفاصيل إضافية، مثل: "دفعة أولى" أو "إيداع شهري". هذا يساعدك لاحقاً في تذكّر سبب الحركة.</p>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <span class="callout-icon">📅</span>
+                <div class="callout-content">
+                    <p><strong>التاريخ:</strong> افتراضياً يُسجَّل التاريخ الحالي. يمكنك تغييره من أعلى النافذة إذا كنت تسجّل حركة قديمة.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: تسجيل سحب
+             ============================================ -->
+        <section class="guide-section" id="withdraw">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">💸 تسجيل سحب</h2>
+                    <div class="section-subtitle">كيف تصرف مبلغاً من أمانات نزيل</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gRed" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#ef4444"/>
+                            <stop offset="100%" stop-color="#dc2626"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="90" y="60" width="140" height="90" rx="14" fill="url(#gRed)" opacity="0.15" stroke="#ef4444" stroke-width="2"/>
+                    <rect x="90" y="60" width="140" height="90" rx="14" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+                    <circle cx="160" cy="35" r="22" fill="#ef4444"/>
+                    <path d="M160 42 L160 28 M152 34 L160 26 L168 34" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <text x="160" y="105" text-anchor="middle" fill="#dc2626" font-size="22" font-weight="900" font-family="Cairo, sans-serif">−</text>
+                    <text x="160" y="130" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="800" font-family="Cairo, sans-serif">سحب</text>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                السحب هو تسجيل صرف مبلغ من أمانات نزيل. هذا المبلغ سيُخصم من رصيد النزيل تلقائياً.
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط زر "سحب"</div>
+                        <div class="step-desc">من الشاشة الرئيسية اضغط الزر الأحمر <strong>💸 سحب</strong>. أو من صفحة أي نزيل: القائمة (⋮) ← <strong>سحب</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر النزيل</div>
+                        <div class="step-desc">كما في الإيداع، ابحث عن النزيل واختره من القائمة.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل رقم الفاتورة</div>
+                        <div class="step-desc">رقم الفاتورة <strong>اختياري</strong> لكنه مفيد للتتبع. اكتب رقم الفاتورة أو رقم الوصل الذي بحوزتك.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل المبلغ والعملة</div>
+                        <div class="step-desc">اكتب المبلغ واختر العملة. <strong>تنبيه:</strong> إذا تجاوز المبلغ رصيد النزيل، سيظهر لك تحذير قبل المتابعة.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">5</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "حفظ"</div>
+                        <div class="step-desc">سيُخصم المبلغ من رصيد النزيل فوراً وتظهر رسالة نجاح.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-content">
+                    <p><strong>تحذير الرصيد:</strong> إذا حاولت سحب مبلغ أكبر من رصيد النزيل، سيظهر تنبيه يطلب منك تأكيد المتابعة. تأكد أن المبلغ صحيح قبل الموافقة، لأن الرصيد قد يصبح سالباً (وهذا يعني أن النزيل مدين).</p>
+                </div>
+            </div>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>نصيحة:</strong> راجع رصيد النزيل قبل السحب. يمكنك رؤية الرصيد مباشرة في صفحته الشخصية أعلى الشاشة.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: تعديل/حذف حركة
+             ============================================ -->
+        <section class="guide-section" id="edit-tx">
+            <div class="section-header">
+                <div class="section-number">6</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">✏️ تعديل وحذف الحركات</h2>
+                    <div class="section-subtitle">كيف تصحّح حركة سجّلتها بالخطأ</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="40" y="50" width="240" height="80" rx="12" fill="#fff" stroke="#ffeadb" stroke-width="2"/>
+                    <rect x="40" y="50" width="6" height="80" rx="3" fill="#ef4444"/>
+                    <text x="64" y="78" fill="#0f172a" font-size="13" font-weight="800" font-family="Cairo, sans-serif">أحمد محمد</text>
+                    <text x="64" y="98" fill="#94a3b8" font-size="11" font-weight="600" font-family="Cairo, sans-serif">سحب - 10/05/2025</text>
+                    <text x="260" y="85" text-anchor="end" fill="#ef4444" font-size="14" font-weight="900" font-family="Cairo, sans-serif" direction="ltr">− 50,000</text>
+                    <circle cx="200" cy="105" r="12" fill="#f1f5f9"/>
+                    <text x="200" y="110" text-anchor="middle" font-size="12">✏️</text>
+                    <circle cx="240" cy="105" r="12" fill="#fef2f2"/>
+                    <text x="240" y="110" text-anchor="middle" font-size="12">🗑️</text>
+                </svg>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin-bottom: 14px;">✏️ تعديل حركة</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">افتح تفاصيل الحركة</div>
+                        <div class="step-desc">في شاشة اليوم أو صفحة النزيل، اضغط على الحركة لتوسيعها ورؤية تفاصيلها.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "تعديل"</div>
+                        <div class="step-desc">ستظهر أيقونة <strong>✏️</strong> ضمن الأزرار السفلية. اضغطها لتفتح نافذة التعديل.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">عدّل ما تريد واضغط "حفظ"</div>
+                        <div class="step-desc">يمكنك تغيير المبلغ، التاريخ، المودع، أو أي حقل آخر. الرصيد سيُحدَّث تلقائياً.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🗑️ حذف حركة</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                من نفس القائمة، اضغط زر <strong>🗑️ حذف</strong>. سيظهر تنبيه يطلب تأكيد الحذف. اضغط <strong>"نعم، احذف"</strong> للتأكيد.
+            </p>
+
+            <div class="callout danger">
+                <span class="callout-icon">🚨</span>
+                <div class="callout-content">
+                    <p><strong>تحذير:</strong> حذف الحركة لا يمكن التراجع عنه. الرصيد سيُعاد حسابته فوراً كما لو أن الحركة لم تكن موجودة. تأكد دائماً قبل الحذف.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: لوحة الإحصائيات
+             ============================================ -->
+        <section class="guide-section" id="stats">
+            <div class="section-header">
+                <div class="section-number">7</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">📈 لوحة الإحصائيات</h2>
+                    <div class="section-subtitle">كيف تفهم أرصدة الصندوق وحركة اليوم والشهر</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="100" width="30" height="50" rx="4" fill="#10b981" opacity="0.7"/>
+                    <rect x="90" y="80" width="30" height="70" rx="4" fill="#10b981" opacity="0.85"/>
+                    <rect x="130" y="60" width="30" height="90" rx="4" fill="#f37021"/>
+                    <rect x="170" y="90" width="30" height="60" rx="4" fill="#ef4444" opacity="0.8"/>
+                    <rect x="210" y="70" width="30" height="80" rx="4" fill="#10b981"/>
+                    <rect x="250" y="110" width="30" height="40" rx="4" fill="#ef4444" opacity="0.7"/>
+                    <line x1="40" y1="152" x2="290" y2="152" stroke="#cbd5e1" stroke-width="2"/>
+                    <text x="160" y="30" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="900" font-family="Cairo, sans-serif">حركة الصندوق</text>
+                    <text x="160" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="600" font-family="Cairo, sans-serif">آخر 6 أشهر</text>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                لوحة الإحصائيات مخفية افتراضياً لتوفير المساحة. لإظهارها، اضغط زر <strong>🔻</strong> في أعلى يمين الشاشة. ستنبثق بطاقة كبيرة تعرض:
+            </p>
+
+            <table class="simple-table">
+                <thead>
+                    <tr>
+                        <th>القسم</th>
+                        <th>ما يعرضه</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>💼 الصندوق الحالي</strong></td>
+                        <td>مجموع أرصدة جميع النزلاء (الليرة والدولار)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>📅 حركة اليوم</strong></td>
+                        <td>إيداعات وسحوبات اليوم الحالي فقط</td>
+                    </tr>
+                    <tr>
+                        <td><strong>📆 حركة الشهر</strong></td>
+                        <td>إيداعات وسحوبات الشهر الحالي كاملاً</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>نصيحة:</strong> راجع "الصندوق الحالي" بانتظام لمطابقته مع النقد الفعلي بحوزتك. إذا لاحظت فرقاً، راجع الحركات الأخيرة.</p>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <span class="callout-icon">🔒</span>
+                <div class="callout-content">
+                    <p><strong>حفظ الحالة:</strong> التطبيق يتذكر آخر حالة للوحة (مخفية أو ظاهرة) ويعيدها عند فتحه في المرة القادمة.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: الأرشيف
+             ============================================ -->
+        <section class="guide-section" id="archive">
+            <div class="section-header">
+                <div class="section-number">8</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">🗂️ الأرشيف</h2>
+                    <div class="section-subtitle">كيف تنقل نزيلاً أو تُخلي سبيله دون فقدان بياناته</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="70" y="80" width="180" height="80" rx="10" fill="#ffeadb" stroke="#f37021" stroke-width="2"/>
+                    <rect x="70" y="80" width="180" height="26" rx="10" fill="#f37021"/>
+                    <text x="160" y="98" text-anchor="middle" fill="#fff" font-size="11" font-weight="800" font-family="Cairo, sans-serif">الأرشيف</text>
+                    <rect x="120" y="40" width="80" height="55" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+                    <line x1="132" y1="55" x2="188" y2="55" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="132" y1="66" x2="188" y2="66" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="132" y1="77" x2="170" y2="77" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M160 100 L160 118 M152 110 L160 120 L168 110" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                الأرشيف يحفظ النزلاء الذين لم يعودوا نشطين، دون فقدان بياناتهم. هناك سببان للأرشفة:
+            </p>
+
+            <ul class="feature-list">
+                <li><strong>📦 نقل:</strong> نزيل انتقل إلى مكان آخر (فرع آخر، مؤسسة أخرى...). يمكن تسجيل مكان النقل.</li>
+                <li><strong>🚪 إخلاء:</strong> نزيل أُخلي سبيله نهائياً وأصبح حراً.</li>
+            </ul>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🗂️ أرشفة نزيل</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">افتح الأرشيف</div>
+                        <div class="step-desc">من القائمة الجانبية ☰ ← <strong>🗂️ الأرشيف</strong>. أو من صفحة النزيل: القائمة (⋮) ← <strong>أرشفة</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "أرشفة نزيل"</div>
+                        <div class="step-desc">ستظهر نافذة لاختيار النزيل وسبب الأرشفة.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر النزيل والسبب</div>
+                        <div class="step-desc">ابحث عن النزيل، اختر السبب (نقل أو إخلاء)، وأدخل تفاصيل إضافية إن أردت (مكان النقل، ملاحظات).</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">أكّد الأرشفة</div>
+                        <div class="step-desc">اضغط <strong>🗂️ أرشفة</strong> وأكّد. سيُحفظ النزيل مع رصيده وسجل حركاته كاملاً في الأرشيف.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">↩️ إرجاع نزيل من الأرشيف</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                من شاشة الأرشيف، اضغط على بطاقة النزيل لتوسيعها، ثم اضغط <strong>↩️ إرجاع</strong>. سيظهر خياران:
+            </p>
+
+            <ul class="feature-list">
+                <li><strong>من الصفر:</strong> إنشاء حساب جديد بنفس الاسم برصيد 0 (بدون الحركات القديمة).</li>
+                <li><strong>بحسابه السابق:</strong> استرجاع النزيل مع كل حركاته القديمة وأرصدته السابقة.</li>
+            </ul>
+
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-content">
+                    <p><strong>انتبه:</strong> "الإرجاع من الصفر" يبدأ برصيد صفر. اختر "بحسابه السابق" إذا أردت الاحتفاظ بالتاريخ المالي كاملاً.</p>
+                </div>
+            </div>
+
+            <div class="callout danger">
+                <span class="callout-icon">🚨</span>
+                <div class="callout-content">
+                    <p><strong>حذف نهائي:</strong> يمكنك من الأرشيف حذف سجل نزيل نهائياً. هذا الإجراء لا يمكن التراجع عنه أبداً، ولا يوجد نسخة احتياطية تلقائية. استخدمه فقط للبيانات التجريبية أو الخاطئة.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: التقارير
+             ============================================ -->
+        <section class="guide-section" id="reports">
+            <div class="section-header">
+                <div class="section-number">9</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">🖨️ التقارير والطباعة</h2>
+                    <div class="section-subtitle">كيف تستعرض وتطبع كشوف الحركات والأرصدة</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="90" y="30" width="140" height="120" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+                    <rect x="90" y="30" width="140" height="30" rx="8" fill="#f37021"/>
+                    <text x="160" y="50" text-anchor="middle" fill="#fff" font-size="11" font-weight="800" font-family="Cairo, sans-serif">تقرير</text>
+                    <line x1="105" y1="80" x2="215" y2="80" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="105" y1="95" x2="215" y2="95" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="105" y1="110" x2="180" y2="110" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="200" y="125" width="70" height="40" rx="6" fill="#10b981"/>
+                    <rect x="215" y="115" width="40" height="15" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
+                    <circle cx="255" cy="145" r="4" fill="#fff" opacity="0.7"/>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                يوفر التطبيق 6 أنواع من التقارير الجاهزة. جميعها قابلة للطباعة بضغطة واحدة، وتُنسَّق تلقائياً على ورق A4.
+            </p>
+
+            <table class="simple-table">
+                <thead>
+                    <tr>
+                        <th>التقرير</th>
+                        <th>ماذا يعرض</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>📅 <strong>حركة اليوم</strong></td><td>كل حركات اليوم الحالي</td></tr>
+                    <tr><td>📆 <strong>حركة الشهر</strong></td><td>كل حركات شهر تختاره</td></tr>
+                    <tr><td>📊 <strong>بين تاريخين</strong></td><td>حركات فترة تختارها</td></tr>
+                    <tr><td>💰 <strong>أرصدة نزلاء</strong></td><td>أرصدة نزلاء محددين تختارهم</td></tr>
+                    <tr><td>📦 <strong>قائمة نقل</strong></td><td>كل النزلاء المنقولين</td></tr>
+                    <tr><td>🚪 <strong>قائمة إخلاء</strong></td><td>كل النزلاء المُخلّى سبيلهم</td></tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">📊 فتح تقرير</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">افتح شاشة التقارير</div>
+                        <div class="step-desc">من القائمة الجانبية ☰ ← <strong>📊 التقارير</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر نوع التقرير</div>
+                        <div class="step-desc">اضغط على البطاقة المناسبة. بعض التقارير تطلب منك اختيار تاريخ أو نزلاء قبل العرض.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "🖨️ طباعة"</div>
+                        <div class="step-desc">سيفتح المتصفح نافذة الطباعة. يمكنك اختيار "حفظ كـ PDF" إذا أردت نسخة رقمية.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🖨️ طباعة كشف حساب نزيل</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                من صفحة أي نزيل، اضغط القائمة (⋮) ← <strong>🖨️ طباعة</strong>. سيُفتح كشف كامل يحتوي على:
+            </p>
+
+            <ul class="feature-list">
+                <li>اسم النزيل والفرز الخاص به</li>
+                <li>رصيد الليرة والدولار الحالي</li>
+                <li>كل الحركات (إيداع/سحب) بالتاريخ والمبلغ</li>
+                <li>أسماء المودعين وأرقام الفواتير والمستلمين</li>
+            </ul>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>نصيحة:</strong> إذا كنت تستخدم جوالاً، يمكنك من نافذة الطباعة اختيار "حفظ كـ PDF" ثم مشاركة الملف عبر واتساب أو البريد.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: النسخ الاحتياطي
+             ============================================ -->
+        <section class="guide-section" id="backup">
+            <div class="section-header">
+                <div class="section-number">10</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">💾 النسخ الاحتياطي</h2>
+                    <div class="section-subtitle">أهم عادة يجب أن تلتزم بها لحماية بياناتك</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 90 Q100 60 130 60 Q145 40 170 45 Q195 35 210 60 Q230 60 230 90 Q230 115 205 115 L125 115 Q100 115 100 90 Z" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="165" cy="82" r="20" fill="#3b82f6"/>
+                    <path d="M165 72 L165 92 M155 84 L165 94 L175 84" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <rect x="130" y="125" width="70" height="40" rx="6" fill="#fff" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="165" y="150" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="800" font-family="Cairo, sans-serif">.json</text>
+                </svg>
+            </div>
+
+            <div class="callout danger">
+                <span class="callout-icon">🚨</span>
+                <div class="callout-content">
+                    <p><strong>مهم جداً:</strong> كل بياناتك محفوظة داخل متصفح جهازك فقط. إذا حذفت بيانات المتصفح أو تعطّل الجهاز، ستفقد كل شيء. <strong>النسخ الاحتياطي هو طوق النجاة الوحيد.</strong></p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">📥 تصدير نسخة احتياطية</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">من القائمة الجانبية ☰ ← "💾 نسخة احتياطية"</div>
+                        <div class="step-desc">سيبدأ تنزيل ملف بصيغة <code>.json</code> مباشرة إلى جهازك.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">احفظ الملف في مكان آمن</div>
+                        <div class="step-desc">يُسمّى الملف تلقائياً باسم يشمل تاريخ اليوم، مثل: <code>amanat_backup_2025-01-15.json</code>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">احفظ نسخة خارج الجهاز</div>
+                        <div class="step-desc">ارفع الملف إلى Google Drive أو أرسله لنفسك على واتساب، ليكون لديك نسخة احتياطية حتى لو تعطّل الجهاز.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">📂 استيراد نسخة احتياطية</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                إذا فقدت بياناتك أو انتقلت لجهاز جديد، يمكنك استعادة النسخة من ملف <code>.json</code>:
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط مطولاً على "📂 استيراد نسخة"</div>
+                        <div class="step-desc">في القائمة الجانبية، اضغط على الخيار <strong>باستمرار (3 ثوان)</strong> حتى يكتمل شريط التقدم. هذا لحماية بياناتك من الاستبدال بالخطأ.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اقرأ التحذير وأكّد</div>
+                        <div class="step-desc">سيظهر تحذير بأن البيانات الحالية ستُستبدل بالكامل. ضع علامة ✓ على مربع الموافقة، ثم اضغط <strong>استبدال البيانات</strong>.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر الملف</div>
+                        <div class="step-desc">ستفتح نافذة لاختيار الملف من جهازك. اختر ملف <code>.json</code> الذي حفظته سابقاً.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>روتين موصى به:</strong> خذ نسخة احتياطية <strong>أسبوعياً</strong> على الأقل، أو بعد كل يوم عمل مزدحم. التطبيق سيُذكّرك بذلك إذا مرّ أكثر من يوم.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: وضع المعاينة
+             ============================================ -->
+        <section class="guide-section" id="preview">
+            <div class="section-header">
+                <div class="section-number">11</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">🔍 وضع المعاينة</h2>
+                    <div class="section-subtitle">استعرض نسخة احتياطية قبل استعادتها</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="160" cy="90" rx="70" ry="45" fill="#fff3ec" stroke="#f37021" stroke-width="3"/>
+                    <circle cx="160" cy="90" r="25" fill="#f37021"/>
+                    <circle cx="160" cy="90" r="12" fill="#fff"/>
+                    <circle cx="168" cy="83" r="4" fill="#d95d15"/>
+                    <rect x="40" y="30" width="40" height="50" rx="4" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+                    <text x="60" y="60" text-anchor="middle" fill="#cbd5e1" font-size="10" font-weight="800" font-family="Cairo, sans-serif">.json</text>
+                    <path d="M90 60 Q120 60 130 75" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3" fill="none"/>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                وضع المعاينة ميزة فريدة تتيح لك <strong>استعراض نسخة احتياطية دون تعديل بياناتك الحقيقية</strong>. مفيدة إذا أردت التأكد أن النسخة صحيحة قبل استعادتها.
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">من القائمة ☰ ← "🔍 معاينة نسخة"</div>
+                        <div class="step-desc">سيُفتح منتقي الملفات.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر ملف النسخة الاحتياطية</div>
+                        <div class="step-desc">سيظهر شريط برتقالي في أعلى الشاشة يخبرك أنك في وضع المعاينة، مع اسم الملف.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">تصفّح البيانات بحرية</div>
+                        <div class="step-desc">يمكنك التنقل بين الشاشات، رؤية النزلاء، الحركات، الأرشيف... كل شيء معروض للمعاينة فقط. <strong>لا يمكنك التعديل</strong> في هذا الوضع.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">اختر: استعادة أو إلغاء</div>
+                        <div class="step-desc">في شريط المعاينة يوجد زرّان:
+                            <br>• <strong>✓ استعادة:</strong> يعتمد هذه النسخة ويستبدل بها بياناتك الحالية (بعد تأكيد).
+                            <br>• <strong>✕ إلغاء:</strong> يعود بك إلى بياناتك الحقيقية دون أي تغيير.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <span class="callout-icon">🛡️</span>
+                <div class="callout-content">
+                    <p><strong>أمان كامل:</strong> وضع المعاينة لا يمسّ بياناتك الحقيقية أبداً. حتى لو حدث خطأ، بياناتك الأصلية بأمان حتى تضغط "استعادة" وتؤكد.</p>
+                </div>
+            </div>
+
+            <div class="callout tip">
+                <span class="callout-icon">📥</span>
+                <div class="callout-content">
+                    <p><strong>عند الاستعادة:</strong> يعرض عليك التطبيق خيار "أخذ نسخة احتياطية من بياناتك الحالية أولاً". ننصحك بتركه مُفعّلاً دائماً.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: رمز الحماية
+             ============================================ -->
+        <section class="guide-section" id="pin">
+            <div class="section-header">
+                <div class="section-number">12</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">🔐 رمز الحماية</h2>
+                    <div class="section-subtitle">كيف تقفل التطبيق برقم سري من 4 أرقام</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="110" y="80" width="100" height="80" rx="10" fill="#f37021"/>
+                    <path d="M135 80 L135 60 Q135 40 160 40 Q185 40 185 60 L185 80" stroke="#f37021" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <circle cx="160" cy="120" r="8" fill="#fff"/>
+                    <rect x="156" y="120" width="8" height="18" rx="3" fill="#fff"/>
+                    <text x="60" y="100" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900" font-family="Cairo, sans-serif">1</text>
+                    <text x="60" y="130" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900" font-family="Cairo, sans-serif">2</text>
+                    <text x="60" y="160" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900" font-family="Cairo, sans-serif">3</text>
+                    <text x="260" y="100" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900" font-family="Cairo, sans-serif">4</text>
+                    <text x="260" y="130" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900" font-family="Cairo, sans-serif">5</text>
+                    <text x="260" y="160" text-anchor="middle" fill="#0f172a" font-size="20" font-weight="900" font-family="Cairo, sans-serif">6</text>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                رمز الحماية هو رقم سري من 4 أرقام يمنع أي شخص آخر من فتح التطبيق. عند تفعيله، سيُطلب الرمز في كل مرة تفتح التطبيق.
+            </p>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🔒 تفعيل رمز الحماية (لأول مرة)</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">من القائمة ☰ ← "🔒 تعيين رمز حماية"</div>
+                        <div class="step-desc">ستظهر نافذة إعدادات الحماية.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">فعّل مفتاح "تفعيل رمز الحماية"</div>
+                        <div class="step-desc">سيظهر حقلان: الرمز الجديد وتأكيد الرمز الجديد.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل 4 أرقام في كل حقل</div>
+                        <div class="step-desc">اكتب الرمز ثم أعد كتابته للتأكيد. يجب أن يتطابق الحقلان.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "حفظ"</div>
+                        <div class="step-desc">سيُفعّل الرمز فوراً. في المرة القادمة التي تفتح فيها التطبيق، سيُطلب منك إدخاله.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🔓 شاشة القفل</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                عند فتح التطبيق مع رمز مفعّل، ستظهر شاشة قفل تحتوي على:
+            </p>
+
+            <ul class="feature-list">
+                <li><strong>4 نقاط:</strong> تتحول للأخضر عند إدخال كل رقم.</li>
+                <li><strong>لوحة أرقام:</strong> 0 إلى 9 + زر ⌫ للحذف.</li>
+                <li><strong>زر "نسيت الرمز؟":</strong> لفتح نافذة الاسترداد (انظر القسم التالي).</li>
+            </ul>
+
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-content">
+                    <p><strong>لا تنسَ الرمز:</strong> إذا نسيت الرمز ولم تحتفظ بمفتاح الاسترداد، ستحتاج لمسح جميع بياناتك (وهذا يعني فقدان كل شيء). احتفظ بالرمز في مكان آمن.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: الاسترداد
+             ============================================ -->
+        <section class="guide-section" id="recovery">
+            <div class="section-header">
+                <div class="section-number">13</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">🔑 الاسترداد</h2>
+                    <div class="section-subtitle">ماذا تفعل إذا نسيت رمز الحماية</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="110" cy="90" r="30" fill="none" stroke="#10b981" stroke-width="8"/>
+                    <circle cx="110" cy="90" r="10" fill="#10b981"/>
+                    <line x1="135" y1="90" x2="220" y2="90" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="180" y1="90" x2="180" y2="115" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="205" y1="90" x2="205" y2="110" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 18px;">
+                إذا نسيت رمز الحماية، يوجد حل بديل عبر "مفتاح الاسترداد" — وهو كود يومي يتغير كل 24 ساعة.
+            </p>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">🔑 خطوات الاسترداد</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">في شاشة القفل، اضغط "نسيت الرمز؟"</div>
+                        <div class="step-desc">ستفتح نافذة تطلب كود الاسترداد (4 أرقام).</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل كود اليوم</div>
+                        <div class="step-desc">يجب أن تحسب هذا الكود من خارج التطبيق. (اطلب من مطوّر التطبيق أو من مالك ملف مولّد الأكواد).</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">اضغط "دخول"</div>
+                        <div class="step-desc">إذا كان الكود صحيحاً، ستنبثق نافذة تطلب منك تعيين رمز جديد.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">أدخل رمزاً جديداً</div>
+                        <div class="step-desc">اكتب الرمز الجديد، ثم تأكيده. بعد الحفظ ستدخل التطبيق مباشرة.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <span class="callout-icon">🆘</span>
+                <div class="callout-content">
+                    <p><strong>خيار أخير - مسح البيانات:</strong> توجد في نافذة تعيين الرمز الجديد (بعد الاسترداد) خيار "🗑️ مسح البيانات". يتطلب الضغط عليه باستمرار 3 ثوان، ثم تأكيداً نهائياً. سيؤدي إلى حذف كل شيء نهائياً. استخدمه فقط إذا كنت مستعداً لفقدان كل البيانات.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: الإعدادات
+             ============================================ -->
+        <section class="guide-section" id="settings">
+            <div class="section-header">
+                <div class="section-number">14</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">⚙️ الإعدادات</h2>
+                    <div class="section-subtitle">تخصيص شكل التطبيق حسب تفضيلاتك</div>
+                </div>
+            </div>
+
+            <div class="illustration">
+                <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="160" cy="90" r="45" fill="none" stroke="#f37021" stroke-width="8"/>
+                    <circle cx="160" cy="90" r="20" fill="#f37021"/>
+                    <rect x="152" y="30" width="16" height="20" rx="3" fill="#f37021"/>
+                    <rect x="152" y="130" width="16" height="20" rx="3" fill="#f37021"/>
+                    <rect x="100" y="82" width="20" height="16" rx="3" fill="#f37021"/>
+                    <rect x="200" y="82" width="20" height="16" rx="3" fill="#f37021"/>
+                    <rect x="112" y="42" width="16" height="20" rx="3" fill="#f37021" transform="rotate(-45 120 52)"/>
+                    <rect x="192" y="42" width="16" height="20" rx="3" fill="#f37021" transform="rotate(45 200 52)"/>
+                    <rect x="112" y="118" width="16" height="20" rx="3" fill="#f37021" transform="rotate(45 120 128)"/>
+                    <rect x="192" y="118" width="16" height="20" rx="3" fill="#f37021" transform="rotate(-45 200 128)"/>
+                </svg>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin-bottom: 14px;">🌙 الوضع الليلي</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                لتحويل التطبيق إلى الوضع الليلي (خلفية داكنة مريحة للعين في الإضاءة المنخفضة): من القائمة ☰ ← اضغط <strong>🌙 الوضع الليلي</strong>. يُحفظ الاختيار تلقائياً ويعود عند فتح التطبيق لاحقاً.
+            </p>
+
+            <h3 style="font-size: 16px; font-weight: 900; color: var(--text); margin: 20px 0 14px;">📈 إظهار/إخفاء الإحصائيات</h3>
+
+            <p style="font-size: 14px; color: var(--text-soft); margin-bottom: 12px;">
+                زر <strong>🔻</strong> في أعلى الشاشة يتحكم في بطاقة الإحصائيات:
+            </p>
+
+            <ul class="feature-list">
+                <li><strong>🔻 مغلق:</strong> اللوحة مخفية (افتراضي). شاشة نظيفة للمهام اليومية.</li>
+                <li><strong>🔺 مفتوح:</strong> تظهر اللوحة بأرصدة الصندوق وحركة اليوم والشهر.</li>
+            </ul>
+
+            <div class="callout tip">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                    <p><strong>حالة محفوظة:</strong> التطبيق يتذكر حالتك المفضلة (مفتوحة أو مغلقة) ويعيدها عند كل فتح جديد.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             القسم: أسئلة شائعة
+             ============================================ -->
+        <section class="guide-section" id="faq">
+            <div class="section-header">
+                <div class="section-number">15</div>
+                <div class="section-title-group">
+                    <h2 class="section-title">❓ أسئلة شائعة</h2>
+                    <div class="section-subtitle">إجابات لأكثر التساؤلات تكراراً</div>
+                </div>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>هل بياناتي محفوظة على الإنترنت؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            لا. جميع بياناتك محفوظة <strong>محلياً داخل متصفح جهازك فقط</strong> (بتقنية IndexedDB). لا يُرسَل أي شيء إلى أي خادم. هذا يعني:
+                            <br>✓ خصوصية كاملة (لا أحد يرى بياناتك)
+                            <br>⚠️ لكن إذا حذفت بيانات المتصفح، فقدت كل شيء
+                            <br><strong>لهذا السبب:</strong> النسخ الاحتياطي المنتظم ضروري جداً.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>هل يمكنني استخدام التطبيق على أكثر من جهاز؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            كل جهاز يحتوي على بيانات منفصلة (لأن التطبيق لا يتصل بخادم). لنقل البيانات بين الأجهزة:
+                            <br>1. من الجهاز الأول: خذ <strong>نسخة احتياطية</strong> (.json)
+                            <br>2. أرسل الملف للجهاز الثاني (واتساب، إيميل، USB...)
+                            <br>3. من الجهاز الثاني: <strong>استورد الملف</strong>
+                            <br>كرر ذلك كلما أردت مزامنة البيانات يدوياً.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>ماذا يحدث إذا سجّلت سحباً أكبر من الرصيد؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            سيظهر تحذير يطلب منك تأكيد المتابعة. إذا وافقت، سيسجل التطبيق السحب ويصبح الرصيد <strong>سالباً</strong>، مما يعني أن النزيل مدين بالمبلغ الزائد. يمكنك لاحقاً تسجيل إيداع لتسديد الدين.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>هل يمكنني استعادة نزيل أرشفته بالخطأ؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            نعم، بسهولة. اذهب إلى <strong>الأرشيف</strong>، افتح بطاقة النزيل، واضغط <strong>↩️ إرجاع</strong>. سيعود النزيل إلى القائمة النشطة مع كل حركاته القديمة.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>لماذا لا يظهر زر "استيراد نسخة" عند الضغط عليه؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            الاستيراد محمي ضد الضغط بالخطأ. يجب أن <strong>تضغط مطولاً</strong> على الزر لمدة 3 ثوان حتى يكتمل شريط التقدم البرتقالي. هذا لحماية بياناتك من الاستبدال المفاجئ.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>هل يمكنني استخدام التطبيق بدون إنترنت؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            نعم تماماً، <strong>بعد التثبيت الأول</strong>. التطبيق يعمل بالكامل دون اتصال (100% offline) بعد أن يُثبَّت على جهازك. أما أول فتح فيحتاج اتصالاً بالإنترنت لتحميل ملفاته.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>هل يمكنني الرجوع عن حذف حركة أو نزيل؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <strong>لا.</strong> الحذف نهائي ولا يمكن التراجع عنه داخل التطبيق. الحل الوحيد للاستعادة هو استيراد نسخة احتياطية قديمة. لهذا السبب ننصح دائماً بأخذ نسخة احتياطية قبل أي عملية كبيرة.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>ماذا أفعل إذا تعطّل التطبيق أو ظهرت شاشة بيضاء؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            جرّب بالترتيب:
+                            <br>1. <strong>حدّث الصفحة</strong> (F5 أو اسحب للأسفل على الجوال)
+                            <br>2. <strong>أغلق المتصفح وأعد فتحه</strong>
+                            <br>3. تأكد من أنك تستخدم متصفحاً حديثاً (Chrome أو Safari أو Edge)
+                            <br>4. إذا استمرت المشكلة: <strong>لا تحذف البيانات</strong>. خذ نسخة احتياطية أولاً إن أمكن، ثم تواصل مع المطوّر.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>هل يمكن طباعة كل الحركات مرة واحدة لكل النزلاء؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            نعم، من <strong>شاشة التقارير</strong> اختر "حركة اليوم" أو "حركة الشهر" أو "بين تاريخين" — كل تقرير يعرض جميع الحركات في الفترة المحددة. أما كشف الحساب الفردي (لكل نزيل) فيُطبع من صفحته الشخصية.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button">
+                        <span>ما الفرق بين "نقل" و"إخلاء" في الأرشيف؟</span>
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <strong>📦 نقل:</strong> النزيل موجود لكن في مكان آخر (فرع، مؤسسة، محافظة أخرى). يُسجَّل مكان النقل.
+                            <br><strong>🚪 إخلاء:</strong> النزيل أُخلي سبيله نهائياً وأصبح حراً.
+                            <br>كلا النوعين يُحفظان في الأرشيف مع رصيدهما وسجل حركاتهما الكامل. الفرق فقط في التصنيف والتفاصيل.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== الخاتمة ===== -->
+        <section class="closing">
+            <div class="closing-content">
+                <h2>🎉 مبروك! أصبحت الآن محترفاً</h2>
+                <p>أنت تعرف الآن كل ما تحتاجه لاستخدام تطبيق الأمانات بكفاءة. ابدأ العمل وثابر على النسخ الاحتياطي.</p>
+                <a href="https://fayizjan.github.io/amanat/" target="_blank" rel="noopener" class="closing-btn">
+                    <span>🏦</span>
+                    <span>افتح التطبيق الآن</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="footer">
+            دليل استخدام الأمانات — الإصدار 3.1<br>
+            صُمِّم ليكون بسيطاً وواضحاً للجميع
+        </div>
+
+    </main>
+</div>
+
+<!-- زر العودة للأعلى -->
+<button class="back-to-top" id="backToTop" aria-label="العودة للأعلى">↑</button>
+
+<script>
+(function() {
+    'use strict';
+
+    const $ = id => document.getElementById(id);
+    const APP_URL = 'https://fayizjan.github.io/amanat/';
+
+    // ===== شريط تقدم القراءة =====
+    const progressBar = $('readingProgress');
+    const backToTop = $('backToTop');
+
+    function updateScrollUI() {
+        const doc = document.documentElement;
+        const scrollTop = window.scrollY || doc.scrollTop;
+        const docHeight = doc.scrollHeight - doc.clientHeight;
+        const percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = percent + '%';
+
+        if (scrollTop > 400) backToTop.classList.add('show');
+        else backToTop.classList.remove('show');
+    }
+
+    window.addEventListener('scroll', updateScrollUI, { passive: true });
+    updateScrollUI();
+
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ===== الوضع الليلي =====
+    const DARK_KEY = 'amanat_guide_dark';
+    const darkToggle = $('darkToggle');
+
+    function applyDark(enabled) {
+        document.body.classList.toggle('dark', enabled);
+        darkToggle.textContent = enabled ? '☀️' : '🌙';
+        darkToggle.title = enabled ? 'الوضع النهاري' : 'الوضع الليلي';
+    }
+
+    if (localStorage.getItem(DARK_KEY) === '1') applyDark(true);
+
+    darkToggle.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark');
+        applyDark(isDark);
+        localStorage.setItem(DARK_KEY, isDark ? '1' : '0');
+    });
+
+    // ===== قائمة الجوال =====
+    const sidebar = $('sidebar');
+    const sidebarOverlay = $('sidebarOverlay');
+    const menuToggle = $('menuToggle');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        sidebarOverlay.classList.toggle('show');
+    }
+
+    menuToggle.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    sidebar.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 960) toggleSidebar();
+        });
+    });
+
+    // ===== نسخ رابط التطبيق =====
+    const copyBtn = $('copyUrlBtn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(APP_URL);
+                const original = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<span>✅</span><span class="copy-text">تم النسخ</span>';
+                copyBtn.style.background = 'var(--success)';
+                copyBtn.style.color = '#fff';
+                setTimeout(() => {
+                    copyBtn.innerHTML = original;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 1800);
+            } catch (err) {
+                // fallback
+                const temp = document.createElement('textarea');
+                temp.value = APP_URL;
+                document.body.appendChild(temp);
+                temp.select();
+                try { document.execCommand('copy'); } catch (e) {}
+                document.body.removeChild(temp);
+                const original = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<span>✅</span><span class="copy-text">تم النسخ</span>';
+                setTimeout(() => { copyBtn.innerHTML = original; }, 1800);
+            }
+        });
+    }
+
+    // ===== التنقل النشط =====
+    const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+    const sections = navLinks
+        .map(link => {
+            const id = link.getAttribute('href').slice(1);
+            return { link, section: document.getElementById(id) };
+        })
+        .filter(item => item.section);
+
+    function setActiveNav() {
+        const scrollY = window.scrollY + 160;
+        let current = sections[0];
+        for (const item of sections) {
+            const top = item.section.offsetTop;
+            if (top <= scrollY) current = item;
+            else break;
+        }
+        navLinks.forEach(l => l.classList.remove('active'));
+        if (current) current.link.classList.add('active');
+    }
+
+    window.addEventListener('scroll', setActiveNav, { passive: true });
+    setActiveNav();
+
+    // ===== الأكورديون =====
+    document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(i => {
+                if (i !== item) i.classList.remove('open');
+            });
+            item.classList.toggle('open', !isOpen);
+        });
+    });
+
+    // ===== تمرير سلس =====
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const target = document.querySelector(link.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+})();
+</script>
+
+</body>
+</html>
