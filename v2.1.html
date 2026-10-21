@@ -58,6 +58,7 @@
     --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     --bottom-nav-height: 68px;
     --header-height: 58px;
+    --preview-banner-height: 56px;
 }
 
 body.dark {
@@ -109,6 +110,7 @@ body.no-scroll { overflow: hidden; }
     top: 0;
     z-index: 100;
     border-bottom: 1px solid var(--border-soft);
+    transition: top var(--transition);
 }
 
 .header-content {
@@ -530,7 +532,6 @@ body.dark .detail-row { border-bottom-color: rgba(255,255,255,0.05); }
 .grouped-tx.deposit { border-right-color: var(--success); }
 .grouped-tx.withdraw { border-right-color: var(--danger); }
 
-/* النصوص داخل البطاقة الجديدة */
 .card-title { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
 .card-type { font-size: 12px; font-weight: 700; }
 .card-type.dep { color: var(--success); }
@@ -764,6 +765,8 @@ body.no-bottom-nav .toast { bottom: 24px; }
     #print-container table { page-break-inside: auto; }
     #print-container tr { page-break-inside: avoid; }
     @page { size: A4 portrait; margin: 12mm 10mm; }
+    .preview-banner { display: none !important; }
+    body.preview-mode { padding-top: 0 !important; }
 }
 
 /* شاشة الحماية */
@@ -787,8 +790,9 @@ body.dark .lock-screen { background: #0f172a; }
     font-weight: 900; direction: ltr; color: var(--text); background: var(--bg);
 }
 .lock-box input:focus { outline: none; border-color: var(--primary); }
+
 /* ===========================
-   تصميم نافذة إعدادات الحماية العصرية
+   نافذة إعدادات الحماية
    =========================== */
 .pin-modal-overlay {
     position: fixed; inset: 0; background: rgba(15,23,42,0.6); 
@@ -805,7 +809,6 @@ body.dark .lock-screen { background: #0f172a; }
 .pin-modal h3 { font-size: 18px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
 .pin-modal p { font-size: 12px; color: var(--text-light); margin-bottom: 20px; }
 
-/* مفتاح التشغيل / الإطفاء */
 .pin-toggle-wrap {
     display: flex; align-items: center; justify-content: space-between;
     background: var(--bg); padding: 12px 16px; border-radius: var(--radius);
@@ -827,7 +830,6 @@ body.dark .lock-screen { background: #0f172a; }
 input:checked + .pin-slider { background: var(--success); }
 input:checked + .pin-slider:before { transform: translateX(20px); }
 
-/* حقول الإدخال */
 .pin-inputs { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
 .pin-input-group { display: flex; flex-direction: column; text-align: right; }
 .pin-input-group label { font-size: 12px; font-weight: 700; color: var(--text-soft); margin-bottom: 4px; }
@@ -840,7 +842,8 @@ input:checked + .pin-slider:before { transform: translateX(20px); }
 .pin-input-group input:focus { outline: none; border-color: var(--primary); }
 .pin-input-group input:disabled { background: var(--border-soft); opacity: 0.6; cursor: not-allowed; }
 .pin-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-/* تصميم الضغط المطول والعداد */
+
+/* الضغط المطول */
 .long-press-progress {
     position: absolute; top: 0; right: 0; bottom: 0; width: 0%;
     background: rgba(239, 68, 68, 0.15); z-index: -1; transition: width 0.05s linear; pointer-events: none;
@@ -850,7 +853,7 @@ input:checked + .pin-slider:before { transform: translateX(20px); }
 .drawer-item.pressing .drawer-item-icon { animation: pulseDanger 0.5s infinite alternate; }
 @keyframes pulseDanger { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-/* تصميم نافذة الاستيراد المخصصة */
+/* نافذة الاستيراد */
 .restore-warning {
     background: var(--danger-light); color: var(--danger-dark);
     padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700;
@@ -864,6 +867,7 @@ input:checked + .pin-slider:before { transform: translateX(20px); }
 .restore-checkbox-wrap input { width: 20px; height: 20px; accent-color: var(--danger); cursor: pointer; margin-top: 2px; }
 .restore-checkbox-wrap span { font-size: 13.5px; font-weight: 700; color: var(--text); }
 .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
 /* ===========================
    نافذة حول الأمانات - احترافية
    =========================== */
@@ -872,7 +876,6 @@ input:checked + .pin-slider:before { transform: translateX(20px); }
     padding: 0;
     overflow: hidden;
     position: relative;
-    /* خلفية موحّدة متدرّجة تغطي كامل النافذة */
     background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 55%, #b84a0e 100%);
     border-radius: var(--radius-lg);
 }
@@ -898,7 +901,6 @@ body.dark .about-modal {
     color: #fff;
 }
 
-/* الهيدر */
 .about-hero {
     position: relative;
     padding: 36px 20px 22px;
@@ -989,13 +991,11 @@ body.dark .about-modal {
     50% { opacity: 0.6; transform: scale(0.85); }
 }
 
-/* الجسم - شفاف ليأخذ نفس خلفية النافذة */
 .about-body {
     padding: 8px 20px 24px;
     background: transparent;
 }
 
-/* بطاقة المطوّر - شفافة */
 .about-dev-card {
     display: flex;
     align-items: center;
@@ -1027,26 +1027,10 @@ body.dark .about-dev-card {
     flex-shrink: 0;
 }
 
-.about-dev-info {
-    flex: 1;
-    min-width: 0;
-}
+.about-dev-info { flex: 1; min-width: 0; }
+.about-dev-label { font-size: 10.5px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.5px; margin-bottom: 2px; }
+.about-dev-name { font-size: 17px; font-weight: 900; color: #fff; }
 
-.about-dev-label {
-    font-size: 10.5px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.85);
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-}
-
-.about-dev-name {
-    font-size: 17px;
-    font-weight: 900;
-    color: #fff;
-}
-
-/* زر الاتصال مع حركة ضوء */
 .about-call-btn {
     position: relative;
     display: flex;
@@ -1063,7 +1047,6 @@ body.dark .about-dev-card {
     overflow: hidden;
 }
 
-/* حركة الضوء المار */
 .about-call-btn::before {
     content: '';
     position: absolute;
@@ -1071,12 +1054,7 @@ body.dark .about-dev-card {
     left: -75%;
     width: 50%;
     height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(255,255,255,0.55) 50%,
-        transparent 100%
-    );
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
     transform: skewX(-20deg);
     animation: aboutShine 3s ease-in-out infinite;
     pointer-events: none;
@@ -1088,14 +1066,8 @@ body.dark .about-dev-card {
     100% { left: 125%; }
 }
 
-.about-call-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(16,185,129,0.5);
-}
-
-.about-call-btn:active {
-    transform: scale(0.98);
-}
+.about-call-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(16,185,129,0.5); }
+.about-call-btn:active { transform: scale(0.98); }
 
 .about-call-icon {
     width: 42px;
@@ -1121,61 +1093,179 @@ body.dark .about-dev-card {
     z-index: 1;
 }
 
-.about-call-label {
-    font-size: 11px;
-    opacity: 0.9;
-    font-weight: 600;
-}
+.about-call-label { font-size: 11px; opacity: 0.9; font-weight: 600; }
+.about-call-number { font-size: 17px; font-weight: 900; direction: ltr; text-align: right; letter-spacing: 0.5px; }
 
-.about-call-number {
-    font-size: 17px;
-    font-weight: 900;
-    direction: ltr;
-    text-align: right;
-    letter-spacing: 0.5px;
-}
-
-/* التذييل */
-.about-footer {
-    text-align: center;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.18);
-}
-
-.about-copyright {
-    font-size: 11.5px;
-    color: rgba(255,255,255,0.9);
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.about-made-with {
-    font-size: 11px;
-    color: rgba(255,255,255,0.75);
-    font-weight: 600;
-}
-
-.about-made-with .heart {
-    display: inline-block;
-    animation: aboutHeart 1.5s ease-in-out infinite;
-}
+.about-footer { text-align: center; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.18); }
+.about-copyright { font-size: 11.5px; color: rgba(255,255,255,0.9); font-weight: 700; margin-bottom: 4px; }
+.about-made-with { font-size: 11px; color: rgba(255,255,255,0.75); font-weight: 600; }
+.about-made-with .heart { display: inline-block; animation: aboutHeart 1.5s ease-in-out infinite; }
 
 @keyframes aboutHeart {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.2); }
 }
 
-/* استجابة الجوال */
 @media (max-width: 480px) {
     .about-app-name { font-size: 23px; }
     .about-logo-wrap { width: 72px; height: 72px; }
     .about-logo { font-size: 36px; }
     .about-call-number { font-size: 15.5px; }
 }
+
+/* ===========================
+   شريط وضع المعاينة
+   =========================== */
+.preview-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--preview-banner-height);
+    z-index: 200;
+    background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    animation: previewBannerSlide 0.3s ease;
+}
+
+@keyframes previewBannerSlide {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+.preview-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.preview-banner-icon { font-size: 20px; flex-shrink: 0; }
+
+.preview-banner-text {
+    min-width: 0;
+    flex: 1;
+}
+
+.preview-banner-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    margin-bottom: 1px;
+}
+
+.preview-banner-subtitle {
+    font-size: 10.5px;
+    opacity: 0.9;
+    font-weight: 600;
+    direction: ltr;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.preview-banner-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.preview-banner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.preview-banner-btn:active { transform: scale(0.95); }
+
+.preview-banner-btn-exit {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+.preview-banner-btn-exit:hover { background: rgba(255,255,255,0.3); }
+
+.preview-banner-btn-restore {
+    background: #fff;
+    color: var(--success-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.preview-banner-btn-restore:hover { background: var(--success-light); }
+
+.preview-banner-btn-text { display: none; }
+@media (min-width: 400px) {
+    .preview-banner-btn-text { display: inline; }
+}
+
+/* وضع المعاينة - تعديلات عامة */
+body.preview-mode { padding-top: var(--preview-banner-height); }
+body.preview-mode .app-header { top: var(--preview-banner-height); }
+
+/* إخفاء أزرار التعديل في وضع المعاينة */
+body.preview-mode .drawer-item[data-action="new-customer"],
+body.preview-mode .drawer-item[data-action="restore"],
+body.preview-mode .drawer-item[data-action="preview"],
+body.preview-mode #btnTodayDeposit,
+body.preview-mode #btnTodayWithdraw,
+body.preview-mode #btnArchiveCustomer,
+body.preview-mode #custDropdownMenu [data-action="deposit"],
+body.preview-mode #custDropdownMenu [data-action="withdraw"],
+body.preview-mode #custDropdownMenu [data-action="edit"],
+body.preview-mode #custDropdownMenu [data-action="archive"],
+body.preview-mode #custDropdownMenu [data-action="delete"],
+body.preview-mode .card-actions [data-action="edit"],
+body.preview-mode .card-actions [data-action="delete"],
+body.preview-mode .card-actions [data-action="restore"],
+body.preview-mode #btnDeleteTx {
+    display: none !important;
+}
 </style>
 </head>
-<body>
+<!-- ============================================ -->
+<!-- ⬆️ نهاية الجزء 1 — يليه مباشرة <body> في الجزء 2 -->
+<!-- ============================================ -->
+  <body>
 
+<!-- ===========================
+     شريط وضع المعاينة (يظهر فقط في وضع المعاينة)
+     =========================== -->
+<div class="preview-banner" id="previewBanner" style="display:none;">
+    <div class="preview-banner-content">
+        <span class="preview-banner-icon">🔍</span>
+        <div class="preview-banner-text">
+            <div class="preview-banner-title">وضع المعاينة</div>
+            <div class="preview-banner-subtitle" id="previewFileName">—</div>
+        </div>
+    </div>
+    <div class="preview-banner-actions">
+        <button class="preview-banner-btn preview-banner-btn-exit" id="btnExitPreview" title="إلغاء المعاينة">
+            <span>✕</span>
+            <span class="preview-banner-btn-text">إلغاء</span>
+        </button>
+        <button class="preview-banner-btn preview-banner-btn-restore" id="btnRestorePreview" title="استعادة هذه النسخة">
+            <span>✓</span>
+            <span class="preview-banner-btn-text">استعادة</span>
+        </button>
+    </div>
+</div>
+
+<!-- ===========================
+     الهيدر
+     =========================== -->
 <header class="app-header">
     <div class="header-content">
         <div class="header-right">
@@ -1188,6 +1278,9 @@ body.dark .about-dev-card {
     </div>
 </header>
 
+<!-- ===========================
+     القائمة الجانبية
+     =========================== -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
 <aside class="drawer" id="drawer">
@@ -1204,6 +1297,7 @@ body.dark .about-dev-card {
         <button class="drawer-item" data-action="reports"><span class="drawer-item-icon">📊</span><span>التقارير</span></button>
         <div class="drawer-divider"></div>
         <button class="drawer-item" data-action="backup"><span class="drawer-item-icon">💾</span><span>نسخة احتياطية</span></button>
+        <button class="drawer-item" data-action="preview"><span class="drawer-item-icon">🔍</span><span>معاينة نسخة احتياطية</span></button>
         <button class="drawer-item" data-action="restore"><span class="drawer-item-icon">📂</span><span>استيراد نسخة</span></button>
         <div class="drawer-divider"></div>
         <button class="drawer-item" id="btnSetPin"><span class="drawer-item-icon">🔒</span><span>تعيين رمز حماية</span></button>
@@ -1215,7 +1309,11 @@ body.dark .about-dev-card {
     </div>
 </aside>
 
+<!-- ===========================
+     المحتوى الرئيسي
+     =========================== -->
 <main class="container">
+    <!-- بطاقة الإحصائيات -->
     <div class="stats-panel hidden" id="statsPanel">
         <div class="stats-box">
             <div class="stats-box-header"><div class="stats-box-title">💼 الصندوق الحالي</div><div class="stats-box-sub" id="boxUpdatedAt">الآن</div></div>
@@ -1246,6 +1344,7 @@ body.dark .about-dev-card {
         </div>
     </div>
 
+    <!-- شاشة اليوم -->
     <section id="viewToday" class="view active">
         <div class="section-title">
             <div style="display:flex; align-items:center; gap:6px;">
@@ -1266,6 +1365,7 @@ body.dark .about-dev-card {
         <div class="empty-state" id="todayEmpty" style="display:none;"><div class="empty-icon">📭</div><h3>لا توجد حركات اليوم</h3><p>ابدأ بإضافة إيداع أو سحب</p></div>
     </section>
 
+    <!-- شاشة النزلاء -->
     <section id="viewCustomers" class="view">
         <div class="search-box"><input type="text" id="searchInput" placeholder="ابحث عن نزيل بالاسم أو الهاتف..." autocomplete="off"></div>
         <div class="filter-chips" id="sortChips"></div>
@@ -1273,6 +1373,7 @@ body.dark .about-dev-card {
         <div class="empty-state" id="customersEmpty" style="display:none;"><div class="empty-icon">📭</div><h3 id="customersEmptyTitle">لا يوجد نزلاء بعد</h3><p id="customersEmptyDesc">ابدأ بإضافة أول نزيل</p></div>
     </section>
 
+    <!-- شاشة الشهر -->
     <section id="viewMonth" class="view">
         <div class="section-title"><h2>📆 الحركة الشهرية</h2></div>
         <div class="form-group" style="margin-bottom:14px;"><select id="monthSelect" style="font-weight:700; font-size:14.5px;"></select></div>
@@ -1280,6 +1381,7 @@ body.dark .about-dev-card {
         <div class="empty-state" id="monthEmpty" style="display:none;"><div class="empty-icon">📭</div><h3>لا توجد حركات هذا الشهر</h3><p>جرّب اختيار شهر آخر</p></div>
     </section>
 
+    <!-- شاشة النزيل -->
     <section id="viewCustomer" class="view no-bottom-nav">
         <div class="customer-header">
             <div class="customer-header-name"><span id="custName">—</span><span class="tag-sort" id="custSort" style="display:none;">—</span></div>
@@ -1322,6 +1424,7 @@ body.dark .about-dev-card {
         <div class="empty-state" id="custTxEmpty" style="display:none;"><div class="empty-icon">📄</div><h3>لا توجد حركات</h3><p>ابدأ بإضافة إيداع أو سحب</p></div>
     </section>
 
+    <!-- شاشة الأرشيف -->
     <section id="viewArchive" class="view no-bottom-nav">
         <div class="section-title">
             <div style="display:flex; align-items:center; gap:8px;"><button class="btn btn-ghost btn-icon" onclick="App.goHome()" title="رجوع">←</button><h2>🗂️ الأرشيف</h2></div>
@@ -1336,6 +1439,7 @@ body.dark .about-dev-card {
         <div style="margin-top:20px; text-align:center;"><button class="btn btn-secondary" onclick="App.goHome()">← رجوع للرئيسية</button></div>
     </section>
 
+    <!-- شاشة التقارير -->
     <section id="viewReports" class="view no-bottom-nav">
         <div class="section-title"><div style="display:flex; align-items:center; gap:8px;"><button class="btn btn-ghost btn-icon" onclick="App.goHome()" title="رجوع">←</button><h2>📊 التقارير</h2></div></div>
         <div class="reports-grid">
@@ -1343,19 +1447,24 @@ body.dark .about-dev-card {
             <div class="report-card" data-report="month"><div class="report-card-icon">📆</div><div class="report-card-info"><div class="report-card-title">حركة الشهر</div><div class="report-card-desc">كل حركات شهر محدد</div></div><span class="report-card-arrow">←</span></div>
             <div class="report-card" data-report="range"><div class="report-card-icon">📊</div><div class="report-card-info"><div class="report-card-title">بين تاريخين</div><div class="report-card-desc">حركات فترة محددة</div></div><span class="report-card-arrow">←</span></div>
             <div class="report-card" data-report="balances"><div class="report-card-icon">💰</div><div class="report-card-info"><div class="report-card-title">أرصدة نزلاء</div><div class="report-card-desc">أرصدة نزلاء محددين</div></div><span class="report-card-arrow">←</span></div>
-         <div class="report-card" data-report="transferred"><div class="report-card-icon">📦</div><div class="report-card-info"><div class="report-card-title">قائمة نقل نزلاء</div><div class="report-card-desc">كل من رُحّلوا إلى مكان آخر</div></div><span class="report-card-arrow">←</span></div>
-<div class="report-card" data-report="vacated"><div class="report-card-icon">🚪</div><div class="report-card-info"><div class="report-card-title">قائمة إخلاء سبيل</div><div class="report-card-desc">كل من أُخلوا نهائياً</div></div><span class="report-card-arrow">←</span></div>
+            <div class="report-card" data-report="transferred"><div class="report-card-icon">📦</div><div class="report-card-info"><div class="report-card-title">قائمة نقل نزلاء</div><div class="report-card-desc">كل من رُحّلوا إلى مكان آخر</div></div><span class="report-card-arrow">←</span></div>
+            <div class="report-card" data-report="vacated"><div class="report-card-icon">🚪</div><div class="report-card-info"><div class="report-card-title">قائمة إخلاء سبيل</div><div class="report-card-desc">كل من أُخلوا نهائياً</div></div><span class="report-card-arrow">←</span></div>
         </div>
     </section>
 </main>
 
+<!-- ===========================
+     الشريط السفلي
+     =========================== -->
 <nav class="bottom-nav" id="bottomNav">
     <button class="bottom-nav-item active" data-view="today"><span class="bottom-nav-icon">📅</span><span>اليومي</span></button>
     <button class="bottom-nav-item" data-view="customers"><span class="bottom-nav-icon">👥</span><span>النزلاء</span></button>
     <button class="bottom-nav-item" data-view="month"><span class="bottom-nav-icon">📆</span><span>الشهري</span></button>
 </nav>
 
-<!-- نافذة إضافة/تعديل نزيل -->
+<!-- ===========================
+     نافذة إضافة/تعديل نزيل
+     =========================== -->
 <div class="modal-overlay" id="modalCustomer">
     <div class="modal">
         <div class="modal-header"><h2 id="modalCustomerTitle">إضافة نزيل جديد</h2><button class="modal-close" data-close="modalCustomer">×</button></div>
@@ -1382,7 +1491,9 @@ body.dark .about-dev-card {
     </div>
 </div>
 
-<!-- نافذة الحركة (إيداع / سحب / تعديل) -->
+<!-- ===========================
+     نافذة الحركة
+     =========================== -->
 <div class="modal-overlay" id="modalTransaction">
     <div class="modal">
         <div class="modal-header" id="txModalHeader">
@@ -1471,7 +1582,9 @@ body.dark .about-dev-card {
     </div>
 </div>
 
-<!-- نافذة أرشفة نزيل -->
+<!-- ===========================
+     نافذة أرشفة نزيل
+     =========================== -->
 <div class="modal-overlay" id="modalArchive">
     <div class="modal">
         <div class="modal-header"><h2>🗂️ أرشفة نزيل</h2><button class="modal-close" data-close="modalArchive">×</button></div>
@@ -1506,7 +1619,9 @@ body.dark .about-dev-card {
     </div>
 </div>
 
-<!-- نافذة التقارير -->
+<!-- ===========================
+     نافذة التقارير
+     =========================== -->
 <div class="modal-overlay" id="modalReport">
     <div class="modal" style="max-width:750px;">
         <div class="modal-header"><h2 id="modalReportTitle">تقرير</h2><button class="modal-close" data-close="modalReport">×</button></div>
@@ -1521,7 +1636,9 @@ body.dark .about-dev-card {
     </div>
 </div>
 
-<!-- نافذة حول الأمانات - النسخة الاحترافية -->
+<!-- ===========================
+     نافذة حول الأمانات - النسخة الاحترافية
+     =========================== -->
 <div class="modal-overlay" id="modalAbout">
     <div class="modal about-modal">
         <button class="modal-close about-close" data-close="modalAbout">×</button>
@@ -1540,7 +1657,6 @@ body.dark .about-dev-card {
         </div>
 
         <div class="about-body">
-
             <div class="about-dev-card">
                 <div class="about-dev-avatar">👨‍💻</div>
                 <div class="about-dev-info">
@@ -1565,7 +1681,9 @@ body.dark .about-dev-card {
     </div>
 </div>
 
-<!-- شاشة الحماية -->
+<!-- ===========================
+     شاشة الحماية
+     =========================== -->
 <div id="lockScreen" class="lock-screen" style="display: none;">
     <div class="lock-box">
         <div class="lock-icon">🔒</div>
@@ -1577,9 +1695,20 @@ body.dark .about-dev-card {
     </div>
 </div>
 
+<!-- ===========================
+     حقل اختيار الملفات (مخفي)
+     =========================== -->
 <input type="file" id="importFile" accept=".json" style="display:none;">
+<input type="file" id="previewFile" accept=".json" style="display:none;">
+
+<!-- ===========================
+     Toast
+     =========================== -->
 <div class="toast" id="toast"></div>
 
+<!-- ===========================
+     نافذة Dialog المخصصة
+     =========================== -->
 <div class="dialog-overlay" id="dialogOverlay">
     <div class="dialog" id="dialogBox">
         <span class="dialog-icon" id="dialogIcon">ℹ️</span>
@@ -1590,9 +1719,115 @@ body.dark .about-dev-card {
     </div>
 </div>
 
-<script>
+<!-- ===========================
+     نافذة إعدادات الحماية
+     =========================== -->
+<div id="pinModal" class="pin-modal-overlay">
+    <div class="pin-modal">
+        <span class="pin-modal-icon">🔐</span>
+        <h3>إعدادات الحماية</h3>
+        <p>تحكم في قفل التطبيق برمز PIN</p>
+
+        <label class="pin-toggle-wrap" for="togglePinEnable">
+            <span class="pin-toggle-label">تفعيل رمز الحماية</span>
+            <div class="pin-switch">
+                <input type="checkbox" id="togglePinEnable">
+                <span class="pin-slider"></span>
+            </div>
+        </label>
+
+        <div id="pinInputsArea" style="display: none;">
+            <div class="pin-inputs">
+                <div class="pin-input-group" id="oldPinGroup" style="display: none;">
+                    <label>الرمز الحالي</label>
+                    <input type="password" id="oldPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
+                </div>
+                <div class="pin-input-group">
+                    <label>الرمز الجديد (4 أرقام)</label>
+                    <input type="password" id="newPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
+                </div>
+            </div>
+        </div>
+
+        <div class="pin-actions">
+            <button type="button" class="btn btn-secondary" id="btnCancelPin">إلغاء</button>
+            <button type="button" class="btn btn-primary" id="btnSavePin">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===========================
+     نافذة استيراد النسخة الاحتياطية
+     =========================== -->
+<div class="modal-overlay" id="modalRestore">
+    <div class="modal" style="max-width:400px;">
+        <div class="modal-header"><h2>📂 استيراد نسخة احتياطية</h2><button class="modal-close" data-close="modalRestore">×</button></div>
+        <div class="modal-body">
+            <div class="restore-warning">
+                ⚠️ تحذير هام جداً:<br>
+                سيتم مسح جميع البيانات الحالية (النزلاء، الحركات، الأرشيف) واستبدالها بالبيانات الموجودة في الملف الذي اخترته. لا يمكن التراجع عن هذه الخطوة!
+            </div>
+
+            <label class="restore-checkbox-wrap">
+                <input type="checkbox" id="chkConfirmRestore">
+                <span>أقر بأنني أريد استبدال جميع البيانات الحالية وفهمت أن هذه العملية لا يمكن التراجع عنها.</span>
+            </label>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" data-close="modalRestore">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmRestore" disabled>استبدال البيانات</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===========================
+     نافذة تأكيد الاستعادة من المعاينة (جديدة)
+     =========================== -->
+<div class="modal-overlay" id="modalConfirmRestoreFromPreview">
+    <div class="modal" style="max-width:440px;">
+        <div class="modal-header">
+            <h2>⚠️ استعادة من المعاينة</h2>
+            <button class="modal-close" data-close="modalConfirmRestoreFromPreview">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="restore-warning">
+                ⚠️ تحذير:<br>
+                سيتم استبدال جميع بيانات التطبيق الحالية (النزلاء، الحركات، الأرشيف) ببيانات النسخة المعروضة. لا يمكن التراجع عن هذه العملية!
+            </div>
+
+            <label class="restore-checkbox-wrap">
+                <input type="checkbox" id="chkBackupBeforeRestore" checked>
+                <span>📥 أخذ نسخة احتياطية من البيانات الحالية أولاً (مستحسن)</span>
+            </label>
+
+            <label class="restore-checkbox-wrap">
+                <input type="checkbox" id="chkConfirmRestoreFromPreview">
+                <span>أقر بأنني أريد استبدال جميع البيانات الحالية وفهمت أن هذه العملية لا يمكن التراجع عنها.</span>
+            </label>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" data-close="modalConfirmRestoreFromPreview">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="btnDoRestoreFromPreview" disabled>استبدال البيانات</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===========================
+     حاوية الطباعة
+     =========================== -->
+<div id="print-container"></div>
+
+<!-- ============================================ -->
+<!-- ⬆️ نهاية الجزء 2 — يليه مباشرة <script> في الجزء 3 -->
+<!-- ============================================ -->
+    <script>
 const App = (() => {
 
+/* ===========================
+   Dialog — نوافذ الحوار
+   =========================== */
 const Dialog = (() => {
     function _show(options) {
         return new Promise(resolve => {
@@ -1650,9 +1885,10 @@ const Dialog = (() => {
             }
         });
     }
-    return {
-        alert:  (msg, t='تنبيه') => _show({ title:t, message:msg, type:'info', icon:'ℹ️' }),
-        success:(msg, t='نجاح')  => _show({ title:t, message:msg, type:'success', icon:'✅' }),
+  return {
+    _show: _show, // ← أضف هذا السطر
+    alert:  (msg, t='تنبيه') => _show({ title:t, message:msg, type:'info', icon:'ℹ️' }),
+    success:(msg, t='نجاح')  => _show({ title:t, message:msg, type:'success', icon:'✅' }),
         error:  (msg, t='خطأ')   => _show({ title:t, message:msg, type:'danger', icon:'❌' }),
         warning:(msg, t='تحذير') => _show({ title:t, message:msg, type:'warning', icon:'⚠️' }),
         confirm:(msg, t='تأكيد') => _show({ title:t, message:msg, type:'warning', icon:'❓', buttons:[{ text:'إلغاء', type:'secondary', value:false }, { text:'تأكيد', type:'primary', value:true }] }),
@@ -1661,6 +1897,9 @@ const Dialog = (() => {
     };
 })();
 
+/* ===========================
+   IDB — IndexedDB Wrapper
+   =========================== */
 const IDB = (() => {
     const DB_NAME = 'amanat_db', STORE_NAME = 'keyval', VERSION = 1;
     let _dbPromise = null;
@@ -1696,6 +1935,9 @@ const IDB = (() => {
     return { getItem, setItem };
 })();
 
+/* ===========================
+   DB — قاعدة البيانات الأصلية (وضع التعديل)
+   =========================== */
 const DB = (() => {
     const STORE = { customers: [], transactions: [], archive: [], recipientsDeposit: [], recipientsWithdraw: [], settings: { darkMode: false, statsHidden: true } };
     let _ready = false; const _readyCallbacks = [];
@@ -1717,17 +1959,19 @@ const DB = (() => {
         }
     }
 
-function _save(key) {
-    try {
-        let dbKey = 'amanat_' + key;
-        if (key === 'recipientsDeposit') dbKey = 'amanat_recipients_deposit';
-        if (key === 'recipientsWithdraw') dbKey = 'amanat_recipients_withdraw';
-        IDB.setItem(dbKey, STORE[key]).catch(e => console.error('فشل الحفظ:', e));
-    } catch (e) { console.error('فشل الحفظ:', e); }
-}
+    function _save(key) {
+        try {
+            let dbKey = 'amanat_' + key;
+            if (key === 'recipientsDeposit') dbKey = 'amanat_recipients_deposit';
+            if (key === 'recipientsWithdraw') dbKey = 'amanat_recipients_withdraw';
+            IDB.setItem(dbKey, STORE[key]).catch(e => console.error('فشل الحفظ:', e));
+        } catch (e) { console.error('فشل الحفظ:', e); }
+    }
 
     function onReady(cb) { if (_ready) cb(); else _readyCallbacks.push(cb); }
     function _newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+    function _dateKey(iso) { const d = new Date(iso); if (isNaN(d)) return ''; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+    function _todayKey() { return _dateKey(new Date().toISOString()); }
 
     function getCustomers() { return STORE.customers; }
     function getCustomer(id) { return STORE.customers.find(c => c.id === id) || null; }
@@ -1765,49 +2009,44 @@ function _save(key) {
     function getBalance(customerId, currency) {
         let b = 0; for (const t of getCustomerTransactions(customerId)) { if (t.currency !== currency) continue; b += (t.type === 'deposit' ? t.amount : -t.amount); } return b;
     }
-  function getCustomerTotals(customerId) {
-    const res = { depSYP:0, depUSD:0, wdSYP:0, wdUSD:0, balSYP:0, balUSD:0 };
-    // تحسين الأداء: استخدام حلقة for بدلاً من الفلترة المتعددة
-    const txs = STORE.transactions;
-    for (let i = 0; i < txs.length; i++) {
-        const t = txs[i];
-        if (t.customer_id !== customerId) continue;
-        
-        if (t.type === 'deposit') { 
-            if (t.currency === 'SYP') { res.depSYP += t.amount; res.balSYP += t.amount; } 
-            else { res.depUSD += t.amount; res.balUSD += t.amount; } 
-        } else { 
-            if (t.currency === 'SYP') { res.wdSYP += t.amount; res.balSYP -= t.amount; } 
-            else { res.wdUSD += t.amount; res.balUSD -= t.amount; } 
+    function getCustomerTotals(customerId) {
+        const res = { depSYP:0, depUSD:0, wdSYP:0, wdUSD:0, balSYP:0, balUSD:0 };
+        const txs = STORE.transactions;
+        for (let i = 0; i < txs.length; i++) {
+            const t = txs[i];
+            if (t.customer_id !== customerId) continue;
+            if (t.type === 'deposit') {
+                if (t.currency === 'SYP') { res.depSYP += t.amount; res.balSYP += t.amount; }
+                else { res.depUSD += t.amount; res.balUSD += t.amount; }
+            } else {
+                if (t.currency === 'SYP') { res.wdSYP += t.amount; res.balSYP -= t.amount; }
+                else { res.wdUSD += t.amount; res.balUSD -= t.amount; }
+            }
         }
-    } 
-    return res;
-}
+        return res;
+    }
     function getCustomerBalance(id) { return { SYP: getBalance(id,'SYP'), USD: getBalance(id,'USD') }; }
     function getTotalBalances() {
         let syp = 0, usd = 0; for (const c of STORE.customers) { syp += getBalance(c.id,'SYP'); usd += getBalance(c.id,'USD'); } return { SYP: syp, USD: usd, count: STORE.customers.length };
     }
 
-    function _dateKey(iso) { const d = new Date(iso); if (isNaN(d)) return ''; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-    function _todayKey() { return _dateKey(new Date().toISOString()); }
+    function getTransactionsByDate(dateStr) {
+        const res = [];
+        for (let i = STORE.transactions.length - 1; i >= 0; i--) {
+            const t = STORE.transactions[i];
+            if (_dateKey(t.date) === dateStr) res.push(t);
+        }
+        return res;
+    }
     function getTodayTransactions() { return getTransactionsByDate(_todayKey()); }
-  function getTransactionsByDate(dateStr) { 
-    const res = [];
-    for (let i = STORE.transactions.length - 1; i >= 0; i--) {
-        const t = STORE.transactions[i];
-        if (_dateKey(t.date) === dateStr) res.push(t);
+    function getMonthTransactions(yearMonth) {
+        const res = [];
+        for (let i = STORE.transactions.length - 1; i >= 0; i--) {
+            const t = STORE.transactions[i];
+            if (_dateKey(t.date).startsWith(yearMonth)) res.push(t);
+        }
+        return res;
     }
-    return res; 
-}
-
-function getMonthTransactions(yearMonth) { 
-    const res = [];
-    for (let i = STORE.transactions.length - 1; i >= 0; i--) {
-        const t = STORE.transactions[i];
-        if (_dateKey(t.date).startsWith(yearMonth)) res.push(t);
-    }
-    return res; 
-}
     function getPeriodSummary(period) {
         const txs = period === 'today' ? getTodayTransactions() : getMonthTransactions(_todayKey().slice(0,7));
         const r = { depSYP:0, depUSD:0, wdSYP:0, wdUSD:0 };
@@ -1859,10 +2098,177 @@ function getMonthTransactions(yearMonth) {
         getBalance, getCustomerBalance, getCustomerTotals, getTotalBalances,
         getTodayTransactions, getTransactionsByDate, getMonthTransactions, getPeriodSummary,
         getArchive, addToArchive, removeFromArchive, archiveCustomer,
-        getRecipients, addRecipient, removeRecipient, getSettings, saveSettings, importAll
+        getRecipients, addRecipient, removeRecipient, getSettings, saveSettings, importAll,
+        _dateKey
     };
 })();
-// دالة تشفير الكلمة السرية (SHA-256)
+
+/* ===========================
+   ViewState — حالة وضع المعاينة (جديد)
+   =========================== */
+const ViewState = {
+    mode: 'edit',
+    data: null,
+    fileName: null,
+    isPreviewMode() { return this.mode === 'preview'; }
+};
+/* ===========================
+   DataSource — طبقة وسيطة (جديد)
+   تقرأ من ViewState في وضع المعاينة، من DB في وضع التعديل
+   =========================== */
+const DataSource = (() => {
+
+    function _preview() {
+        return ViewState.mode === 'preview' && ViewState.data ? ViewState.data : null;
+    }
+
+    function getCustomers() {
+        const p = _preview();
+        return p ? (p.customers || []) : DB.getCustomers();
+    }
+
+    function getCustomer(id) {
+        const p = _preview();
+        if (p) return (p.customers || []).find(c => c.id === id) || null;
+        return DB.getCustomer(id);
+    }
+
+    function getTransactions() {
+        const p = _preview();
+        return p ? (p.transactions || []) : DB.getTransactions();
+    }
+
+    function getTransaction(id) {
+        const p = _preview();
+        if (p) return (p.transactions || []).find(t => t.id === id) || null;
+        return DB.getTransaction(id);
+    }
+
+    function getCustomerTransactions(customerId) {
+        const p = _preview();
+        if (p) {
+            return (p.transactions || []).filter(t => t.customer_id === customerId).sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+        return DB.getCustomerTransactions(customerId);
+    }
+
+    function getCustomerTotals(customerId) {
+        const p = _preview();
+        const txs = p ? (p.transactions || []) : DB.getTransactions();
+        const res = { depSYP:0, depUSD:0, wdSYP:0, wdUSD:0, balSYP:0, balUSD:0 };
+        for (let i = 0; i < txs.length; i++) {
+            const t = txs[i];
+            if (t.customer_id !== customerId) continue;
+            if (t.type === 'deposit') {
+                if (t.currency === 'SYP') { res.depSYP += t.amount; res.balSYP += t.amount; }
+                else { res.depUSD += t.amount; res.balUSD += t.amount; }
+            } else {
+                if (t.currency === 'SYP') { res.wdSYP += t.amount; res.balSYP -= t.amount; }
+                else { res.wdUSD += t.amount; res.balUSD -= t.amount; }
+            }
+        }
+        return res;
+    }
+
+    function getCustomerBalance(id) {
+        const p = _preview();
+        if (p) {
+            const t = getCustomerTotals(id);
+            return { SYP: t.balSYP, USD: t.balUSD };
+        }
+        return DB.getCustomerBalance(id);
+    }
+
+    function getTotalBalances() {
+        const p = _preview();
+        if (p) {
+            const customers = p.customers || [];
+            let syp = 0, usd = 0;
+            for (const c of customers) {
+                const b = getCustomerBalance(c.id);
+                syp += b.SYP; usd += b.USD;
+            }
+            return { SYP: syp, USD: usd, count: customers.length };
+        }
+        return DB.getTotalBalances();
+    }
+
+    function getTransactionsByDate(dateStr) {
+        const p = _preview();
+        if (p) {
+            const res = [];
+            const txs = p.transactions || [];
+            for (let i = txs.length - 1; i >= 0; i--) {
+                const t = txs[i];
+                if (DB._dateKey(t.date) === dateStr) res.push(t);
+            }
+            return res;
+        }
+        return DB.getTransactionsByDate(dateStr);
+    }
+
+    function getTodayTransactions() { return getTransactionsByDate(todayISO()); }
+
+    function getMonthTransactions(yearMonth) {
+        const p = _preview();
+        if (p) {
+            const res = [];
+            const txs = p.transactions || [];
+            for (let i = txs.length - 1; i >= 0; i--) {
+                const t = txs[i];
+                if (DB._dateKey(t.date).startsWith(yearMonth)) res.push(t);
+            }
+            return res;
+        }
+        return DB.getMonthTransactions(yearMonth);
+    }
+
+    function getPeriodSummary(period) {
+        const txs = period === 'today' ? getTodayTransactions() : getMonthTransactions(todayISO().slice(0,7));
+        const r = { depSYP:0, depUSD:0, wdSYP:0, wdUSD:0 };
+        for (const t of txs) {
+            if (t.type === 'deposit') {
+                if (t.currency === 'SYP') r.depSYP += t.amount;
+                else r.depUSD += t.amount;
+            } else {
+                if (t.currency === 'SYP') r.wdSYP += t.amount;
+                else r.wdUSD += t.amount;
+            }
+        }
+        return r;
+    }
+
+    function getArchive() {
+        const p = _preview();
+        return p ? (p.archive || []) : DB.getArchive();
+    }
+
+    function getRecipients(type) {
+        const p = _preview();
+        if (p) {
+            return type === 'deposit' ? (p.recipientsDeposit || []) : (p.recipientsWithdraw || []);
+        }
+        return DB.getRecipients(type);
+    }
+
+    function getSettings() {
+        const p = _preview();
+        return p ? (p.settings || { darkMode: false, statsHidden: true }) : DB.getSettings();
+    }
+
+    function isPreviewMode() { return ViewState.mode === 'preview'; }
+
+    return {
+        getCustomers, getCustomer, getTransactions, getTransaction,
+        getCustomerTransactions, getCustomerTotals, getCustomerBalance, getTotalBalances,
+        getTransactionsByDate, getTodayTransactions, getMonthTransactions, getPeriodSummary,
+        getArchive, getRecipients, getSettings, isPreviewMode
+    };
+})();
+
+/* ===========================
+   دوال مساعدة
+   =========================== */
 async function hashPin(pin) {
     const encoder = new TextEncoder();
     const data = encoder.encode(pin);
@@ -1884,14 +2290,31 @@ function buildTxDateISO(dateStr) {
     const now = new Date();
     return new Date(dateStr + 'T' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0')).toISOString();
 }
+function guardEdit() {
+    if (ViewState.mode === 'preview') {
+        toast('⚠️ لا يمكن التعديل في وضع المعاينة', 'error');
+        return false;
+    }
+    return true;
+}
 
+/* ===========================
+   متغيرات الحالة العامة
+   =========================== */
 let currentCustomerId = null, previousView = 'viewToday', currentView = 'viewToday';
 let currentSearch = '', currentSort = 'الكل', currentArchiveTab = 'نقل';
 let selectedTxCustomerId = null, selectedArchiveCustomerId = null;
 let statsHidden = true, currentMonth = todayISO().slice(0,7), selectedDate = todayISO(), datePickerVisible = false;
 let currentRecipientType = 'deposit', _prevRecipientValue = '';
 const SORT_OPTIONS = ['م0','م1','م2','م3','م4','م5','م6','م7','م8'];
+let currentReportType = null, currentReportData = null, selectedReportCustomers = [];
 
+// ============================================
+// ⬆️ نهاية الجزء 3 — يليه دوال الرسم في الجزء 4
+// ============================================
+  /* ===========================
+   التنقل بين الشاشات
+   =========================== */
 function switchView(viewName) {
     const viewMap = { 'today': 'viewToday', 'customers': 'viewCustomers', 'month': 'viewMonth', 'customer': 'viewCustomer', 'archive': 'viewArchive', 'reports': 'viewReports' };
     const id = viewMap[viewName]; if (!id) return;
@@ -1908,43 +2331,60 @@ function switchView(viewName) {
 function goHome() { currentCustomerId = null; history.replaceState(null, '', location.pathname); switchView('today'); }
 function switchToReports() { switchView('reports'); }
 
+/* ===========================
+   لوحة الإحصائيات
+   =========================== */
 function renderDashboard() {
-    const totals = DB.getTotalBalances(); document.getElementById('boxSYP').textContent = formatNumber(totals.SYP); document.getElementById('boxUSD').textContent = formatNumber(totals.USD);
-    const today = DB.getPeriodSummary('today'); document.getElementById('todayDate').textContent = formatDate(new Date().toISOString());
-    document.getElementById('todayDepSYP').textContent = formatNumber(today.depSYP); document.getElementById('todayDepUSD').textContent = formatNumber(today.depUSD);
-    document.getElementById('todayWdSYP').textContent = formatNumber(today.wdSYP); document.getElementById('todayWdUSD').textContent = formatNumber(today.wdUSD);
-    const month = DB.getPeriodSummary('month'); document.getElementById('monthLabel').textContent = monthNameAr(todayISO().slice(0,7));
-    document.getElementById('monthDepSYP').textContent = formatNumber(month.depSYP); document.getElementById('monthDepUSD').textContent = formatNumber(month.depUSD);
-    document.getElementById('monthWdSYP').textContent = formatNumber(month.wdSYP); document.getElementById('monthWdUSD').textContent = formatNumber(month.wdUSD);
+    const totals = DataSource.getTotalBalances();
+    document.getElementById('boxSYP').textContent = formatNumber(totals.SYP);
+    document.getElementById('boxUSD').textContent = formatNumber(totals.USD);
+    const today = DataSource.getPeriodSummary('today');
+    document.getElementById('todayDate').textContent = formatDate(new Date().toISOString());
+    document.getElementById('todayDepSYP').textContent = formatNumber(today.depSYP);
+    document.getElementById('todayDepUSD').textContent = formatNumber(today.depUSD);
+    document.getElementById('todayWdSYP').textContent = formatNumber(today.wdSYP);
+    document.getElementById('todayWdUSD').textContent = formatNumber(today.wdUSD);
+    const month = DataSource.getPeriodSummary('month');
+    document.getElementById('monthLabel').textContent = monthNameAr(todayISO().slice(0,7));
+    document.getElementById('monthDepSYP').textContent = formatNumber(month.depSYP);
+    document.getElementById('monthDepUSD').textContent = formatNumber(month.depUSD);
+    document.getElementById('monthWdSYP').textContent = formatNumber(month.wdSYP);
+    document.getElementById('monthWdUSD').textContent = formatNumber(month.wdUSD);
 }
 function toggleStatsPanel() {
-    statsHidden = !statsHidden; document.getElementById('statsPanel').classList.toggle('hidden', statsHidden);
+    statsHidden = !statsHidden;
+    document.getElementById('statsPanel').classList.toggle('hidden', statsHidden);
     document.getElementById('btnToggleStats').textContent = statsHidden ? '🔻' : '🔺';
-    const s = DB.getSettings(); s.statsHidden = statsHidden; DB.saveSettings(s);
+    if (!ViewState.isPreviewMode()) {
+        const s = DB.getSettings(); s.statsHidden = statsHidden; DB.saveSettings(s);
+    }
 }
 
+/* ===========================
+   شاشة اليوم
+   =========================== */
 function renderToday() {
-    const isToday = selectedDate === todayISO(); 
+    const isToday = selectedDate === todayISO();
     document.getElementById('todayTitle').textContent = isToday ? '📅 الحركة اليومية' : `📅 حركة يوم ${formatDate(selectedDate + 'T00:00:00')}`;
-    
-    const txs = DB.getTransactionsByDate(selectedDate); 
+
+    const txs = DataSource.getTransactionsByDate(selectedDate);
     document.getElementById('todayTxCount').textContent = txs.length ? `(${txs.length} حركة)` : '';
-    
+
     const listEl = document.getElementById('todayList'), emptyEl = document.getElementById('todayEmpty');
-    if (txs.length === 0) { 
-        listEl.innerHTML = ''; 
-        emptyEl.style.display = 'block'; 
-        return; 
+    if (txs.length === 0) {
+        listEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
     }
     emptyEl.style.display = 'none';
-    
+
     let htmlContent = '';
     for (let i = 0; i < txs.length; i++) {
         const t = txs[i];
-        const c = DB.getCustomer(t.customer_id); 
-        const name = c ? c.name : '⚠️ (محذوف)'; 
+        const c = DataSource.getCustomer(t.customer_id);
+        const name = c ? c.name : '⚠️ (محذوف)';
         const isDep = t.type === 'deposit';
-        const curLabel = t.currency === 'SYP' ? 'ل.س' : '$'; 
+        const curLabel = t.currency === 'SYP' ? 'ل.س' : '$';
         const sign = isDep ? '+' : '−';
         const icon = isDep ? '💰' : '💸';
 
@@ -1972,7 +2412,7 @@ function renderToday() {
                         ${t.recipient ? `<div class="detail-row"><span class="detail-label">المستلم</span><span class="detail-value">${esc(t.recipient)}</span></div>` : ''}
                         ${t.notes ? `<div class="detail-row"><span class="detail-label">ملاحظات</span><span class="detail-value">${esc(t.notes)}</span></div>` : ''}
                         ${(!t.depositor_name && !t.invoice && !t.recipient && !t.notes) ? `<div style="text-align:center; color:var(--text-light); font-size:12px; padding:10px;">لا توجد تفاصيل إضافية</div>` : ''}
-                        
+
                         <div class="card-actions" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top: 15px;">
                             <button class="btn btn-primary" data-action="customer" data-cid="${t.customer_id}" title="فتح ملف النزيل" style="padding:12px; font-size:18px;">👤</button>
                             <button class="btn btn-secondary" data-action="edit" data-txid="${t.id}" title="تعديل" style="padding:12px; font-size:18px;">✏️</button>
@@ -1984,7 +2424,7 @@ function renderToday() {
     }
     listEl.innerHTML = htmlContent;
 
-    bindExpandableCards(listEl); 
+    bindExpandableCards(listEl);
     bindTodayActions(listEl);
 }
 function bindExpandableCards(container) {
@@ -1996,10 +2436,20 @@ function bindExpandableCards(container) {
 function bindTodayActions(container) {
     container.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            e.stopPropagation(); const action = btn.dataset.action; const txId = btn.dataset.txid; const custId = btn.dataset.cid;
-            if (action === 'customer' && custId) { if (DB.getCustomer(custId)) openCustomer(custId); else Dialog.error('هذا النزيل محذوف', 'غير موجود'); }
-            else if (action === 'edit' && txId) openTransactionModal({ editId: txId });
+            e.stopPropagation();
+            const action = btn.dataset.action;
+            const txId = btn.dataset.txid;
+            const custId = btn.dataset.cid;
+            if (action === 'customer' && custId) {
+                if (DataSource.getCustomer(custId)) openCustomer(custId);
+                else Dialog.error('هذا النزيل محذوف', 'غير موجود');
+            }
+            else if (action === 'edit' && txId) {
+                if (!guardEdit()) return;
+                openTransactionModal({ editId: txId });
+            }
             else if (action === 'delete' && txId) {
+                if (!guardEdit()) return;
                 const ok = await Dialog.confirmDanger('هل تريد حذف هذه الحركة؟');
                 if (ok) { DB.deleteTransaction(txId); toast('تم حذف الحركة', 'success'); renderToday(); renderDashboard(); }
             }
@@ -2007,19 +2457,28 @@ function bindTodayActions(container) {
     });
 }
 
+/* ===========================
+   شاشة النزلاء
+   =========================== */
 function renderSortChips() {
-    const customers = DB.getCustomers(); const container = document.getElementById('sortChips');
+    const customers = DataSource.getCustomers();
+    const container = document.getElementById('sortChips');
     const counts = { 'الكل': customers.length }; SORT_OPTIONS.forEach(s => counts[s] = 0);
     customers.forEach(c => { if (c.sort && counts[c.sort] !== undefined) counts[c.sort]++; else if (!c.sort) counts['م0']++; });
     let html = `<button class="chip ${currentSort==='الكل'?'active':''}" data-sort="الكل">الكل <span class="chip-count">(${counts['الكل']})</span></button>`;
     if (counts['م0'] > 0) html += `<button class="chip chip-m0 ${currentSort==='م0'?'active':''}" data-sort="م0">م0 <span class="chip-count">(${counts['م0']})</span></button>`;
     html += SORT_OPTIONS.filter(s => s !== 'م0').map(s => counts[s] > 0 ? `<button class="chip ${currentSort===s?'active':''}" data-sort="${s}">${s} <span class="chip-count">(${counts[s]})</span></button>` : '').join('');
     container.innerHTML = html;
-    container.querySelectorAll('.chip').forEach(chip => { chip.addEventListener('click', () => { currentSort = chip.dataset.sort; renderSortChips(); renderCustomers(); }); });
+    container.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', () => { currentSort = chip.dataset.sort; renderSortChips(); renderCustomers(); });
+    });
 }
 function renderCustomers() {
-    let list = DB.getCustomers();
-    if (currentSort !== 'الكل') { if (currentSort === 'م0') list = list.filter(c => !c.sort || c.sort === 'م0'); else list = list.filter(c => c.sort === currentSort); }
+    let list = DataSource.getCustomers();
+    if (currentSort !== 'الكل') {
+        if (currentSort === 'م0') list = list.filter(c => !c.sort || c.sort === 'م0');
+        else list = list.filter(c => c.sort === currentSort);
+    }
     if (currentSearch) { const q = currentSearch.toLowerCase(); list = list.filter(c => c.name.toLowerCase().includes(q)); }
     list.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
     const listEl = document.getElementById('customersList'), emptyEl = document.getElementById('customersEmpty');
@@ -2031,7 +2490,8 @@ function renderCustomers() {
     }
     emptyEl.style.display = 'none';
     listEl.innerHTML = list.map(c => {
-        const bal = DB.getCustomerBalance(c.id); const sortLabel = (!c.sort || c.sort === 'م0') ? 'م0' : c.sort;
+        const bal = DataSource.getCustomerBalance(c.id);
+        const sortLabel = (!c.sort || c.sort === 'م0') ? 'م0' : c.sort;
         return `
             <div class="expandable-card" data-cid="${c.id}" style="cursor:pointer;">
                 <div class="card-summary neutral" style="border-radius:var(--radius);">
@@ -2045,8 +2505,12 @@ function renderCustomers() {
     listEl.querySelectorAll('.expandable-card').forEach(card => { card.addEventListener('click', () => openCustomer(card.dataset.cid)); });
 }
 
+/* ===========================
+   شاشة الشهر
+   =========================== */
 function renderMonthSelect() {
-    const sel = document.getElementById('monthSelect'); const txs = DB.getTransactions();
+    const sel = document.getElementById('monthSelect');
+    const txs = DataSource.getTransactions();
     const months = new Set([todayISO().slice(0,7)]);
     txs.forEach(t => { const d = new Date(t.date); if (!isNaN(d)) months.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`); });
     const sorted = Array.from(months).sort().reverse();
@@ -2055,11 +2519,12 @@ function renderMonthSelect() {
 }
 function renderMonth() {
     renderMonthSelect();
-    const txs = DB.getMonthTransactions(currentMonth); const listEl = document.getElementById('monthList'), emptyEl = document.getElementById('monthEmpty');
+    const txs = DataSource.getMonthTransactions(currentMonth);
+    const listEl = document.getElementById('monthList'), emptyEl = document.getElementById('monthEmpty');
     if (txs.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
     emptyEl.style.display = 'none';
     const grouped = {}; txs.forEach(t => { if (!grouped[t.customer_id]) grouped[t.customer_id] = []; grouped[t.customer_id].push(t); });
-    const entries = Object.entries(grouped).map(([cid, list]) => ({ cid, list, customer: DB.getCustomer(cid) })).filter(e => e.customer).sort((a, b) => a.customer.name.localeCompare(b.customer.name, 'ar'));
+    const entries = Object.entries(grouped).map(([cid, list]) => ({ cid, list, customer: DataSource.getCustomer(cid) })).filter(e => e.customer).sort((a, b) => a.customer.name.localeCompare(b.customer.name, 'ar'));
     listEl.innerHTML = entries.map(({ cid, list, customer }) => {
         let depSYP = 0, wdSYP = 0, depUSD = 0, wdUSD = 0;
         list.forEach(t => { if (t.type === 'deposit') { if (t.currency === 'SYP') depSYP += t.amount; else depUSD += t.amount; } else { if (t.currency === 'SYP') wdSYP += t.amount; else wdUSD += t.amount; } });
@@ -2099,26 +2564,34 @@ function renderMonth() {
     listEl.querySelectorAll('[data-action="open"]').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); openCustomer(btn.dataset.cid); }); });
 }
 
+/* ===========================
+   شاشة النزيل
+   =========================== */
 function openCustomer(id) {
-    const c = DB.getCustomer(id); if (!c) { toast('النزيل غير موجود', 'error'); return; }
+    const c = DataSource.getCustomer(id);
+    if (!c) { toast('النزيل غير موجود', 'error'); return; }
     previousView = currentView === 'customer' ? previousView : currentView;
     currentCustomerId = id; renderCustomerView(); switchView('customer');
 }
 function renderCustomerView() {
-    const c = DB.getCustomer(currentCustomerId); if (!c) { goHome(); return; }
+    const c = DataSource.getCustomer(currentCustomerId); if (!c) { goHome(); return; }
     document.getElementById('custName').textContent = c.name;
     const sortEl = document.getElementById('custSort'); const sortLabel = (!c.sort || c.sort === 'م0') ? 'م0' : c.sort;
     sortEl.textContent = sortLabel; sortEl.style.display = 'inline-block';
-    const t = DB.getCustomerTotals(c.id);
-    document.getElementById('custBalSYP').textContent = formatNumber(t.balSYP); document.getElementById('custBalUSD').textContent = formatNumber(t.balUSD);
-    document.getElementById('custDepSYP').textContent = formatNumber(t.depSYP); document.getElementById('custDepUSD').textContent = formatNumber(t.depUSD);
-    document.getElementById('custWdSYP').textContent = formatNumber(t.wdSYP); document.getElementById('custWdUSD').textContent = formatNumber(t.wdUSD);
+    const t = DataSource.getCustomerTotals(c.id);
+    document.getElementById('custBalSYP').textContent = formatNumber(t.balSYP);
+    document.getElementById('custBalUSD').textContent = formatNumber(t.balUSD);
+    document.getElementById('custDepSYP').textContent = formatNumber(t.depSYP);
+    document.getElementById('custDepUSD').textContent = formatNumber(t.depUSD);
+    document.getElementById('custWdSYP').textContent = formatNumber(t.wdSYP);
+    document.getElementById('custWdUSD').textContent = formatNumber(t.wdUSD);
     const metaBox = document.getElementById('custMetaBox'); let metaHTML = '';
     if (c.notes) metaHTML += `<div class="detail-row" style="background:var(--border-soft); padding:10px; border-radius:8px; border:none;"><span class="detail-label">📝 ملاحظات</span><span class="detail-value">${esc(c.notes)}</span></div>`;
     metaBox.innerHTML = metaHTML; renderCustomerTransactions();
 }
 function renderCustomerTransactions() {
-    const txs = DB.getCustomerTransactions(currentCustomerId); const listEl = document.getElementById('custTxList'), emptyEl = document.getElementById('custTxEmpty');
+    const txs = DataSource.getCustomerTransactions(currentCustomerId);
+    const listEl = document.getElementById('custTxList'), emptyEl = document.getElementById('custTxEmpty');
     document.getElementById('custTxCount').textContent = txs.length ? `(${txs.length} حركة)` : '';
     if (txs.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
     emptyEl.style.display = 'none';
@@ -2150,9 +2623,11 @@ function renderCustomerTransactions() {
     bindExpandableCards(listEl);
     listEl.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            e.stopPropagation(); const action = btn.dataset.action; const txId = btn.dataset.txid;
-            if (action === 'edit') openTransactionModal({ editId: txId });
+            e.stopPropagation();
+            const action = btn.dataset.action; const txId = btn.dataset.txid;
+            if (action === 'edit') { if (!guardEdit()) return; openTransactionModal({ editId: txId }); }
             else if (action === 'delete') {
+                if (!guardEdit()) return;
                 const ok = await Dialog.confirmDanger('هل تريد حذف هذه الحركة؟');
                 if (ok) { DB.deleteTransaction(txId); toast('تم حذف الحركة', 'success'); renderCustomerView(); renderDashboard(); }
             }
@@ -2160,7 +2635,11 @@ function renderCustomerTransactions() {
     });
 }
 
+/* ===========================
+   إضافة/تعديل نزيل
+   =========================== */
 function openCustomerModal(customer = null) {
+    if (!guardEdit()) return;
     const titleEl = document.getElementById('modalCustomerTitle');
     const idEl = document.getElementById('inputCustomerId');
     const sortEl = document.getElementById('inputSort');
@@ -2185,16 +2664,16 @@ function openCustomerModal(customer = null) {
 }
 async function submitCustomer(e) {
     e.preventDefault();
+    if (!guardEdit()) return;
     const id = document.getElementById('inputCustomerId').value; let sort = document.getElementById('inputSort').value.trim();
     const name = document.getElementById('inputName').value.trim(), notes = document.getElementById('inputNotes').value.trim();
     if (!name) { toast('الاسم مطلوب', 'error'); return; }
-  // التحقق من عدم تكرار الاسم
-const existingCustomer = DB.getCustomers().find(c => c.name === name && c.id !== id);
-if (existingCustomer) {
-    toast('يوجد نزيل بنفس الاسم مسبقاً! أضف تمييزاً للاسم.', 'error');
-    return;
-}
-  if (!sort) sort = 'م0';
+    const existingCustomer = DB.getCustomers().find(c => c.name === name && c.id !== id);
+    if (existingCustomer) {
+        toast('يوجد نزيل بنفس الاسم مسبقاً! أضف تمييزاً للاسم.', 'error');
+        return;
+    }
+    if (!sort) sort = 'م0';
     if (id) { DB.updateCustomer(id, { name, notes, sort }); toast('تم تحديث بيانات النزيل ✅', 'success'); }
     else { DB.addCustomer({ name, notes, sort }); toast('تم إضافة النزيل بنجاح ✅', 'success'); }
     closeModal('modalCustomer'); renderDashboard();
@@ -2204,8 +2683,12 @@ if (existingCustomer) {
     if (currentView === 'customer' && currentCustomerId === id) renderCustomerView();
 }
 
+/* ===========================
+   المستلمون
+   =========================== */
 function populateRecipientDropdown(type, selected) {
-    const sel = document.getElementById('inputRecipient'); const list = DB.getRecipients(type); currentRecipientType = type;
+    const sel = document.getElementById('inputRecipient');
+    const list = DataSource.getRecipients(type); currentRecipientType = type;
     if (list.length === 0) {
         sel.innerHTML = `<option value="">المستلم الافتراضي</option><option value="__manage__" style="color:#f37021; font-weight:700;">⚙️ إدارة المستلمين</option>`;
         sel.value = '';
@@ -2215,7 +2698,8 @@ function populateRecipientDropdown(type, selected) {
     }
 }
 function renderRecipientsList() {
-    const list = DB.getRecipients(currentRecipientType); const container = document.getElementById('recipientsList');
+    const list = DataSource.getRecipients(currentRecipientType);
+    const container = document.getElementById('recipientsList');
     if (list.length === 0) { container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-light); font-size:13px;">لا يوجد مستلمون بعد</div>`; return; }
     container.innerHTML = list.map((name, i) => `
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; background:var(--border-soft); border-radius:10px; margin-bottom:6px;">
@@ -2228,7 +2712,9 @@ function renderRecipientsList() {
     `).join('');
     container.querySelectorAll('[data-delete-recipient]').forEach(btn => {
         btn.addEventListener('click', async () => {
-            const name = btn.dataset.deleteRecipient; const ok = await Dialog.confirmDanger(`حذف المستلم "${name}"؟`);
+            if (!guardEdit()) return;
+            const name = btn.dataset.deleteRecipient;
+            const ok = await Dialog.confirmDanger(`حذف المستلم "${name}"؟`);
             if (!ok) return;
             if (!DB.removeRecipient(currentRecipientType, name)) { toast('لا يمكن الحذف', 'error'); return; }
             toast('تم الحذف', 'success'); renderRecipientsList();
@@ -2237,21 +2723,33 @@ function renderRecipientsList() {
 }
 function switchToRecipientManager() {
     const sel = document.getElementById('inputRecipient'); _prevRecipientValue = sel.value;
-    if (_prevRecipientValue === '__manage__') { const list = DB.getRecipients(currentRecipientType); _prevRecipientValue = list[0] || ''; }
-    document.getElementById('txFormNormal').style.display = 'none'; document.getElementById('txRecipientManager').style.display = 'block';
-    document.getElementById('newRecipientInput').value = ''; document.getElementById('modalTxTitle').textContent = '⚙️ إدارة المستلمين'; document.getElementById('modalTxSubtitle').style.display = 'none';
+    if (_prevRecipientValue === '__manage__') { const list = DataSource.getRecipients(currentRecipientType); _prevRecipientValue = list[0] || ''; }
+    document.getElementById('txFormNormal').style.display = 'none';
+    document.getElementById('txRecipientManager').style.display = 'block';
+    document.getElementById('newRecipientInput').value = '';
+    document.getElementById('modalTxTitle').textContent = '⚙️ إدارة المستلمين';
+    document.getElementById('modalTxSubtitle').style.display = 'none';
     renderRecipientsList(); setTimeout(() => document.getElementById('newRecipientInput').focus(), 200);
 }
 function backToTransactionForm() {
-    document.getElementById('txRecipientManager').style.display = 'none'; document.getElementById('txFormNormal').style.display = 'block';
-    const type = document.getElementById('inputTxType').value; const isEdit = !!document.getElementById('inputTxId').value;
+    document.getElementById('txRecipientManager').style.display = 'none';
+    document.getElementById('txFormNormal').style.display = 'block';
+    const type = document.getElementById('inputTxType').value;
+    const isEdit = !!document.getElementById('inputTxId').value;
     document.getElementById('modalTxTitle').textContent = isEdit ? 'تعديل الحركة' : (type === 'deposit' ? 'إضافة إيداع' : 'إضافة سحب');
-    document.getElementById('modalTxSubtitle').style.display = 'block'; document.getElementById('modalTxSubtitle').textContent = type === 'deposit' ? 'استلام أمانات' : 'صرف فاتورة';
-    const list = DB.getRecipients(currentRecipientType); let target = _prevRecipientValue;
-    if (!list.includes(target)) target = list[0] || ''; populateRecipientDropdown(currentRecipientType, target);
+    document.getElementById('modalTxSubtitle').style.display = 'block';
+    document.getElementById('modalTxSubtitle').textContent = type === 'deposit' ? 'استلام أمانات' : 'صرف فاتورة';
+    const list = DataSource.getRecipients(currentRecipientType);
+    let target = _prevRecipientValue;
+    if (!list.includes(target)) target = list[0] || '';
+    populateRecipientDropdown(currentRecipientType, target);
 }
 
+/* ===========================
+   نافذة الحركة (إيداع/سحب)
+   =========================== */
 function openTransactionModal({ type = 'deposit', editId = null, customerId = null } = {}) {
+    if (!guardEdit()) return;
     selectedTxCustomerId = customerId || null;
     document.getElementById('txFormNormal').style.display = 'block';
     document.getElementById('txRecipientManager').style.display = 'none';
@@ -2261,7 +2759,7 @@ function openTransactionModal({ type = 'deposit', editId = null, customerId = nu
     const editing = !!editId;
     let tx = null;
     if (editing) {
-        tx = DB.getTransaction(editId);
+        tx = DataSource.getTransaction(editId);
         if (!tx) { toast('الحركة غير موجودة', 'error'); return; }
         type = tx.type;
         selectedTxCustomerId = tx.customer_id;
@@ -2277,21 +2775,22 @@ function openTransactionModal({ type = 'deposit', editId = null, customerId = nu
     if (subEl) subEl.textContent = type === 'deposit' ? 'استلام أمانات' : 'صرف فاتورة';
 
     if (type === 'deposit') {
-        headerEl.style.background = 'var(--success-light)'; headerEl.style.borderBottomColor = 'var(--success)'; titleEl.style.color = 'var(--success-dark)';
+        headerEl.style.background = 'var(--success-light)';
+        headerEl.style.borderBottomColor = 'var(--success)';
+        titleEl.style.color = 'var(--success-dark)';
     } else {
-        headerEl.style.background = 'var(--danger-light)'; headerEl.style.borderBottomColor = 'var(--danger)'; titleEl.style.color = 'var(--danger-dark)';
+        headerEl.style.background = 'var(--danger-light)';
+        headerEl.style.borderBottomColor = 'var(--danger)';
+        titleEl.style.color = 'var(--danger-dark)';
     }
 
     document.getElementById('groupDepositor').style.display = type === 'deposit' ? 'block' : 'none';
     document.getElementById('groupInvoice').style.display = 'block';
-    
-    const groupRecipient = document.getElementById('groupRecipient');
-    if (groupRecipient) groupRecipient.style.display = 'block';
 
     const showPicker = !selectedTxCustomerId && !editing;
     const groupPicker = document.getElementById('groupCustomerPicker');
     if (groupPicker) groupPicker.style.display = showPicker ? 'block' : 'none';
-    
+
     const custHeaderEl = document.getElementById('txHeaderCustomerName');
 
     if (showPicker) {
@@ -2299,7 +2798,7 @@ function openTransactionModal({ type = 'deposit', editId = null, customerId = nu
         if (custHeaderEl) custHeaderEl.textContent = '';
     } else if (selectedTxCustomerId) {
         showSelectedCustomer(selectedTxCustomerId);
-        const c = DB.getCustomer(selectedTxCustomerId);
+        const c = DataSource.getCustomer(selectedTxCustomerId);
         if (custHeaderEl) custHeaderEl.textContent = c ? c.name : '';
     }
 
@@ -2332,34 +2831,45 @@ function openTransactionModal({ type = 'deposit', editId = null, customerId = nu
     }, 150);
 }
 function resetCustomerPicker() {
-    document.getElementById('txCustomerSearch').value = ''; document.getElementById('txCustomerSearch').style.display = 'block';
-    document.getElementById('txCustomerResults').innerHTML = ''; document.getElementById('txCustomerResults').style.display = 'block';
-    document.getElementById('txCustomerSelected').style.display = 'none'; document.getElementById('txCustomerSelected').innerHTML = '';
+    document.getElementById('txCustomerSearch').value = '';
+    document.getElementById('txCustomerSearch').style.display = 'block';
+    document.getElementById('txCustomerResults').innerHTML = '';
+    document.getElementById('txCustomerResults').style.display = 'block';
+    document.getElementById('txCustomerSelected').style.display = 'none';
+    document.getElementById('txCustomerSelected').innerHTML = '';
     selectedTxCustomerId = null;
 }
 function showSelectedCustomer(customerId) {
-    const c = DB.getCustomer(customerId); if (!c) return; selectedTxCustomerId = customerId;
-    document.getElementById('txCustomerSearch').style.display = 'none'; document.getElementById('txCustomerResults').style.display = 'none';
+    const c = DataSource.getCustomer(customerId); if (!c) return;
+    selectedTxCustomerId = customerId;
+    document.getElementById('txCustomerSearch').style.display = 'none';
+    document.getElementById('txCustomerResults').style.display = 'none';
     document.getElementById('txCustomerSelected').style.display = 'block';
     document.getElementById('txCustomerSelected').innerHTML = `<div class="selected-customer-badge"><div><div class="selected-customer-name">✅ ${esc(c.name)}</div>${c.sort ? `<div style="font-size:11px; color:var(--text-soft); margin-top:2px;">الفرز: ${esc(c.sort)}</div>` : ''}</div><button type="button" class="selected-customer-clear" id="clearCustomerSel" title="تغيير">✕</button></div>`;
     document.getElementById('clearCustomerSel').addEventListener('click', resetCustomerPicker);
 }
 function searchTxCustomer(query) {
-    const resultsEl = document.getElementById('txCustomerResults'); if (!query.trim()) { resultsEl.innerHTML = ''; return; }
-    const q = query.toLowerCase(); const list = DB.getCustomers().filter(c => c.name.toLowerCase().includes(q)).slice(0, 15);
+    const resultsEl = document.getElementById('txCustomerResults');
+    if (!query.trim()) { resultsEl.innerHTML = ''; return; }
+    const q = query.toLowerCase();
+    const list = DataSource.getCustomers().filter(c => c.name.toLowerCase().includes(q)).slice(0, 15);
     if (list.length === 0) { resultsEl.innerHTML = '<div style="text-align:center; padding:10px; color:var(--text-light); font-size:13px;">لا نتائج</div>'; return; }
     resultsEl.innerHTML = list.map(c => `<div class="search-result-item" data-cid="${c.id}"><div><div class="search-result-name">${esc(c.name)}</div></div>${c.sort ? `<span class="tag-sort">${esc(c.sort)}</span>` : ''}</div>`).join('');
     resultsEl.querySelectorAll('.search-result-item').forEach(item => { item.addEventListener('click', () => showSelectedCustomer(item.dataset.cid)); });
 }
-function selectCurrency(currency) {
-    document.getElementById('inputCurrency').value = currency;
-}
+function selectCurrency(currency) { document.getElementById('inputCurrency').value = currency; }
 async function submitTransaction(e) {
     e.preventDefault();
-    const txId = document.getElementById('inputTxId').value, type = document.getElementById('inputTxType').value, currency = document.getElementById('inputCurrency').value;
-    const amount = parseFloat(document.getElementById('inputAmount').value), depositor = document.getElementById('inputDepositor').value.trim();
-    const invoice = document.getElementById('inputInvoice').value.trim(), recipient = document.getElementById('inputRecipient').value.trim();
-    const dateStr = document.getElementById('inputDate').value, notes = document.getElementById('inputTxNotes').value.trim();
+    if (!guardEdit()) return;
+    const txId = document.getElementById('inputTxId').value;
+    const type = document.getElementById('inputTxType').value;
+    const currency = document.getElementById('inputCurrency').value;
+    const amount = parseFloat(document.getElementById('inputAmount').value);
+    const depositor = document.getElementById('inputDepositor').value.trim();
+    const invoice = document.getElementById('inputInvoice').value.trim();
+    const recipient = document.getElementById('inputRecipient').value.trim();
+    const dateStr = document.getElementById('inputDate').value;
+    const notes = document.getElementById('inputTxNotes').value.trim();
 
     if (!selectedTxCustomerId) { toast('يرجى اختيار النزيل', 'error'); return; }
     if (type === 'deposit' && !depositor) { toast('اسم المودع مطلوب', 'error'); return; }
@@ -2390,6 +2900,7 @@ async function submitTransaction(e) {
     if (currentView === 'customer') renderCustomerView();
 }
 async function deleteTxFromModal() {
+    if (!guardEdit()) return;
     const txId = document.getElementById('inputTxId').value; if (!txId) return;
     const ok = await Dialog.confirmDanger('هل تريد حذف هذه الحركة؟\nلا يمكن التراجع!'); if (!ok) return;
     DB.deleteTransaction(txId); closeModal('modalTransaction'); toast('تم حذف الحركة', 'success');
@@ -2400,56 +2911,84 @@ async function deleteTxFromModal() {
     if (currentView === 'customer') renderCustomerView();
 }
 
+/* ===========================
+   أرشفة نزيل
+   =========================== */
 function openArchiveModal() {
-    document.getElementById('formArchive').reset(); document.getElementById('archiveCustomerId').value = '';
-    document.getElementById('archiveCustomerResults').innerHTML = ''; document.getElementById('groupTransferTo').style.display = 'none';
-    document.getElementById('archivePreview').style.display = 'none'; resetArchivePicker();
-    openModal('modalArchive'); setTimeout(() => document.getElementById('archiveCustomerSearch').focus(), 150);
+    if (!guardEdit()) return;
+    document.getElementById('formArchive').reset();
+    document.getElementById('archiveCustomerId').value = '';
+    document.getElementById('archiveCustomerResults').innerHTML = '';
+    document.getElementById('groupTransferTo').style.display = 'none';
+    document.getElementById('archivePreview').style.display = 'none';
+    resetArchivePicker();
+    openModal('modalArchive');
+    setTimeout(() => document.getElementById('archiveCustomerSearch').focus(), 150);
 }
 function resetArchivePicker() {
-    document.getElementById('archiveCustomerSearch').value = ''; document.getElementById('archiveCustomerSearch').style.display = 'block';
-    document.getElementById('archiveCustomerResults').innerHTML = ''; document.getElementById('archiveCustomerResults').style.display = 'block';
-    document.getElementById('archiveCustomerSelected').style.display = 'none'; document.getElementById('archiveCustomerSelected').innerHTML = '';
+    document.getElementById('archiveCustomerSearch').value = '';
+    document.getElementById('archiveCustomerSearch').style.display = 'block';
+    document.getElementById('archiveCustomerResults').innerHTML = '';
+    document.getElementById('archiveCustomerResults').style.display = 'block';
+    document.getElementById('archiveCustomerSelected').style.display = 'none';
+    document.getElementById('archiveCustomerSelected').innerHTML = '';
     selectedArchiveCustomerId = null;
 }
 function searchArchiveCustomer(query) {
-    const resultsEl = document.getElementById('archiveCustomerResults'); if (!query.trim()) { resultsEl.innerHTML = ''; return; }
-    const q = query.toLowerCase(); const list = DB.getCustomers().filter(c => c.name.toLowerCase().includes(q)).slice(0, 15);
+    const resultsEl = document.getElementById('archiveCustomerResults');
+    if (!query.trim()) { resultsEl.innerHTML = ''; return; }
+    const q = query.toLowerCase();
+    const list = DataSource.getCustomers().filter(c => c.name.toLowerCase().includes(q)).slice(0, 15);
     if (list.length === 0) { resultsEl.innerHTML = '<div style="text-align:center; padding:10px; color:var(--text-light); font-size:13px;">لا نتائج</div>'; return; }
     resultsEl.innerHTML = list.map(c => `<div class="search-result-item" data-cid="${c.id}"><div><div class="search-result-name">${esc(c.name)}</div></div>${c.sort ? `<span class="tag-sort">${esc(c.sort)}</span>` : ''}</div>`).join('');
     resultsEl.querySelectorAll('.search-result-item').forEach(item => { item.addEventListener('click', () => selectArchiveCustomer(item.dataset.cid)); });
 }
 function selectArchiveCustomer(customerId) {
-    const c = DB.getCustomer(customerId); if (!c) return; selectedArchiveCustomerId = customerId; document.getElementById('archiveCustomerId').value = customerId;
-    document.getElementById('archiveCustomerSearch').style.display = 'none'; document.getElementById('archiveCustomerResults').style.display = 'none';
+    const c = DataSource.getCustomer(customerId); if (!c) return;
+    selectedArchiveCustomerId = customerId;
+    document.getElementById('archiveCustomerId').value = customerId;
+    document.getElementById('archiveCustomerSearch').style.display = 'none';
+    document.getElementById('archiveCustomerResults').style.display = 'none';
     document.getElementById('archiveCustomerSelected').style.display = 'block';
     document.getElementById('archiveCustomerSelected').innerHTML = `<div class="selected-customer-badge"><div class="selected-customer-name">✅ ${esc(c.name)}</div><button type="button" class="selected-customer-clear" id="clearArchiveSel" title="تغيير">✕</button></div>`;
     document.getElementById('clearArchiveSel').addEventListener('click', resetArchivePicker);
-    const bal = DB.getCustomerBalance(customerId);
-    document.getElementById('archivePreviewSYP').textContent = formatNumber(bal.SYP); document.getElementById('archivePreviewUSD').textContent = formatNumber(bal.USD);
+    const bal = DataSource.getCustomerBalance(customerId);
+    document.getElementById('archivePreviewSYP').textContent = formatNumber(bal.SYP);
+    document.getElementById('archivePreviewUSD').textContent = formatNumber(bal.USD);
     document.getElementById('archivePreview').style.display = 'block';
 }
 async function submitArchive(e) {
     e.preventDefault();
-    const customerId = document.getElementById('archiveCustomerId').value, reason = document.getElementById('inputArchiveReason').value;
-    const transfer_to = document.getElementById('inputTransferTo').value, notes = document.getElementById('inputArchiveNotes').value;
+    if (!guardEdit()) return;
+    const customerId = document.getElementById('archiveCustomerId').value;
+    const reason = document.getElementById('inputArchiveReason').value;
+    const transfer_to = document.getElementById('inputTransferTo').value;
+    const notes = document.getElementById('inputArchiveNotes').value;
     if (!customerId) { toast('يرجى اختيار النزيل', 'error'); return; }
     if (!reason) { toast('يرجى اختيار السبب', 'error'); return; }
     const customer = DB.getCustomer(customerId); if (!customer) { toast('النزيل غير موجود', 'error'); return; }
     const ok = await Dialog.confirm(`سيتم أرشفة النزيل "${customer.name}" بسبب "${reason}".\n\nهل تريد المتابعة؟`, 'تأكيد الأرشفة'); if (!ok) return;
-    DB.archiveCustomer(customerId, { reason, transfer_to, notes }); toast('تم أرشفة النزيل بنجاح 🗂️', 'success'); closeModal('modalArchive');
+    DB.archiveCustomer(customerId, { reason, transfer_to, notes });
+    toast('تم أرشفة النزيل بنجاح 🗂️', 'success'); closeModal('modalArchive');
     renderDashboard();
     if (currentView === 'customers') { renderSortChips(); renderCustomers(); }
     if (currentView === 'today') renderToday();
     if (currentView === 'month') renderMonth();
     if (currentView === 'customer' && currentCustomerId === customerId) goHome();
 }
+
+/* ===========================
+   عرض الأرشيف
+   =========================== */
 function renderArchive() {
-    const all = DB.getArchive(); const filtered = all.filter(a => a.reason === currentArchiveTab).sort((a, b) => new Date(b.archived_at) - new Date(a.archived_at));
+    const all = DataSource.getArchive();
+    const filtered = all.filter(a => a.reason === currentArchiveTab).sort((a, b) => new Date(b.archived_at) - new Date(a.archived_at));
     const listEl = document.getElementById('archiveList'), emptyEl = document.getElementById('archiveEmpty');
     if (filtered.length === 0) {
         listEl.innerHTML = ''; emptyEl.style.display = 'block';
-        document.getElementById('archiveEmptyTitle').textContent = currentArchiveTab === 'نقل' ? 'لا يوجد نزلاء منقولون' : 'لا يوجد نزلاء مخلّى سبيلهم'; document.getElementById('archiveEmptyDesc').textContent = '—'; return;
+        document.getElementById('archiveEmptyTitle').textContent = currentArchiveTab === 'نقل' ? 'لا يوجد نزلاء منقولون' : 'لا يوجد نزلاء مخلّى سبيلهم';
+        document.getElementById('archiveEmptyDesc').textContent = '—';
+        return;
     }
     emptyEl.style.display = 'none';
     listEl.innerHTML = filtered.map(a => `
@@ -2464,7 +3003,7 @@ function renderArchive() {
             <div class="card-details"><div class="card-details-inner">
                 <div class="detail-row"><span class="detail-label">📌 السبب</span><span class="detail-value">${esc(a.reason)}</span></div>
                 ${a.transfer_to ? `<div class="detail-row"><span class="detail-label">📍 مكان النقل</span><span class="detail-value">${esc(a.transfer_to)}</span></div>` : ''}
-                
+
                 <div class="detail-row"><span class="detail-label">💰 الرصيد وقت الأرشفة</span><span class="detail-value ltr">ل.س ${formatNumber(a.balance_syp)} | $ ${formatNumber(a.balance_usd)}</span></div>
                 <div class="detail-row"><span class="detail-label">📊 عدد الحركات</span><span class="detail-value">${a.transactions.length}</span></div>
                 ${a.notes ? `<div class="detail-row"><span class="detail-label">📝 ملاحظات</span><span class="detail-value">${esc(a.notes)}</span></div>` : ''}
@@ -2480,7 +3019,8 @@ function renderArchive() {
         const aid = card.dataset.archiveId;
         card.querySelectorAll('[data-action]').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.stopPropagation(); const action = btn.dataset.action;
+                e.stopPropagation();
+                const action = btn.dataset.action;
                 if (action === 'restore') restoreFromArchive(aid);
                 else if (action === 'view') viewArchiveDetails(aid);
                 else if (action === 'delete') deleteArchiveEntry(aid);
@@ -2489,6 +3029,7 @@ function renderArchive() {
     });
 }
 async function restoreFromArchive(archiveId) {
+    if (!guardEdit()) return;
     const archive = DB.getArchive().find(a => a.id === archiveId); if (!archive) return;
     const c = archive.customer;
     const choice = await Dialog.confirmRestore(`كيف تريد إرجاع "${c.name}"؟\n\n• من الصفر: حساب جديد برصيد 0\n• بحسابه السابق: استرجاع كل الحركات القديمة`, '↩️ إرجاع النزيل');
@@ -2508,22 +3049,26 @@ async function viewArchiveDetails(archiveId) {
     await Dialog.alert(content, 'تفاصيل الأرشيف');
 }
 async function deleteArchiveEntry(archiveId) {
+    if (!guardEdit()) return;
     const a = DB.getArchive().find(x => x.id === archiveId); if (!a) return;
     const ok = await Dialog.confirmDanger(`سيتم حذف سجل الأرشيف الخاص بـ "${a.customer.name}" نهائياً.\n\nلا يمكن التراجع!`, 'تأكيد الحذف النهائي');
     if (ok) { DB.removeFromArchive(archiveId); toast('تم حذف السجل', 'success'); renderArchive(); }
 }
 
+/* ===========================
+   طباعة النزيل
+   =========================== */
 function printCustomer(customerId) {
-    const c = customerId ? DB.getCustomer(customerId) : DB.getCustomer(currentCustomerId); 
+    const c = customerId ? DataSource.getCustomer(customerId) : DataSource.getCustomer(currentCustomerId);
     if (!c) { toast('النزيل غير موجود', 'error'); return; }
-    
-    const t = DB.getCustomerTotals(c.id); 
-    const txs = DB.getCustomerTransactions(c.id);
-    
+
+    const t = DataSource.getCustomerTotals(c.id);
+    const txs = DataSource.getCustomerTransactions(c.id);
+
     let rows = txs.map(x => {
-        const isDep = x.type === 'deposit'; 
-        const color = isDep ? '#10b981' : '#ef4444'; 
-        const sign = isDep ? '+' : '−'; 
+        const isDep = x.type === 'deposit';
+        const color = isDep ? '#10b981' : '#ef4444';
+        const sign = isDep ? '+' : '−';
         const cur = x.currency === 'SYP' ? 'ل.س' : '$';
         return `<tr style="border-bottom:1px solid #e5e7eb;">
             <td style="padding:6px 4px; text-align:center; font-size:11px;">${formatDate(x.date)}</td>
@@ -2535,9 +3080,9 @@ function printCustomer(customerId) {
             <td style="padding:6px 4px; text-align:center; font-size:10.5px;">${esc(x.recipient || '—')}</td>
         </tr>`;
     }).join('');
-    
+
     if (!rows) rows = `<tr><td colspan="7" style="padding:20px; text-align:center; color:#6b7280; font-size:11px;">لا توجد حركات</td></tr>`;
-    
+
     const htmlContent = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2555,7 +3100,7 @@ function printCustomer(customerId) {
 </head>
 <body>
     <button class="print-btn no-print" onclick="window.print()">🖨️ اضغط هنا للطباعة</button>
-    
+
     <div style="text-align:center; margin-bottom:16px; border-bottom:3px solid #f37021; padding-bottom:10px;">
         <h1 style="color:#f37021; margin:0; font-size:22px;">🏦 الأمانات</h1>
     </div>
@@ -2578,89 +3123,135 @@ function printCustomer(customerId) {
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const w = window.open(url, '_blank');
-    
+
     if (!w) {
         toast('المتصفح منع فتح النافذة. اسمح بالنوافذ المنبثقة.', 'error');
     }
 }
 
+/* ===========================
+   النسخ الاحتياطي والاستيراد
+   =========================== */
 function backup() {
-    localStorage.setItem('amanat_last_backup', Date.now()); // <--- أضف هذا السطر
+    if (ViewState.isPreviewMode()) {
+        toast('⚠️ أنت في وضع المعاينة. ألغِ المعاينة أولاً', 'error');
+        return;
+    }
+    localStorage.setItem('amanat_last_backup', Date.now());
     const data = { version: 3, exported_at: new Date().toISOString(), customers: DB.getCustomers(), transactions: DB.getTransactions(), archive: DB.getArchive(), recipientsDeposit: DB.getRecipients('deposit'), recipientsWithdraw: DB.getRecipients('withdraw'), settings: DB.getSettings() };
-    // ... باقي الكود كما هو ...
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `amanat_backup_${todayISO()}.json`; a.click(); URL.revokeObjectURL(url);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `amanat_backup_${todayISO()}.json`; a.click();
+    URL.revokeObjectURL(url);
     toast('تم تصدير النسخة الاحتياطية 💾', 'success');
 }
-function restore() { 
+function restore() {
+    if (ViewState.isPreviewMode()) {
+        toast('⚠️ لا يمكن الاستيراد في وضع المعاينة', 'error');
+        return;
+    }
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
     document.getElementById('chkConfirmRestore').checked = false;
     document.getElementById('btnConfirmRestore').disabled = true;
     openModal('modalRestore');
 }
-
 async function handleImport(e) {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    
-    // إغلاق أي نوافذ مفتوحة فوراً قبل بدء القراءة
+
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-    document.body.classList.remove('no-scroll'); // لضمان عدم تعليق التمرير
+    document.body.classList.remove('no-scroll');
 
     reader.onload = async (ev) => {
         try {
-            const data = JSON.parse(ev.target.result); 
+            const data = JSON.parse(ev.target.result);
             if (!data.customers || !data.transactions) throw new Error('ملف غير صالح');
-            
+
             toast('جاري استيراد البيانات...', 'success');
-            
-            await DB.importAll(data); 
-            toast('تم استيراد البيانات بنجاح ✅', 'success'); 
-            
-            // إعادة تهيئة الواجهات
-            goHome(); 
-            renderDashboard(); 
-            renderSortChips(); 
-            renderCustomers(); 
+
+            await DB.importAll(data);
+            toast('تم استيراد البيانات بنجاح ✅', 'success');
+
+            goHome();
+            renderDashboard();
+            renderSortChips();
+            renderCustomers();
             renderMonth();
-            
-        } catch (err) { 
-            Dialog.error('فشل استيراد الملف: ' + err.message, 'خطأ'); 
+
+        } catch (err) {
+            Dialog.error('فشل استيراد الملف: ' + err.message, 'خطأ');
         }
     };
-    reader.readAsText(file); 
-    e.target.value = ''; // تفريغ الحقل لتمكين اختيار نفس الملف مرة أخرى مستقبلاً
+    reader.readAsText(file);
+    e.target.value = '';
 }
+
+/* ===========================
+   الوضع الليلي
+   =========================== */
 function toggleDarkMode() {
-    const s = DB.getSettings(); s.darkMode = !s.darkMode; DB.saveSettings(s); applyDarkMode(s.darkMode); updateDrawerDarkItem(s.darkMode); toast(s.darkMode ? 'الوضع الليلي 🌙' : 'الوضع النهاري ☀️');
+    const s = DB.getSettings();
+    s.darkMode = !s.darkMode;
+    DB.saveSettings(s);
+    applyDarkMode(s.darkMode);
+    updateDrawerDarkItem(s.darkMode);
+    toast(s.darkMode ? 'الوضع الليلي 🌙' : 'الوضع النهاري ☀️');
 }
 function applyDarkMode(enabled) { document.body.classList.toggle('dark', enabled); }
-function updateDrawerDarkItem(enabled) { document.getElementById('drawerDarkIcon').textContent = enabled ? '☀️' : '🌙'; document.getElementById('drawerDarkText').textContent = enabled ? 'الوضع النهاري' : 'الوضع الليلي'; }
-function openDrawer() { document.getElementById('drawer').classList.add('show'); document.getElementById('drawerOverlay').classList.add('show'); }
-function closeDrawer() { document.getElementById('drawer').classList.remove('show'); document.getElementById('drawerOverlay').classList.remove('show'); }
+function updateDrawerDarkItem(enabled) {
+    document.getElementById('drawerDarkIcon').textContent = enabled ? '☀️' : '🌙';
+    document.getElementById('drawerDarkText').textContent = enabled ? 'الوضع النهاري' : 'الوضع الليلي';
+}
 
-let currentReportType = null, currentReportData = null, selectedReportCustomers = [];
+/* ===========================
+   القائمة الجانبية
+   =========================== */
+function openDrawer() {
+    document.getElementById('drawer').classList.add('show');
+    document.getElementById('drawerOverlay').classList.add('show');
+}
+function closeDrawer() {
+    document.getElementById('drawer').classList.remove('show');
+    document.getElementById('drawerOverlay').classList.remove('show');
+}
+
+// ============================================
+// ⬆️ نهاية الجزء 4 — يليه التقارير + المعاينة والاستعادة + الأحداث + init في الجزء 5
+// ============================================
+  /* ===========================
+   التقارير
+   =========================== */
 function openReport(type) {
     currentReportType = type; selectedReportCustomers = [];
-    const titleEl = document.getElementById('modalReportTitle'), filtersEl = document.getElementById('reportFilters'), previewEl = document.getElementById('reportPreview');
+    const titleEl = document.getElementById('modalReportTitle');
+    const filtersEl = document.getElementById('reportFilters');
+    const previewEl = document.getElementById('reportPreview');
     filtersEl.innerHTML = ''; previewEl.innerHTML = '';
 
     if (type === 'today') { titleEl.textContent = '📅 حركة اليوم'; renderReportToday(); }
     else if (type === 'month') { titleEl.textContent = '📆 حركة الشهر'; renderMonthFilterForReport(); }
     else if (type === 'range') { titleEl.textContent = '📊 حركة بين تاريخين'; renderRangeFilterForReport(); }
     else if (type === 'balances') { titleEl.textContent = '💰 أرصدة نزلاء محددين'; renderBalancesFilterForReport(); }
-  else if (type === 'transferred') { titleEl.textContent = '📦 قائمة نقل نزلاء'; renderArchiveReport('نقل'); }
-else if (type === 'vacated') { titleEl.textContent = '🚪 قائمة إخلاء سبيل'; renderArchiveReport('إخلاء'); }
+    else if (type === 'transferred') { titleEl.textContent = '📦 قائمة نقل نزلاء'; renderArchiveReport('نقل'); }
+    else if (type === 'vacated') { titleEl.textContent = '🚪 قائمة إخلاء سبيل'; renderArchiveReport('إخلاء'); }
     openModal('modalReport');
 }
 function calcSummary(txs) {
     const r = { depSYP:0, depUSD:0, wdSYP:0, wdUSD:0, count: txs.length };
-    for (const t of txs) { if (t.type === 'deposit') { if (t.currency === 'SYP') r.depSYP += t.amount; else r.depUSD += t.amount; } else { if (t.currency === 'SYP') r.wdSYP += t.amount; else r.wdUSD += t.amount; } } return r;
+    for (const t of txs) {
+        if (t.type === 'deposit') { if (t.currency === 'SYP') r.depSYP += t.amount; else r.depUSD += t.amount; }
+        else { if (t.currency === 'SYP') r.wdSYP += t.amount; else r.wdUSD += t.amount; }
+    }
+    return r;
 }
 function buildSummaryBoxes(s) {
     return [
-        { label: 'عدد الحركات', value: s.count, color: 'primary' }, { label: 'إيداع ل.س', value: formatNumber(s.depSYP), color: 'success' }, { label: 'إيداع $', value: formatNumber(s.depUSD), color: 'success' },
-        { label: 'سحب ل.س', value: formatNumber(s.wdSYP), color: 'danger' }, { label: 'سحب $', value: formatNumber(s.wdUSD), color: 'danger' },
+        { label: 'عدد الحركات', value: s.count, color: 'primary' },
+        { label: 'إيداع ل.س', value: formatNumber(s.depSYP), color: 'success' },
+        { label: 'إيداع $', value: formatNumber(s.depUSD), color: 'success' },
+        { label: 'سحب ل.س', value: formatNumber(s.wdSYP), color: 'danger' },
+        { label: 'سحب $', value: formatNumber(s.wdUSD), color: 'danger' },
         { label: 'المحصلة ل.س', value: formatNumber(s.depSYP - s.wdSYP), color: (s.depSYP - s.wdSYP) >= 0 ? 'success' : 'danger' },
         { label: 'المحصلة $', value: formatNumber(s.depUSD - s.wdUSD), color: (s.depUSD - s.wdUSD) >= 0 ? 'success' : 'danger' }
     ];
@@ -2673,46 +3264,79 @@ function buildReportPreviewHTML(data) {
         data.summary.forEach(s => { html += `<div class="report-summary-box"><div class="report-summary-label">${s.label}</div><div class="report-summary-value ${s.color || 'primary'}">${s.value}</div></div>`; });
         html += `</div>`;
     }
-    if (!data.rows || data.rows.length === 0) { html += `<div class="report-empty">لا توجد بيانات مطابقة</div>`; }
-    else {
-        html += `<table class="report-table"><thead><tr>`; data.headers.forEach(h => html += `<th>${h}</th>`); html += `</tr></thead><tbody>`;
-        data.rows.forEach(row => { html += `<tr>`; row.forEach(cell => { const val = (typeof cell === 'object' && cell.html) ? cell.html : cell; html += `<td>${val}</td>`; }); html += `</tr>`; });
+    if (!data.rows || data.rows.length === 0) {
+        html += `<div class="report-empty">لا توجد بيانات مطابقة</div>`;
+    } else {
+        html += `<table class="report-table"><thead><tr>`;
+        data.headers.forEach(h => html += `<th>${h}</th>`);
+        html += `</tr></thead><tbody>`;
+        data.rows.forEach(row => {
+            html += `<tr>`;
+            row.forEach(cell => {
+                const val = (typeof cell === 'object' && cell.html) ? cell.html : cell;
+                html += `<td>${val}</td>`;
+            });
+            html += `</tr>`;
+        });
         html += `</tbody></table>`;
     }
-    html += `</div>`; return html;
+    html += `</div>`;
+    return html;
 }
 function buildReportPrintHTML(data) {
     let html = `<div style="text-align:center; margin-bottom:16px; border-bottom:3px solid #f37021; padding-bottom:10px;"><h1 style="color:#f37021; margin:0; font-size:22px;">🏦 الأمانات</h1><p style="color:#6b7280; margin:4px 0 0; font-size:11px;">${data.title}</p></div>`;
     if (data.subtitle) html += `<div style="text-align:center; font-size:12px; color:#6b7280; margin-bottom:12px;">${data.subtitle}</div>`;
     if (data.summary && data.summary.length) {
         html += `<table style="width:100%; border-collapse:collapse; margin-bottom:14px;"><tr>`;
-        data.summary.forEach(s => { html += `<td style="padding:5px;"><div style="background:#f5f5f5; padding:10px; border-radius:8px; text-align:center;"><div style="color:#6b7280; font-size:11px; margin-bottom:3px;">${s.label}</div><div style="font-weight:900; font-size:14px; direction:ltr; color:#1f2937;">${s.value}</div></div></td>`; });
+        data.summary.forEach(s => {
+            html += `<td style="padding:5px;"><div style="background:#f5f5f5; padding:10px; border-radius:8px; text-align:center;"><div style="color:#6b7280; font-size:11px; margin-bottom:3px;">${s.label}</div><div style="font-weight:900; font-size:14px; direction:ltr; color:#1f2937;">${s.value}</div></div></td>`;
+        });
         html += `</tr></table>`;
     }
-    if (!data.rows || data.rows.length === 0) html += `<div style="text-align:center; padding:30px; color:#6b7280;">لا توجد بيانات مطابقة</div>`;
-    else {
+    if (!data.rows || data.rows.length === 0) {
+        html += `<div style="text-align:center; padding:30px; color:#6b7280;">لا توجد بيانات مطابقة</div>`;
+    } else {
         html += `<table style="width:100%; border-collapse:collapse; font-size:11px; border:1px solid #e5e7eb;"><thead><tr style="background:#f5f5f5;">`;
         data.headers.forEach(h => html += `<th style="padding:7px 4px; border-bottom:2px solid #f37021; font-size:10.5px;">${h}</th>`);
         html += `</tr></thead><tbody>`;
-        data.rows.forEach(row => { html += `<tr style="border-bottom:1px solid #e5e7eb;">`; row.forEach(cell => { const val = (typeof cell === 'object' && cell.html) ? cell.html : cell; html += `<td style="padding:6px 4px; text-align:center; font-size:10.5px;">${val}</td>`; }); html += `</tr>`; });
+        data.rows.forEach(row => {
+            html += `<tr style="border-bottom:1px solid #e5e7eb;">`;
+            row.forEach(cell => {
+                const val = (typeof cell === 'object' && cell.html) ? cell.html : cell;
+                html += `<td style="padding:6px 4px; text-align:center; font-size:10.5px;">${val}</td>`;
+            });
+            html += `</tr>`;
+        });
         html += `</tbody></table>`;
     }
     html += `<div style="margin-top:14px; text-align:center; color:#6b7280; font-size:10px; border-top:1px solid #e5e7eb; padding-top:8px;">تم إنشاء التقرير بتاريخ ${formatDate(new Date().toISOString())}</div>`;
     return html;
 }
-function showReportPreview(data) { currentReportData = data; document.getElementById('reportPreview').innerHTML = buildReportPreviewHTML(data); }
-function printCurrentReport() { if (!currentReportData) { toast('لا يوجد تقرير', 'error'); return; } document.getElementById('print-container').innerHTML = buildReportPrintHTML(currentReportData); setTimeout(() => window.print(), 200); }
+function showReportPreview(data) {
+    currentReportData = data;
+    document.getElementById('reportPreview').innerHTML = buildReportPreviewHTML(data);
+}
+function printCurrentReport() {
+    if (!currentReportData) { toast('لا يوجد تقرير', 'error'); return; }
+    document.getElementById('print-container').innerHTML = buildReportPrintHTML(currentReportData);
+    setTimeout(() => window.print(), 200);
+}
 
 function renderReportToday() {
-    const txs = DB.getTodayTransactions(); const s = calcSummary(txs);
+    const txs = DataSource.getTodayTransactions();
+    const s = calcSummary(txs);
     const rows = txs.map(t => {
-        const c = DB.getCustomer(t.customer_id); const isDep = t.type === 'deposit'; const curLbl = t.currency === 'SYP' ? 'ل.س' : '$'; const sign = isDep ? '+' : '−';
+        const c = DataSource.getCustomer(t.customer_id);
+        const isDep = t.type === 'deposit';
+        const curLbl = t.currency === 'SYP' ? 'ل.س' : '$';
+        const sign = isDep ? '+' : '−';
         return [formatDate(t.date), c ? esc(c.name) : '⚠️ محذوف', isDep ? '<span class="amount-dep">إيداع</span>' : '<span class="amount-wd">سحب</span>', t.currency === 'SYP' ? 'ليرة' : 'دولار', (isDep ? '<span class="amount-dep">' : '<span class="amount-wd">') + sign + ' ' + curLbl + ' ' + formatNumber(t.amount) + '</span>', t.depositor_name ? esc(t.depositor_name) : '—', t.recipient ? esc(t.recipient) : '—'];
     });
     showReportPreview({ title: '📅 حركة اليوم', subtitle: formatDate(new Date().toISOString()), summary: buildSummaryBoxes(s), headers: ['التاريخ', 'النزيل', 'النوع', 'العملة', 'المبلغ', 'المودع', 'المستلم'], rows });
 }
 function renderMonthFilterForReport() {
-    const txs = DB.getTransactions(); const months = new Set([todayISO().slice(0,7)]);
+    const txs = DataSource.getTransactions();
+    const months = new Set([todayISO().slice(0,7)]);
     txs.forEach(t => { const d = new Date(t.date); if (!isNaN(d)) months.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`); });
     const sorted = Array.from(months).sort().reverse();
     document.getElementById('reportFilters').innerHTML = `<div class="report-filters"><div class="report-filter-group"><label>اختر الشهر</label><select id="reportMonthSelect">${sorted.map(m => `<option value="${m}">${monthNameAr(m)}</option>`).join('')}</select></div></div>`;
@@ -2720,39 +3344,58 @@ function renderMonthFilterForReport() {
     renderReportMonth(sorted[0]);
 }
 function renderReportMonth(yearMonth) {
-    const txs = DB.getMonthTransactions(yearMonth); const s = calcSummary(txs);
+    const txs = DataSource.getMonthTransactions(yearMonth);
+    const s = calcSummary(txs);
     const rows = txs.map(t => {
-        const c = DB.getCustomer(t.customer_id); const isDep = t.type === 'deposit'; const curLbl = t.currency === 'SYP' ? 'ل.س' : '$'; const sign = isDep ? '+' : '−';
+        const c = DataSource.getCustomer(t.customer_id);
+        const isDep = t.type === 'deposit';
+        const curLbl = t.currency === 'SYP' ? 'ل.س' : '$';
+        const sign = isDep ? '+' : '−';
         return [formatDate(t.date), c ? esc(c.name) : '⚠️ محذوف', isDep ? '<span class="amount-dep">إيداع</span>' : '<span class="amount-wd">سحب</span>', t.currency === 'SYP' ? 'ليرة' : 'دولار', (isDep ? '<span class="amount-dep">' : '<span class="amount-wd">') + sign + ' ' + curLbl + ' ' + formatNumber(t.amount) + '</span>', t.depositor_name ? esc(t.depositor_name) : '—', t.recipient ? esc(t.recipient) : '—'];
     });
     showReportPreview({ title: '📆 حركة الشهر', subtitle: monthNameAr(yearMonth), summary: buildSummaryBoxes(s), headers: ['التاريخ', 'النزيل', 'النوع', 'العملة', 'المبلغ', 'المودع', 'المستلم'], rows });
 }
 function renderRangeFilterForReport() {
-    const today = todayISO(); const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1); const monthAgoISO = monthAgo.toISOString().slice(0,10);
+    const today = todayISO();
+    const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1);
+    const monthAgoISO = monthAgo.toISOString().slice(0,10);
     document.getElementById('reportFilters').innerHTML = `<div class="report-filters"><div class="report-filters-grid"><div class="report-filter-group"><label>من تاريخ</label><input type="date" id="reportFromDate" value="${monthAgoISO}"></div><div class="report-filter-group"><label>إلى تاريخ</label><input type="date" id="reportToDate" value="${today}"></div></div></div>`;
-    const update = () => { const from = document.getElementById('reportFromDate').value; const to = document.getElementById('reportToDate').value; renderReportRange(from, to); };
-    document.getElementById('reportFromDate').addEventListener('change', update); document.getElementById('reportToDate').addEventListener('change', update); update();
+    const update = () => {
+        const from = document.getElementById('reportFromDate').value;
+        const to = document.getElementById('reportToDate').value;
+        renderReportRange(from, to);
+    };
+    document.getElementById('reportFromDate').addEventListener('change', update);
+    document.getElementById('reportToDate').addEventListener('change', update);
+    update();
 }
 function renderReportRange(fromDate, toDate) {
     if (!fromDate || !toDate) return;
-    const all = DB.getTransactions(); const from = new Date(fromDate + 'T00:00:00'); const to = new Date(toDate + 'T23:59:59');
+    const all = DataSource.getTransactions();
+    const from = new Date(fromDate + 'T00:00:00');
+    const to = new Date(toDate + 'T23:59:59');
     const txs = all.filter(t => { const d = new Date(t.date); return d >= from && d <= to; }).sort((a, b) => new Date(b.date) - new Date(a.date));
     const s = calcSummary(txs);
     const rows = txs.map(t => {
-        const c = DB.getCustomer(t.customer_id); const isDep = t.type === 'deposit'; const curLbl = t.currency === 'SYP' ? 'ل.س' : '$'; const sign = isDep ? '+' : '−';
+        const c = DataSource.getCustomer(t.customer_id);
+        const isDep = t.type === 'deposit';
+        const curLbl = t.currency === 'SYP' ? 'ل.س' : '$';
+        const sign = isDep ? '+' : '−';
         return [formatDate(t.date), c ? esc(c.name) : '⚠️ محذوف', isDep ? '<span class="amount-dep">إيداع</span>' : '<span class="amount-wd">سحب</span>', t.currency === 'SYP' ? 'ليرة' : 'دولار', (isDep ? '<span class="amount-dep">' : '<span class="amount-wd">') + sign + ' ' + curLbl + ' ' + formatNumber(t.amount) + '</span>', t.depositor_name ? esc(t.depositor_name) : '—', t.recipient ? esc(t.recipient) : '—'];
     });
     showReportPreview({ title: '📊 حركة بين تاريخين', subtitle: `من ${formatDate(fromDate + 'T00:00:00')} إلى ${formatDate(toDate + 'T00:00:00')}`, summary: buildSummaryBoxes(s), headers: ['التاريخ', 'النزيل', 'النوع', 'العملة', 'المبلغ', 'المودع', 'المستلم'], rows });
 }
 function renderBalancesFilterForReport() {
     document.getElementById('reportFilters').innerHTML = `<div class="report-filters"><div class="report-filter-group"><label>فلترة بالفرز (اختياري)</label><select id="reportBalanceSort"><option value="الكل">الكل</option><option value="م0">غير مفروز (م0)</option><option value="م1">م1</option><option value="م2">م2</option><option value="م3">م3</option><option value="م4">م4</option><option value="م5">م5</option><option value="م6">م6</option><option value="م7">م7</option><option value="م8">م8</option></select></div><div class="report-picker-actions" style="margin-top:10px;"><button type="button" id="btnSelectAllCustomers">✓ تحديد الكل</button><button type="button" id="btnDeselectAllCustomers">✕ إلغاء الكل</button><button type="button" id="btnSelectSortCustomers">✓ تحديد كل هذا الفرز</button></div><div class="report-customers-picker" id="reportCustomersPicker"></div></div>`;
-    selectedReportCustomers = DB.getCustomers().map(c => c.id);
+    selectedReportCustomers = DataSource.getCustomers().map(c => c.id);
     const renderPicker = () => {
-        const sortVal = document.getElementById('reportBalanceSort').value; const all = DB.getCustomers();
+        const sortVal = document.getElementById('reportBalanceSort').value;
+        const all = DataSource.getCustomers();
         const list = sortVal === 'الكل' ? all : all.filter(c => { if (sortVal === 'م0') return !c.sort || c.sort === 'م0'; return c.sort === sortVal; });
         const picker = document.getElementById('reportCustomersPicker');
-        if (list.length === 0) { picker.innerHTML = '<div style="text-align:center; padding:14px; color:var(--text-light); font-size:12px;">لا يوجد نزلاء</div>'; }
-        else {
+        if (list.length === 0) {
+            picker.innerHTML = '<div style="text-align:center; padding:14px; color:var(--text-light); font-size:12px;">لا يوجد نزلاء</div>';
+        } else {
             picker.innerHTML = list.map(c => `<label class="report-customer-item"><input type="checkbox" data-cid="${c.id}" ${selectedReportCustomers.includes(c.id) ? 'checked' : ''}><span style="flex:1; font-weight:700;">${esc(c.name)}</span>${c.sort ? `<span class="tag-sort">${esc(c.sort)}</span>` : '<span class="tag-sort">م0</span>'}</label>`).join('');
             picker.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.addEventListener('change', () => {
@@ -2766,10 +3409,11 @@ function renderBalancesFilterForReport() {
         renderReportBalances();
     };
     document.getElementById('reportBalanceSort').addEventListener('change', renderPicker);
-    document.getElementById('btnSelectAllCustomers').addEventListener('click', () => { selectedReportCustomers = DB.getCustomers().map(c => c.id); renderPicker(); });
+    document.getElementById('btnSelectAllCustomers').addEventListener('click', () => { selectedReportCustomers = DataSource.getCustomers().map(c => c.id); renderPicker(); });
     document.getElementById('btnDeselectAllCustomers').addEventListener('click', () => { selectedReportCustomers = []; renderPicker(); });
     document.getElementById('btnSelectSortCustomers').addEventListener('click', () => {
-        const sortVal = document.getElementById('reportBalanceSort').value; const all = DB.getCustomers();
+        const sortVal = document.getElementById('reportBalanceSort').value;
+        const all = DataSource.getCustomers();
         const list = sortVal === 'الكل' ? all : all.filter(c => { if (sortVal === 'م0') return !c.sort || c.sort === 'م0'; return c.sort === sortVal; });
         list.forEach(c => { if (!selectedReportCustomers.includes(c.id)) selectedReportCustomers.push(c.id); });
         renderPicker();
@@ -2777,10 +3421,11 @@ function renderBalancesFilterForReport() {
     renderPicker();
 }
 function renderReportBalances() {
-    const list = DB.getCustomers().filter(c => selectedReportCustomers.includes(c.id)).sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+    const list = DataSource.getCustomers().filter(c => selectedReportCustomers.includes(c.id)).sort((a, b) => a.name.localeCompare(b.name, 'ar'));
     let totalSYP = 0, totalUSD = 0;
     const rows = list.map(c => {
-        const bal = DB.getCustomerBalance(c.id); totalSYP += bal.SYP; totalUSD += bal.USD;
+        const bal = DataSource.getCustomerBalance(c.id);
+        totalSYP += bal.SYP; totalUSD += bal.USD;
         const sortLabel = (!c.sort || c.sort === 'م0') ? 'م0' : c.sort;
         return [esc(c.name), sortLabel, formatNumber(bal.SYP), formatNumber(bal.USD)];
     });
@@ -2788,43 +3433,314 @@ function renderReportBalances() {
     showReportPreview({ title: '💰 أرصدة نزلاء محددين', subtitle: `عدد النزلاء: ${list.length}`, summary: [{ label: 'عدد النزلاء', value: list.length, color: 'primary' }, { label: 'إجمالي ل.س', value: formatNumber(totalSYP), color: 'success' }, { label: 'إجمالي $', value: formatNumber(totalUSD), color: 'success' }], headers: ['النزيل', 'الفرز', 'رصيد ل.س', 'رصيد $'], rows });
 }
 function renderArchiveReport(reason) {
-    const all = DB.getArchive(); const list = all.filter(a => a.reason === reason).sort((a, b) => new Date(b.archived_at) - new Date(a.archived_at));
+    const all = DataSource.getArchive();
+    const list = all.filter(a => a.reason === reason).sort((a, b) => new Date(b.archived_at) - new Date(a.archived_at));
     let totalSYP = 0, totalUSD = 0;
     const rows = list.map(a => {
-        totalSYP += a.balance_syp; totalUSD += a.balance_usd; const sortLabel = (!a.customer.sort || a.customer.sort === 'م0') ? 'م0' : a.customer.sort;
+        totalSYP += a.balance_syp; totalUSD += a.balance_usd;
+        const sortLabel = (!a.customer.sort || a.customer.sort === 'م0') ? 'م0' : a.customer.sort;
         return [esc(a.customer.name), sortLabel, formatDate(a.archived_at), reason === 'نقل' ? esc(a.transfer_to || '—') : '—', formatNumber(a.balance_syp), formatNumber(a.balance_usd)];
     });
     if (rows.length > 0) { rows.push(['<strong>الإجمالي</strong>', '—', '—', '—', '<strong>' + formatNumber(totalSYP) + '</strong>', '<strong>' + formatNumber(totalUSD) + '</strong>']); }
     showReportPreview({ title: reason === 'نقل' ? '📦 قائمة نقل نزلاء' : '🚪 قائمة إخلاء سبيل', subtitle: `عدد: ${list.length}`, summary: [{ label: 'العدد', value: list.length, color: 'primary' }, { label: 'إجمالي ل.س', value: formatNumber(totalSYP), color: 'success' }, { label: 'إجمالي $', value: formatNumber(totalUSD), color: 'success' }], headers: reason === 'نقل' ? ['النزيل', 'الفرز', 'تاريخ النقل', 'إلى', 'رصيد ل.س', 'رصيد $'] : ['النزيل', 'الفرز', 'تاريخ الإخلاء', '—', 'رصيد ل.س', 'رصيد $'], rows });
 }
 
-function bindEvents() {
-    document.querySelectorAll('.bottom-nav-item').forEach(btn => { 
-        btn.addEventListener('click', () => switchView(btn.dataset.view)); 
-    });
+/* ===========================
+   وضع المعاينة — فتح ملف (جديد)
+   =========================== */
+function openPreviewModal() {
+    if (ViewState.isPreviewMode()) {
+        toast('⚠️ أنت بالفعل في وضع المعاينة', 'error');
+        return;
+    }
+    const previewFile = document.getElementById('previewFile');
+    if (!previewFile) {
+        toast('خطأ: حقل الملف غير موجود', 'error');
+        return;
+    }
+    // فتح الملف مباشرة بدون تأخير (ضروري ليعمل على الجوال)
+    previewFile.click();
     
+    // إغلاق القائمة الجانبية بعد لحظة
+    setTimeout(() => closeDrawer(), 300);
+}
+async function handlePreviewFile(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+
+    reader.onload = async (ev) => {
+        try {
+            const data = JSON.parse(ev.target.result);
+            if (!data.customers || !data.transactions) throw new Error('الملف لا يحتوي على بيانات صالحة (نزلاء أو حركات)');
+
+            // التحقق من صحة البيانات
+            if (!Array.isArray(data.customers) || !Array.isArray(data.transactions)) {
+                throw new Error('بنية الملف غير صحيحة');
+            }
+
+            enterPreviewMode(data, file.name);
+            toast('تم فتح النسخة في وضع المعاينة 🔍', 'success');
+
+        } catch (err) {
+            Dialog.error('فشل فتح الملف: ' + err.message, 'خطأ');
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+
+function enterPreviewMode(data, fileName) {
+    // حفظ الحالة
+    ViewState.mode = 'preview';
+    ViewState.data = {
+        customers: data.customers || [],
+        transactions: data.transactions || [],
+        archive: data.archive || [],
+        recipientsDeposit: data.recipientsDeposit || [],
+        recipientsWithdraw: data.recipientsWithdraw || [],
+        settings: data.settings || { darkMode: false, statsHidden: true }
+    };
+    ViewState.fileName = fileName || '—';
+
+    // تفعيل الطبقة على body
+    document.body.classList.add('preview-mode');
+
+    // إظهار شريط المعاينة
+    document.getElementById('previewBanner').style.display = 'flex';
+    document.getElementById('previewFileName').textContent = fileName || '—';
+
+    // إعادة تهيئة الحالة
+    currentCustomerId = null;
+    currentSearch = '';
+    currentSort = 'الكل';
+    currentArchiveTab = 'نقل';
+    selectedDate = todayISO();
+
+    // إعادة رسم كل شيء من DataSource
+    renderDashboard();
+    renderSortChips();
+    renderCustomers();
+    renderMonth();
+
+    // الرجوع للشاشة الرئيسية
+    switchView('today');
+
+    // تطبيق الوضع الليلي من الملف (اختياري)
+    if (ViewState.data.settings && ViewState.data.settings.darkMode !== undefined) {
+        applyDarkMode(ViewState.data.settings.darkMode);
+        updateDrawerDarkItem(ViewState.data.settings.darkMode);
+    }
+}
+
+function exitPreviewMode() {
+    if (!ViewState.isPreviewMode()) return;
+
+    // إزالة الحالة
+    ViewState.mode = 'edit';
+    ViewState.data = null;
+    ViewState.fileName = null;
+
+    // إخفاء الطبقة
+    document.body.classList.remove('preview-mode');
+    document.getElementById('previewBanner').style.display = 'none';
+
+    // إعادة الحالة
+    currentCustomerId = null;
+    currentSearch = '';
+    currentSort = 'الكل';
+    currentArchiveTab = 'نقل';
+    selectedDate = todayISO();
+
+    // استعادة الوضع الليلي من الإعدادات الأصلية
+    const settings = DB.getSettings();
+    applyDarkMode(settings.darkMode);
+    updateDrawerDarkItem(settings.darkMode);
+
+    // إعادة رسم كل شيء من DB
+    renderDashboard();
+    renderSortChips();
+    renderCustomers();
+    renderMonth();
+
+    // الرجوع للشاشة الرئيسية
+    switchView('today');
+
+    toast('تم إلغاء المعاينة، عدت إلى الوضع الطبيعي ✅', 'success');
+}
+
+/* ===========================
+   الاستعادة من المعاينة (جديد)
+   =========================== */
+function openRestoreFromPreviewModal() {
+    if (!ViewState.isPreviewMode()) return;
+    document.getElementById('chkConfirmRestoreFromPreview').checked = false;
+    document.getElementById('chkBackupBeforeRestore').checked = true;
+    document.getElementById('btnDoRestoreFromPreview').disabled = true;
+    openModal('modalConfirmRestoreFromPreview');
+}
+
+function saveCurrentBackupBeforeRestore() {
+    try {
+        const data = { version: 3, exported_at: new Date().toISOString(), customers: DB.getCustomers(), transactions: DB.getTransactions(), archive: DB.getArchive(), recipientsDeposit: DB.getRecipients('deposit'), recipientsWithdraw: DB.getRecipients('withdraw'), settings: DB.getSettings() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `amanat_pre_restore_backup_${todayISO()}_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        return true;
+    } catch (err) {
+        console.error('فشل حفظ النسخة الاحتياطية:', err);
+        return false;
+    }
+}
+
+async function doRestoreFromPreview() {
+    if (!ViewState.isPreviewMode()) return;
+    const data = ViewState.data;
+    const fileName = ViewState.fileName;
+    const makeBackup = document.getElementById('chkBackupBeforeRestore').checked;
+
+    try {
+        // أخذ نسخة احتياطية من البيانات الحالية (اختياري)
+        if (makeBackup) {
+            toast('جاري أخذ نسخة احتياطية من البيانات الحالية...', 'success');
+            const ok = saveCurrentBackupBeforeRestore();
+            if (!ok) {
+                const proceed = await Dialog.confirm('فشل أخذ النسخة الاحتياطية. هل تريد المتابعة على أي حال؟', 'تحذير');
+                if (!proceed) return;
+            } else {
+                // انتظار بسيط ليكتمل التنزيل
+                await new Promise(r => setTimeout(r, 800));
+            }
+        }
+
+        // استبدال البيانات في IndexedDB
+        await DB.importAll({
+            customers: data.customers || [],
+            transactions: data.transactions || [],
+            archive: data.archive || [],
+            recipientsDeposit: data.recipientsDeposit || [],
+            recipientsWithdraw: data.recipientsWithdraw || [],
+            settings: data.settings || { darkMode: false, statsHidden: true }
+        });
+
+        // إغلاق النافذة
+        closeModal('modalConfirmRestoreFromPreview');
+
+        // الخروج من وضع المعاينة (سيُعيد الرسم من DB)
+        exitPreviewMode();
+
+        // إعادة الرسم النهائي
+        renderDashboard();
+        renderSortChips();
+        renderCustomers();
+        renderMonth();
+        switchView('today');
+
+        toast(`تمت الاستعادة بنجاح من "${fileName}" ✅`, 'success');
+        setTimeout(() => {
+            Dialog.success(`تم استبدال بيانات التطبيق بنجاح.\n\nالملف المستعاد: ${fileName}\n\nيمكنك الآن متابعة العمل بشكل طبيعي.`, '✅ تمت الاستعادة');
+        }, 400);
+
+    } catch (err) {
+        console.error('فشل الاستعادة:', err);
+        Dialog.error('فشل استعادة البيانات: ' + err.message, 'خطأ');
+    }
+}
+
+/* ===========================
+   التاريخ
+   =========================== */
+function toggleDatePicker() {
+    datePickerVisible = !datePickerVisible;
+    document.getElementById('datePickerBar').classList.toggle('hidden', !datePickerVisible);
+    document.getElementById('btnToggleDatePicker').textContent = datePickerVisible ? '🔺' : '🔻';
+    if (datePickerVisible) { document.getElementById('selectedDate').value = selectedDate; }
+}
+function changeSelectedDate(dateStr) {
+    selectedDate = dateStr || todayISO();
+    renderToday();
+}
+function backToToday() {
+    selectedDate = todayISO();
+    document.getElementById('selectedDate').value = selectedDate;
+    renderToday();
+    toast('تم الرجوع لليوم ✅');
+}
+function switchArchiveTab(reason) {
+    currentArchiveTab = reason;
+    const tT = document.getElementById('tabTransferred'), tV = document.getElementById('tabVacated');
+    if (reason === 'نقل') {
+        tT.style.cssText = 'border-radius:0; border-bottom:3px solid var(--primary); color:var(--primary); font-weight:800; padding:10px 18px;';
+        tV.style.cssText = 'border-radius:0; padding:10px 18px;';
+    } else {
+        tV.style.cssText = 'border-radius:0; border-bottom:3px solid var(--primary); color:var(--primary); font-weight:800; padding:10px 18px;';
+        tT.style.cssText = 'border-radius:0; padding:10px 18px;';
+    }
+    renderArchive();
+}
+
+/* ===========================
+   ربط الأحداث
+   =========================== */
+function bindEvents() {
+    // التنقل السفلي
+    document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+
     document.getElementById('btnToggleStats').addEventListener('click', toggleStatsPanel);
     document.getElementById('btnMenu').addEventListener('click', openDrawer);
     document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
-    // --- ربط أزرار نافذة الاستيراد الجديدة ---
-document.getElementById('chkConfirmRestore').addEventListener('change', (e) => {
-    document.getElementById('btnConfirmRestore').disabled = !e.target.checked;
-});
 
-document.getElementById('btnConfirmRestore').addEventListener('click', () => {
-    // إغلاق النافذة أولاً وإعطاء المتصفح وقتاً لإغلاقها
-    closeModal('modalRestore');
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-    
-    setTimeout(() => {
-        document.getElementById('importFile').click();
-    }, 350); // تأخير بسيط لضمان إغلاق النافذة قبل فتح مستعرض الملفات
-});
-  document.querySelectorAll('.drawer-item').forEach(item => {
+    // ====== شريط المعاينة (جديد) ======
+    document.getElementById('btnExitPreview').addEventListener('click', async () => {
+        const ok = await Dialog.confirm('هل تريد إلغاء وضع المعاينة والعودة إلى بياناتك الحقيقية؟', 'إلغاء المعاينة');
+        if (ok) exitPreviewMode();
+    });
+    document.getElementById('btnRestorePreview').addEventListener('click', openRestoreFromPreviewModal);
+    document.getElementById('previewFile').addEventListener('change', handlePreviewFile);
+
+    // ====== نافذة تأكيد الاستعادة من المعاينة ======
+    document.getElementById('chkConfirmRestoreFromPreview').addEventListener('change', (e) => {
+        document.getElementById('btnDoRestoreFromPreview').disabled = !e.target.checked;
+    });
+    document.getElementById('btnDoRestoreFromPreview').addEventListener('click', doRestoreFromPreview);
+
+    // ====== نافذة الاستيراد القديمة ======
+    document.getElementById('chkConfirmRestore').addEventListener('change', (e) => {
+        document.getElementById('btnConfirmRestore').disabled = !e.target.checked;
+    });
+    document.getElementById('btnConfirmRestore').addEventListener('click', () => {
+        closeModal('modalRestore');
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+        setTimeout(() => { document.getElementById('importFile').click(); }, 350);
+    });
+
+   // ====== أزرار القائمة الجانبية ======
+document.querySelectorAll('.drawer-item').forEach(item => {
     const action = item.dataset.action;
-    
-    // إذا كان زر الاستيراد، نطبق عليه الضغط المطول
-    if (action === 'restore') {
+
+    // 1. زر النسخ الاحتياطي (يجب أن ينفذ مباشرة ليعمل التنزيل على الجوال)
+    if (action === 'backup') {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeDrawer();
+            backup(); // تنفيذ فوري بدون تأخير
+        });
+    }
+    // 2. زر المعاينة (يجب أن ينفذ مباشرة ليفتح المتصفح نافذة الملفات)
+    else if (action === 'preview') {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeDrawer();
+            openPreviewModal(); // تنفيذ فوري بدون تأخير
+        });
+    }
+    // 3. زر الاستيراد (الضغط المطول)
+    else if (action === 'restore') {
         let pressTimer;
         let progressBar = document.createElement('div');
         progressBar.className = 'long-press-progress';
@@ -2835,200 +3751,193 @@ document.getElementById('btnConfirmRestore').addEventListener('click', () => {
             item.classList.add('pressing');
             let width = 0;
             progressBar.style.width = '0%';
-            
             pressTimer = setInterval(() => {
-                width += 2; // يزيد 2% كل 40 مللي ثانية = 2 ثانية للمئة
+                width += 2;
                 progressBar.style.width = width + '%';
                 if (width >= 100) {
                     clearInterval(pressTimer);
                     item.classList.remove('pressing');
                     progressBar.style.width = '0%';
-                    // اهتزاز خفيف
                     if (navigator.vibrate) navigator.vibrate(50);
                     closeDrawer();
                     setTimeout(() => restore(), 200);
                 }
             }, 40);
         };
-
         const cancelPress = () => {
             clearInterval(pressTimer);
             item.classList.remove('pressing');
             progressBar.style.width = '0%';
         };
-
         item.addEventListener('touchstart', startPress, {passive: false});
         item.addEventListener('mousedown', startPress);
         item.addEventListener('touchend', cancelPress);
         item.addEventListener('touchcancel', cancelPress);
         item.addEventListener('mouseup', cancelPress);
         item.addEventListener('mouseleave', cancelPress);
-        
-    } else {
-        // باقي الأزرار تعمل بالضغط العادي
+    }
+    // 4. باقي الأزرار (تعمل بشكل عادي)
+    else {
         item.addEventListener('click', () => {
             closeDrawer();
             setTimeout(() => {
                 if (action === 'new-customer') openCustomerModal();
                 else if (action === 'archive') switchView('archive');
                 else if (action === 'reports') switchToReports();
-                else if (action === 'backup') backup();
                 else if (action === 'dark-mode') toggleDarkMode();
             }, 200);
         });
     }
 });
-// --- إعدادات نافذة الحماية ---
-document.getElementById('btnSetPin').addEventListener('click', () => {
-    closeDrawer();
-    setTimeout(() => {
-        const currentPin = localStorage.getItem('amanat_pin');
-        const toggle = document.getElementById('togglePinEnable');
+
+    // ====== إعدادات الحماية ======
+    document.getElementById('btnSetPin').addEventListener('click', () => {
+        closeDrawer();
+        setTimeout(() => {
+            const currentPin = localStorage.getItem('amanat_pin');
+            const toggle = document.getElementById('togglePinEnable');
+            const inputsArea = document.getElementById('pinInputsArea');
+            const oldGroup = document.getElementById('oldPinGroup');
+            document.getElementById('oldPinInput').value = '';
+            document.getElementById('newPinInput').value = '';
+            if (currentPin) {
+                toggle.checked = true;
+                inputsArea.style.display = 'block';
+                oldGroup.style.display = 'block';
+            } else {
+                toggle.checked = false;
+                inputsArea.style.display = 'none';
+                oldGroup.style.display = 'none';
+            }
+            document.getElementById('pinModal').classList.add('show');
+        }, 200);
+    });
+    document.getElementById('togglePinEnable').addEventListener('change', (e) => {
         const inputsArea = document.getElementById('pinInputsArea');
         const oldGroup = document.getElementById('oldPinGroup');
-        
-        document.getElementById('oldPinInput').value = '';
-        document.getElementById('newPinInput').value = '';
-        
-        if (currentPin) {
-            toggle.checked = true;
+        const currentPin = localStorage.getItem('amanat_pin');
+        if (e.target.checked) {
             inputsArea.style.display = 'block';
-            oldGroup.style.display = 'block';
+            oldGroup.style.display = currentPin ? 'block' : 'none';
         } else {
-            toggle.checked = false;
             inputsArea.style.display = 'none';
-            oldGroup.style.display = 'none';
         }
-        document.getElementById('pinModal').classList.add('show');
-    }, 200);
-});
-
-document.getElementById('togglePinEnable').addEventListener('change', (e) => {
-    const inputsArea = document.getElementById('pinInputsArea');
-    const oldGroup = document.getElementById('oldPinGroup');
-    const currentPin = localStorage.getItem('amanat_pin');
-    
-    if (e.target.checked) {
-        inputsArea.style.display = 'block';
-        oldGroup.style.display = currentPin ? 'block' : 'none';
-    } else {
-        inputsArea.style.display = 'none';
-    }
-});
-
-document.getElementById('btnCancelPin').addEventListener('click', () => {
-    document.getElementById('pinModal').classList.remove('show');
-});
-
-document.getElementById('btnSavePin').addEventListener('click', async () => {
-    const isEnabled = document.getElementById('togglePinEnable').checked;
-    const currentPinHash = localStorage.getItem('amanat_pin'); // نقرأ الكود المشفر المخزن
-    
-    if (!isEnabled) {
-        // إطفاء الحماية
+    });
+    document.getElementById('btnCancelPin').addEventListener('click', () => {
+        document.getElementById('pinModal').classList.remove('show');
+    });
+    document.getElementById('btnSavePin').addEventListener('click', async () => {
+        const isEnabled = document.getElementById('togglePinEnable').checked;
+        const currentPinHash = localStorage.getItem('amanat_pin');
+        if (!isEnabled) {
+            if (currentPinHash) {
+                const oldPin = document.getElementById('oldPinInput').value;
+                const oldPinHash = await hashPin(oldPin);
+                if (oldPinHash !== currentPinHash) { toast('الرمز الحالي خاطئ', 'error'); return; }
+            }
+            localStorage.removeItem('amanat_pin');
+            toast('تم إلغاء تفعيل رمز الحماية', 'success');
+            document.getElementById('pinModal').classList.remove('show');
+            return;
+        }
+        const newPin = document.getElementById('newPinInput').value;
+        if (!/^\d{4}$/.test(newPin)) { toast('يجب أن يكون الرمز الجديد 4 أرقام', 'error'); return; }
         if (currentPinHash) {
             const oldPin = document.getElementById('oldPinInput').value;
             const oldPinHash = await hashPin(oldPin);
             if (oldPinHash !== currentPinHash) { toast('الرمز الحالي خاطئ', 'error'); return; }
         }
-        localStorage.removeItem('amanat_pin');
-        toast('تم إلغاء تفعيل رمز الحماية', 'success');
+        const newPinHash = await hashPin(newPin);
+        localStorage.setItem('amanat_pin', newPinHash);
+        toast('تم حفظ رمز الحماية بنجاح 🔒', 'success');
         document.getElementById('pinModal').classList.remove('show');
-        return;
-    }
-    
-    // تفعيل الحماية
-    const newPin = document.getElementById('newPinInput').value;
-    if (!/^\d{4}$/.test(newPin)) { toast('يجب أن يكون الرمز الجديد 4 أرقام', 'error'); return; }
-    
-    if (currentPinHash) {
-        const oldPin = document.getElementById('oldPinInput').value;
-        const oldPinHash = await hashPin(oldPin);
-        if (oldPinHash !== currentPinHash) { toast('الرمز الحالي خاطئ', 'error'); return; }
-    }
-    
-    // تشفير الرمز الجديد وحفظه
-    const newPinHash = await hashPin(newPin);
-    localStorage.setItem('amanat_pin', newPinHash);
-    toast('تم حفظ رمز الحماية بنجاح 🔒', 'success');
-    document.getElementById('pinModal').classList.remove('show');
-});
-    document.getElementById('searchInput').addEventListener('input', (e) => { 
-        currentSearch = e.target.value.trim(); renderCustomers(); 
     });
-    
+
+    // ====== البحث والتاريخ ======
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        currentSearch = e.target.value.trim();
+        renderCustomers();
+    });
     document.getElementById('btnToggleDatePicker').addEventListener('click', toggleDatePicker);
     document.getElementById('selectedDate').addEventListener('change', (e) => { changeSelectedDate(e.target.value); });
     document.getElementById('btnBackToToday').addEventListener('click', backToToday);
-    
+
+    // ====== أزرار اليوم ======
     document.getElementById('btnTodayDeposit').addEventListener('click', () => openTransactionModal({ type: 'deposit' }));
     document.getElementById('btnTodayWithdraw').addEventListener('click', () => openTransactionModal({ type: 'withdraw' }));
-    
+
+    // ====== صفحة النزيل ======
     document.getElementById('btnCloseCustomer').addEventListener('click', () => { switchView(previousView); });
-    
+
     const dropdown = document.getElementById('custDropdown');
-    document.getElementById('btnCustMenu').addEventListener('click', (e) => { 
-        e.stopPropagation(); dropdown.classList.toggle('open'); 
+    document.getElementById('btnCustMenu').addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
     });
-    
-    document.addEventListener('click', (e) => { 
-        if (!dropdown.contains(e.target)) dropdown.classList.remove('open'); 
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target)) dropdown.classList.remove('open');
     });
-    
+
     document.querySelectorAll('#custDropdownMenu .dropdown-item').forEach(item => {
         item.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const action = item.dataset.action; 
+            const action = item.dataset.action;
             dropdown.classList.remove('open');
-            const c = DB.getCustomer(currentCustomerId); 
+            const c = DataSource.getCustomer(currentCustomerId);
             if (!c) { toast('خطأ: النزيل غير موجود', 'error'); return; }
 
-            if (action === 'deposit') openTransactionModal({ type: 'deposit', customerId: currentCustomerId });
-            else if (action === 'withdraw') openTransactionModal({ type: 'withdraw', customerId: currentCustomerId });
-            else if (action === 'edit') openCustomerModal(c);
+            if (action === 'deposit') { if (!guardEdit()) return; openTransactionModal({ type: 'deposit', customerId: currentCustomerId }); }
+            else if (action === 'withdraw') { if (!guardEdit()) return; openTransactionModal({ type: 'withdraw', customerId: currentCustomerId }); }
+            else if (action === 'edit') { if (!guardEdit()) return; openCustomerModal(c); }
             else if (action === 'print') printCustomer(c.id);
-            else if (action === 'archive') { openArchiveModal(); setTimeout(() => selectArchiveCustomer(currentCustomerId), 200); }
+            else if (action === 'archive') { if (!guardEdit()) return; openArchiveModal(); setTimeout(() => selectArchiveCustomer(currentCustomerId), 200); }
             else if (action === 'delete') {
+                if (!guardEdit()) return;
                 const ok = await Dialog.confirmDanger(`سيتم حذف النزيل "${c.name}" وكل حركاته نهائياً.\n\nلا يمكن التراجع!`);
                 if (ok) { DB.deleteCustomer(currentCustomerId); toast('تم حذف النزيل', 'success'); goHome(); renderDashboard(); renderSortChips(); renderCustomers(); }
             }
         });
     });
 
+    // ====== نماذج ======
     document.getElementById('formCustomer').addEventListener('submit', submitCustomer);
     document.getElementById('formTransaction').addEventListener('submit', submitTransaction);
     document.getElementById('btnDeleteTx').addEventListener('click', deleteTxFromModal);
-    
+
+    // ====== اختيار النزيل في الحركة ======
     document.getElementById('txCustomerSearch').addEventListener('input', (e) => { searchTxCustomer(e.target.value); });
-    
-    document.getElementById('inputRecipient').addEventListener('change', (e) => { 
-        if (e.target.value === '__manage__') switchToRecipientManager(); 
+
+    // ====== المستلمون ======
+    document.getElementById('inputRecipient').addEventListener('change', (e) => {
+        if (e.target.value === '__manage__') switchToRecipientManager();
     });
-    
     document.getElementById('btnAddRecipient').addEventListener('click', () => {
-        const inp = document.getElementById('newRecipientInput'); const name = inp.value.trim();
+        if (!guardEdit()) return;
+        const inp = document.getElementById('newRecipientInput');
+        const name = inp.value.trim();
         if (!name) { toast('أدخل الاسم', 'error'); return; }
         if (!DB.addRecipient(currentRecipientType, name)) { toast('الاسم موجود مسبقاً', 'error'); return; }
-        toast('تم الإضافة ✅', 'success'); inp.value = ''; renderRecipientsList();
+        toast('تم الإضافة ✅', 'success');
+        inp.value = '';
+        renderRecipientsList();
     });
-    
-    document.getElementById('newRecipientInput').addEventListener('keydown', (e) => { 
-        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnAddRecipient').click(); } 
+    document.getElementById('newRecipientInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnAddRecipient').click(); }
     });
-    
     document.getElementById('btnBackToTx').addEventListener('click', backToTransactionForm);
-    
+
+    // ====== الأرشفة ======
     document.getElementById('formArchive').addEventListener('submit', submitArchive);
     document.getElementById('archiveCustomerSearch').addEventListener('input', (e) => { searchArchiveCustomer(e.target.value); });
-    document.getElementById('inputArchiveReason').addEventListener('change', (e) => { 
-        document.getElementById('groupTransferTo').style.display = e.target.value === 'نقل' ? 'block' : 'none'; 
+    document.getElementById('inputArchiveReason').addEventListener('change', (e) => {
+        document.getElementById('groupTransferTo').style.display = e.target.value === 'نقل' ? 'block' : 'none';
     });
-    
     document.getElementById('btnArchiveCustomer').addEventListener('click', openArchiveModal);
     document.getElementById('tabTransferred').addEventListener('click', () => switchArchiveTab('نقل'));
     document.getElementById('tabVacated').addEventListener('click', () => switchArchiveTab('إخلاء'));
-    
+
+    // ====== إغلاق النوافذ ======
     document.querySelectorAll('[data-close]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const manager = document.getElementById('txRecipientManager');
@@ -3039,7 +3948,6 @@ document.getElementById('btnSavePin').addEventListener('click', async () => {
             }
         });
     });
-    
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
@@ -3049,7 +3957,6 @@ document.getElementById('btnSavePin').addEventListener('click', async () => {
             }
         });
     });
-    
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.show').forEach(m => {
@@ -3060,42 +3967,33 @@ document.getElementById('btnSavePin').addEventListener('click', async () => {
             closeDrawer();
         }
     });
-    
+
+    // ====== حول و الاستيراد ======
     document.getElementById('btnAbout').addEventListener('click', () => { closeDrawer(); setTimeout(() => openModal('modalAbout'), 250); });
     document.getElementById('importFile').addEventListener('change', handleImport);
-    
-    document.querySelectorAll('.report-card').forEach(card => { 
-        card.addEventListener('click', () => openReport(card.dataset.report)); 
+
+    // ====== التقارير ======
+    document.querySelectorAll('.report-card').forEach(card => {
+        card.addEventListener('click', () => openReport(card.dataset.report));
     });
-    
     document.getElementById('btnPrintReport').addEventListener('click', printCurrentReport);
 }
 
-function toggleDatePicker() {
-    datePickerVisible = !datePickerVisible; document.getElementById('datePickerBar').classList.toggle('hidden', !datePickerVisible);
-    document.getElementById('btnToggleDatePicker').textContent = datePickerVisible ? '🔺' : '🔻';
-    if (datePickerVisible) { document.getElementById('selectedDate').value = selectedDate; }
-}
-function changeSelectedDate(dateStr) { selectedDate = dateStr || todayISO(); renderToday(); }
-function backToToday() { selectedDate = todayISO(); document.getElementById('selectedDate').value = selectedDate; renderToday(); toast('تم الرجوع لليوم ✅'); }
-function switchArchiveTab(reason) {
-    currentArchiveTab = reason; const tT = document.getElementById('tabTransferred'), tV = document.getElementById('tabVacated');
-    if (reason === 'نقل') { tT.style.cssText = 'border-radius:0; border-bottom:3px solid var(--primary); color:var(--primary); font-weight:800; padding:10px 18px;'; tV.style.cssText = 'border-radius:0; padding:10px 18px;'; }
-    else { tV.style.cssText = 'border-radius:0; border-bottom:3px solid var(--primary); color:var(--primary); font-weight:800; padding:10px 18px;'; tT.style.cssText = 'border-radius:0; padding:10px 18px;'; }
-    renderArchive();
-}
-
+/* ===========================
+   الإقلاع
+   =========================== */
 function init() {
-    const savedPin = localStorage.getItem('amanat_pin');
+    const savedPinHash = localStorage.getItem('amanat_pin');
     const lockScreen = document.getElementById('lockScreen');
-    
-    if (savedPin) {
+
+    if (savedPinHash) {
         lockScreen.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        
-        const unlock = () => {
+
+        const unlock = async () => {
             const val = document.getElementById('lockInput').value;
-            if (val === savedPin) {
+            const valHash = await hashPin(val);
+            if (valHash === savedPinHash) {
                 lockScreen.style.display = 'none';
                 document.body.style.overflow = '';
                 startAppCore();
@@ -3104,10 +4002,8 @@ function init() {
                 document.getElementById('lockInput').value = '';
             }
         };
-        
         document.getElementById('btnUnlock').onclick = unlock;
         document.getElementById('lockInput').onkeydown = (e) => { if(e.key === 'Enter') unlock(); };
-        
         document.getElementById('btnForgotPin').onclick = async () => {
             const ok = await Dialog.confirmDanger('سيتم مسح جميع البيانات نهائياً! هل أنت متأكد؟', 'نسيت الرمز');
             if (ok) { localStorage.clear(); indexedDB.deleteDatabase('amanat_db'); location.reload(); }
@@ -3118,110 +4014,56 @@ function init() {
 }
 
 function startAppCore() {
-    // --- فحص تذكير النسخ الاحتياطي (يومياً) ---
+    // تنبيه النسخ الاحتياطي
     const lastBackup = localStorage.getItem('amanat_last_backup');
     const now = Date.now();
-    const oneDay = 24 * 60 * 60 * 1000; // 24 ساعة (يوم واحد)
-    
+    const oneDay = 24 * 60 * 60 * 1000;
+
     if (DB.getCustomers().length > 0) {
         if (!lastBackup || (now - lastBackup > oneDay)) {
             setTimeout(() => {
                 Dialog._show({
                     title: '💾 تنبيه النسخ الاحتياطي',
                     message: 'لقد مر يوم (أو أكثر) منذ آخر نسخة احتياطية.\n\nننصحك بأخذ نسخة الآن لحماية بياناتك.',
-                    type: 'warning', icon: '⚠️', 
+                    type: 'warning', icon: '⚠️',
                     buttons: [
                         { text: 'لاحقاً', type: 'secondary', value: false },
                         { text: 'أخذ نسخة الآن', type: 'primary', value: true }
                     ]
                 }).then(res => { if (res) backup(); });
-            }, 2500); // يظهر بعد ثانيتين ونصف من فتح التطبيق
+            }, 2500);
         }
     }
 
-    // --- كود بداية التطبيق الأساسي ---
-    const settings = DB.getSettings(); 
-    applyDarkMode(settings.darkMode); 
+    // إعدادات
+    const settings = DB.getSettings();
+    applyDarkMode(settings.darkMode);
     updateDrawerDarkItem(settings.darkMode);
-    statsHidden = settings.statsHidden !== false; 
+    statsHidden = settings.statsHidden !== false;
     document.getElementById('statsPanel').classList.toggle('hidden', statsHidden);
     document.getElementById('btnToggleStats').textContent = statsHidden ? '🔻' : '🔺';
-    
-    bindEvents(); 
-    renderDashboard(); 
-    renderSortChips(); 
-    renderCustomers(); 
-    renderMonth(); 
+
+    // ربط الأحداث
+    bindEvents();
+
+    // الرسم الأولي
+    renderDashboard();
+    renderSortChips();
+    renderCustomers();
+    renderMonth();
     switchView('today');
-    
-    const hash = location.hash; 
-    const match = hash.match(/customer=([^&]+)/); 
+
+    // الرابط المباشر
+    const hash = location.hash;
+    const match = hash.match(/customer=([^&]+)/);
     if (match && DB.getCustomer(match[1])) { openCustomer(match[1]); }
-    console.log('✅ تم تحميل تطبيق الأمانات v3.1');
+
+    console.log('✅ تم تحميل تطبيق الأمانات v3.1 (مع وضع المعاينة)');
 }
 
 document.addEventListener('DOMContentLoaded', () => { DB.onReady(init); });
 return { goHome, openCustomer, switchView };
 })();
 </script>
-<!-- نافذة إعدادات الحماية العصرية -->
-<div id="pinModal" class="pin-modal-overlay">
-    <div class="pin-modal">
-        <span class="pin-modal-icon">🔐</span>
-        <h3>إعدادات الحماية</h3>
-        <p>تحكم في قفل التطبيق برمز PIN</p>
-        
-        <label class="pin-toggle-wrap" for="togglePinEnable">
-            <span class="pin-toggle-label">تفعيل رمز الحماية</span>
-            <div class="pin-switch">
-                <input type="checkbox" id="togglePinEnable">
-                <span class="pin-slider"></span>
-            </div>
-        </label>
-        
-        <div id="pinInputsArea" style="display: none;">
-            <div class="pin-inputs">
-                <div class="pin-input-group" id="oldPinGroup" style="display: none;">
-                    <label>الرمز الحالي</label>
-                    <input type="password" id="oldPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
-                </div>
-                <div class="pin-input-group">
-                    <label>الرمز الجديد (4 أرقام)</label>
-                    <input type="password" id="newPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
-                </div>
-            </div>
-        </div>
-
-        <div class="pin-actions">
-            <button type="button" class="btn btn-secondary" id="btnCancelPin">إلغاء</button>
-            <button type="button" class="btn btn-primary" id="btnSavePin">حفظ</button>
-        </div>
-    </div>
-</div>
-<!-- نافذة استيراد النسخة الاحتياطية (المخصصة) -->
-<div class="modal-overlay" id="modalRestore">
-    <div class="modal" style="max-width:400px;">
-        <div class="modal-header"><h2>📂 استيراد نسخة احتياطية</h2><button class="modal-close" data-close="modalRestore">×</button></div>
-        <div class="modal-body">
-            <div class="restore-warning">
-                ⚠️ تحذير هام جداً:<br>
-                سيتم مسح جميع البيانات الحالية (النزلاء، الحركات، الأرشيف) واستبدالها بالبيانات الموجودة في الملف الذي اخترته. لا يمكن التراجع عن هذه الخطوة!
-            </div>
-            
-            <label class="restore-checkbox-wrap">
-                <input type="checkbox" id="chkConfirmRestore">
-                <span>أقر بأنني أريد استبدال جميع البيانات الحالية وفهمت أن هذه العملية لا يمكن التراجع عنها.</span>
-            </label>
-            
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" data-close="modalRestore">إلغاء</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmRestore" disabled>استبدال البيانات</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<input type="file" id="importFile" accept=".json" style="display:none;">
-  <div id="print-container"></div>
 </body>
 </html>
