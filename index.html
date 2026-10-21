@@ -1338,6 +1338,36 @@ body.preview-mode #btnDeleteTx {
 
 /* إخفاء حقل الإدخال القديم (نبقيه في الكود لكن مخفياً) */
 #lockInput { display: none !important; }
+/* زر الدليل في هيدر القائمة */
+.drawer-help-btn {
+    margin-right: auto;          /* يدفعه لليسار (لأن الاتجاه RTL) */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.drawer-help-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.drawer-help-btn:active {
+    transform: scale(0.95);
+}
 </style>
 </head>
 <body>
@@ -1386,13 +1416,14 @@ body.preview-mode #btnDeleteTx {
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
 <aside class="drawer" id="drawer">
-    <div class="drawer-header">
-        <div class="drawer-logo">🏦</div>
-        <div class="drawer-title">
-            <h2>الأمانات</h2>
-            <p>نظام إدارة النزلاء</p>
-        </div>
+  <div class="drawer-header">
+    <div class="drawer-logo">🏦</div>
+    <div class="drawer-title">
+        <h2>الأمانات</h2>
+        <p>نظام إدارة النزلاء</p>
     </div>
+    <button class="drawer-help-btn" id="btnOpenGuide" title="دليل الاستخدام" aria-label="دليل الاستخدام">❓</button>
+  </div>
     <div class="drawer-body">
         <button class="drawer-item" data-action="new-customer"><span class="drawer-item-icon">➕</span><span>نزيل جديد</span></button>
         <button class="drawer-item" data-action="archive"><span class="drawer-item-icon">🗂️</span><span>الأرشيف</span></button>
@@ -4067,7 +4098,13 @@ function bindEvents() {
         document.getElementById('pinModal').classList.remove('show');
     });
 
-   
+   document.getElementById('btnOpenGuide').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeDrawer();
+    setTimeout(() => {
+        window.open('AmanatGuide.html', '_blank');
+    }, 200);
+});
   // ====== البحث والتاريخ ======
     document.getElementById('searchInput').addEventListener('input', (e) => {
         currentSearch = e.target.value.trim();
@@ -4415,7 +4452,6 @@ if (btnConfirmFinalWipe) {
     btnWipe.addEventListener('mouseup', cancelWipePress);
     btnWipe.addEventListener('mouseleave', cancelWipePress);
 }
-// ====== نهاية كود المسح ======
 // ====== نهاية كود المسح ======
     } else {
         startAppCore();
