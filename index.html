@@ -1368,6 +1368,42 @@ body.preview-mode #btnDeleteTx {
 .drawer-help-btn:active {
     transform: scale(0.95);
 }
+/* ====== لمعة ذهبية على زر الدليل ====== */
+.drawer-help-btn {
+    position: relative;
+    overflow: hidden;   /* مهم: يقص اللمعة داخل الزر */
+}
+
+/* اللمعة الذهبية */
+.drawer-help-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;       /* تبدأ خارج الزر */
+    width: 150%;
+    height: 150%;
+   background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.9) 45%,   /* ذهبي غامق */
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(212, 175, 55, 0.9) 55%,
+    transparent 100%
+);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* الحركة: عندما نضيف .shine، تعبر اللمعة */
+.drawer-help-btn.shine::before {
+    animation: goldShineSweep 1s ease-in-out;
+}
+
+@keyframes goldShineSweep {
+    0%   { left: -150%; }
+    100% { left: 150%; }
+}
 </style>
 </head>
 <body>
@@ -1422,7 +1458,7 @@ body.preview-mode #btnDeleteTx {
         <h2>الأمانات</h2>
         <p>نظام إدارة النزلاء</p>
     </div>
-    <button class="drawer-help-btn" id="btnOpenGuide" title="دليل الاستخدام" aria-label="دليل الاستخدام">❓</button>
+  <button class="drawer-help-btn" id="btnOpenGuide" aria-label="دليل الاستخدام">❓</button>
   </div>
     <div class="drawer-body">
         <button class="drawer-item" data-action="new-customer"><span class="drawer-item-icon">➕</span><span>نزيل جديد</span></button>
@@ -2567,7 +2603,12 @@ _bn.style.pointerEvents = showBottomNav ? 'auto' : 'none';
 // إجبار إعادة حساب layout
 void _bn.offsetHeight;
 document.body.classList.toggle('no-bottom-nav', !showBottomNav);
-    currentView = viewName; window.scrollTo({ top: 0, behavior: 'smooth' });
+    // تحديث تمييز الشريط السفلي
+document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === viewName);
+});
+
+currentView = viewName; window.scrollTo({ top: 0, behavior: 'smooth' });
     if (viewName === 'today') renderToday();
     if (viewName === 'customers') { renderSortChips(); renderCustomers(); }
     if (viewName === 'month') renderMonth();
@@ -4033,7 +4074,30 @@ function bindEvents() {
             });
         }
     });
+// ====== لمعة ذهبية دورية على زر الدليل ======
+const btnGuide = document.getElementById('btnOpenGuide');
+let guideShineTimer = null;
 
+function playGuideShine() {
+    if (!btnGuide) return;
+    btnGuide.classList.remove('shine');
+    void btnGuide.offsetWidth;  // force reflow
+    btnGuide.classList.add('shine');
+    setTimeout(() => btnGuide.classList.remove('shine'), 750);
+}
+
+// بدء التشغيل الدوري (كل 10 ثوانٍ)
+if (btnGuide) {
+    guideShineTimer = setInterval(playGuideShine, 5000);
+    
+    // إيقاف المؤقت عند إغلاق الصفحة (لطف بالأداء)
+    window.addEventListener('beforeunload', () => {
+        if (guideShineTimer) clearInterval(guideShineTimer);
+    });
+    
+    // أول لمعة بعد 1.5 ثانية من تحميل الصفحة (لتجذب الانتباه مبكراً)
+    setTimeout(playGuideShine, 1500);
+}
     // ====== إعدادات الحماية ======
     document.getElementById('btnSetPin').addEventListener('click', () => {
         closeDrawer();
