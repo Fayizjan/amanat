@@ -771,7 +771,7 @@ body.no-bottom-nav .toast { bottom: 24px; }
 
 /* شاشة الحماية */
 .lock-screen {
-    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+    position: fixed; inset: 0; background: var(--bg); z-index: 900; /* تم التعديل */
     display: flex; align-items: center; justify-content: center;
     padding: 20px; text-align: center;
 }
@@ -1233,12 +1233,180 @@ body.preview-mode .card-actions [data-action="restore"],
 body.preview-mode #btnDeleteTx {
     display: none !important;
 }
+/* ====== إصلاح مشكلة اللمس في الشريط السفلي ====== */
+.bottom-nav {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    transform: translateZ(0); /* إجبار طبقة compositing مستقلة */
+}
+.bottom-nav-item {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1;
+}
+/* منع أي عنصر شفاف من اعتراض اللمس فوق الشريط السفلي */
+.bottom-nav.hidden {
+    pointer-events: none !important;
+    visibility: hidden;
+    transform: translateY(100%) !important;
+}
+/* ضمان أن التوست لا يعترض اللمس */
+.toast {
+    pointer-events: none !important;
+}
+/* ضمان أن شريط المعاينة لا يعترض اللمس بعد إخفائه */
+.preview-banner[style*="display: none"],
+.preview-banner[style*="display:none"] {
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+/* ===========================
+   لوحة الأرقام (Keypad)
+   =========================== */
+.keypad-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+}
+.keypad-dots {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+.keypad-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+.keypad-dot.active {
+    background: var(--primary);
+    transform: scale(1.15);
+    box-shadow: 0 0 10px rgba(243, 112, 33, 0.4);
+}
+.keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 260px;
+}
+.keypad-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 1px solid var(--border-soft);
+    background: var(--white);
+    color: var(--text);
+    font-size: 26px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.keypad-btn:active, .keypad-btn.pressed {
+    background: var(--primary-light);
+    color: var(--primary);
+    transform: scale(0.92);
+    border-color: var(--primary);
+}
+.keypad-btn.action-btn-keypad {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    font-size: 22px;
+    color: var(--text-soft);
+}
+.keypad-btn.action-btn-keypad:active {
+    background: var(--border-soft);
+    transform: scale(0.92);
+}
+
+/* إخفاء حقل الإدخال القديم (نبقيه في الكود لكن مخفياً) */
+#lockInput { display: none !important; }
+/* زر الدليل في هيدر القائمة */
+.drawer-help-btn {
+    margin-right: auto;          /* يدفعه لليسار (لأن الاتجاه RTL) */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.drawer-help-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.drawer-help-btn:active {
+    transform: scale(0.95);
+}
+/* ====== لمعة ذهبية على زر الدليل ====== */
+.drawer-help-btn {
+    position: relative;
+    overflow: hidden;   /* مهم: يقص اللمعة داخل الزر */
+}
+
+/* اللمعة الذهبية */
+.drawer-help-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;       /* تبدأ خارج الزر */
+    width: 150%;
+    height: 150%;
+   background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.9) 45%,   /* ذهبي غامق */
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(212, 175, 55, 0.9) 55%,
+    transparent 100%
+);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* الحركة: عندما نضيف .shine، تعبر اللمعة */
+.drawer-help-btn.shine::before {
+    animation: goldShineSweep 1s ease-in-out;
+}
+
+@keyframes goldShineSweep {
+    0%   { left: -150%; }
+    100% { left: 150%; }
+}
 </style>
 </head>
-<!-- ============================================ -->
-<!-- ⬆️ نهاية الجزء 1 — يليه مباشرة <body> في الجزء 2 -->
-<!-- ============================================ -->
-  <body>
+<body>
 
 <!-- ===========================
      شريط وضع المعاينة (يظهر فقط في وضع المعاينة)
@@ -1284,20 +1452,21 @@ body.preview-mode #btnDeleteTx {
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
 <aside class="drawer" id="drawer">
-    <div class="drawer-header">
-        <div class="drawer-logo">🏦</div>
-        <div class="drawer-title">
-            <h2>الأمانات</h2>
-            <p>نظام إدارة النزلاء</p>
-        </div>
+  <div class="drawer-header">
+    <div class="drawer-logo">🏦</div>
+    <div class="drawer-title">
+        <h2>الأمانات</h2>
+        <p>نظام إدارة النزلاء</p>
     </div>
+  <button class="drawer-help-btn" id="btnOpenGuide" aria-label="دليل الاستخدام">❓</button>
+  </div>
     <div class="drawer-body">
         <button class="drawer-item" data-action="new-customer"><span class="drawer-item-icon">➕</span><span>نزيل جديد</span></button>
         <button class="drawer-item" data-action="archive"><span class="drawer-item-icon">🗂️</span><span>الأرشيف</span></button>
         <button class="drawer-item" data-action="reports"><span class="drawer-item-icon">📊</span><span>التقارير</span></button>
         <div class="drawer-divider"></div>
         <button class="drawer-item" data-action="backup"><span class="drawer-item-icon">💾</span><span>نسخة احتياطية</span></button>
-        <button class="drawer-item" data-action="preview"><span class="drawer-item-icon">🔍</span><span>معاينة نسخة احتياطية</span></button>
+        <button class="drawer-item" data-action="preview"><span class="drawer-item-icon">🔍</span><span>معاينة نسخة</span></button>
         <button class="drawer-item" data-action="restore"><span class="drawer-item-icon">📂</span><span>استيراد نسخة</span></button>
         <div class="drawer-divider"></div>
         <button class="drawer-item" id="btnSetPin"><span class="drawer-item-icon">🔒</span><span>تعيين رمز حماية</span></button>
@@ -1684,18 +1853,118 @@ body.preview-mode #btnDeleteTx {
 <!-- ===========================
      شاشة الحماية
      =========================== -->
-<div id="lockScreen" class="lock-screen" style="display: none;">
-    <div class="lock-box">
-        <div class="lock-icon">🔒</div>
-        <h2>الأمانات</h2>
-        <p>أدخل رمز المرور للمتابعة</p>
-        <input type="password" id="lockInput" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="off">
-        <button class="btn btn-primary btn-block" id="btnUnlock" style="margin-top: 15px;">دخول</button>
-        <button id="btnForgotPin" style="background:none; border:none; color:var(--text-light); font-size:11px; margin-top:15px; text-decoration:underline; font-family:inherit;">نسيت الرمز؟ (مسح البيانات)</button>
+<!-- ===========================
+     نافذة استرداد كلمة السر
+     =========================== -->
+<div id="recoveryModal" class="pin-modal-overlay">
+    <div class="pin-modal">
+        <span class="pin-modal-icon">🔑</span>
+        <h3>مفتاح الاسترداد</h3>
+        <p>أدخل كود الاسترداد الخاص بتطبيق الأمانات</p>
+
+        <div class="pin-input-group" style="margin-bottom: 20px;">
+            <label>كود اليوم (4 أرقام)</label>
+            <input type="text" id="recoveryInput" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align: center; font-size: 24px; letter-spacing: 10px;">
+        </div>
+
+        <div class="pin-actions">
+            <button type="button" class="btn btn-secondary" id="btnCancelRecovery">إلغاء</button>
+            <button type="button" class="btn btn-primary" id="btnConfirmRecovery">دخول</button>
+        </div>
     </div>
 </div>
+  <div id="lockScreen" class="lock-screen" style="display: none;">
+    <div class="lock-box" style="max-width: 340px; padding: 25px 20px;">
+        <div class="lock-icon">🔒</div>
+        <h2>الأمانات</h2>
+        <p style="margin-bottom: 10px;">أدخل رمز المرور للمتابعة</p>
+        
+        <!-- حقل مخفي للتوافق مع الكود القديم -->
+        <input type="password" id="lockInput" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="off" style="display:none;">
 
+        <!-- النقاط (Dots) -->
+        <div class="keypad-dots" id="keypadDots">
+            <div class="keypad-dot"></div>
+            <div class="keypad-dot"></div>
+            <div class="keypad-dot"></div>
+            <div class="keypad-dot"></div>
+        </div>
+
+        <!-- لوحة الأرقام -->
+        <div class="keypad-grid" dir="ltr">
+            <button type="button" class="keypad-btn" data-key="1">1</button>
+            <button type="button" class="keypad-btn" data-key="2">2</button>
+            <button type="button" class="keypad-btn" data-key="3">3</button>
+            <button type="button" class="keypad-btn" data-key="4">4</button>
+            <button type="button" class="keypad-btn" data-key="5">5</button>
+            <button type="button" class="keypad-btn" data-key="6">6</button>
+            <button type="button" class="keypad-btn" data-key="7">7</button>
+            <button type="button" class="keypad-btn" data-key="8">8</button>
+            <button type="button" class="keypad-btn" data-key="9">9</button>
+            
+         
+        <div></div> <!-- مساحة فارغة -->
+<button type="button" class="keypad-btn" data-key="0">0</button>
+<button type="button" class="keypad-btn action-btn-keypad" id="btnKeypadDelete" title="حذف">⌫</button>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 8px;">
+            <button id="btnRecovery" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; text-decoration:underline; font-family:inherit; cursor:pointer;">نسيت الرمز؟ (مفتاح الاسترداد)</button>
+        </div>
+    </div>
+</div>
 <!-- ===========================
+     نافذة إجبارية لتعيين كلمة سر جديدة (بعد الاسترداد)
+     =========================== -->
+<div id="forceNewPinModal" class="pin-modal-overlay">
+    <div class="pin-modal">
+        <span class="pin-modal-icon">🔐</span>
+        <h3>كلمة سر جديدة</h3>
+        <p>لدخولك بمفتاح الاسترداد، يجب تعيين كلمة سر جديدة لحماية التطبيق.</p>
+
+        <div class="pin-inputs">
+            <div class="pin-input-group">
+                <label>الرمز الجديد (4 أرقام)</label>
+                <input type="password" id="forceNewPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
+            </div>
+            <div class="pin-input-group">
+                <label>تأكيد الرمز الجديد</label>
+                <input type="password" id="forceConfirmPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
+            </div>
+        </div>
+
+        <div class="pin-actions">
+            <button type="button" class="btn btn-primary btn-block" id="btnSaveForcePin">حفظ ودخول</button>
+        </div>
+<!-- زر مسح البيانات (بعد الدخول بالاسترداد) -->
+<button type="button" class="btn btn-outline btn-block" id="btnWipeDataFromSettings" style="position: relative; overflow: hidden; margin-top: 15px; border-color: var(--danger); color: var(--danger); z-index: 1;">
+    <div id="wipeProgressBar" style="position: absolute; top: 0; right: 0; bottom: 0; width: 0%; background: rgba(239, 68, 68, 0.2); z-index: -1; transition: width 0.1s linear; pointer-events: none;"></div>
+    <span id="wipeBtnText" style="position: relative; z-index: 2;">🗑️ اضغط باستمرار للمسح (3 ثوان)</span>
+</button>
+    </div>
+</div>
+<!-- ===========================
+     نافذة تأكيد المسح النهائي
+     =========================== -->
+<div id="finalWipeConfirmModal" class="pin-modal-overlay">
+    <div class="pin-modal" style="border: 2px solid var(--danger);">
+        <span class="pin-modal-icon" style="color: var(--danger);">⚠️</span>
+        <h3 style="color: var(--danger);">تأكيد المسح النهائي</h3>
+        <p style="margin-bottom: 15px;">أنت على وشك مسح جميع البيانات (النزلاء، الحركات، الأرشيف) نهائياً.<br>لا يمكن التراجع عن هذه الخطوة!</p>
+
+        <label class="restore-checkbox-wrap" style="text-align: right; display: flex; align-items: flex-start; margin-bottom: 20px;">
+            <input type="checkbox" id="chkFinalWipeConfirm" style="margin-top: 4px;">
+            <span style="font-size: 13px; line-height: 1.5; color: var(--text);">أقر بأنني أريد مسح جميع البيانات نهائياً وفهمت أن هذه العملية لا يمكن التراجع عنها.</span>
+        </label>
+
+        <div class="pin-actions">
+            <button type="button" class="btn btn-secondary" id="btnCancelFinalWipe">إلغاء</button>
+            <button type="button" class="btn btn-danger" id="btnConfirmFinalWipe" disabled>مسح نهائي</button>
+        </div>
+    </div>
+</div>
+  
+  <!-- ===========================
      حقل اختيار الملفات (مخفي)
      =========================== -->
 <input type="file" id="importFile" accept=".json" style="display:none;">
@@ -1752,6 +2021,7 @@ body.preview-mode #btnDeleteTx {
         <div class="pin-actions">
             <button type="button" class="btn btn-secondary" id="btnCancelPin">إلغاء</button>
             <button type="button" class="btn btn-primary" id="btnSavePin">حفظ</button>
+
         </div>
     </div>
 </div>
@@ -1818,11 +2088,7 @@ body.preview-mode #btnDeleteTx {
      حاوية الطباعة
      =========================== -->
 <div id="print-container"></div>
-
-<!-- ============================================ -->
-<!-- ⬆️ نهاية الجزء 2 — يليه مباشرة <script> في الجزء 3 -->
-<!-- ============================================ -->
-    <script>
+<script>
 const App = (() => {
 
 /* ===========================
@@ -1885,10 +2151,9 @@ const Dialog = (() => {
             }
         });
     }
-  return {
-    _show: _show, // ← أضف هذا السطر
-    alert:  (msg, t='تنبيه') => _show({ title:t, message:msg, type:'info', icon:'ℹ️' }),
-    success:(msg, t='نجاح')  => _show({ title:t, message:msg, type:'success', icon:'✅' }),
+    return {
+        alert:  (msg, t='تنبيه') => _show({ title:t, message:msg, type:'info', icon:'ℹ️' }),
+        success:(msg, t='نجاح')  => _show({ title:t, message:msg, type:'success', icon:'✅' }),
         error:  (msg, t='خطأ')   => _show({ title:t, message:msg, type:'danger', icon:'❌' }),
         warning:(msg, t='تحذير') => _show({ title:t, message:msg, type:'warning', icon:'⚠️' }),
         confirm:(msg, t='تأكيد') => _show({ title:t, message:msg, type:'warning', icon:'❓', buttons:[{ text:'إلغاء', type:'secondary', value:false }, { text:'تأكيد', type:'primary', value:true }] }),
@@ -2112,6 +2377,7 @@ const ViewState = {
     fileName: null,
     isPreviewMode() { return this.mode === 'preview'; }
 };
+
 /* ===========================
    DataSource — طبقة وسيطة (جديد)
    تقرأ من ViewState في وضع المعاينة، من DB في وضع التعديل
@@ -2282,7 +2548,22 @@ function todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(
 function monthNameAr(yearMonth) { const [y, m] = yearMonth.split('-').map(Number); const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']; return months[m-1] + ' ' + y; }
 function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 let toastTimer = null;
-function toast(msg, type='') { const el = document.getElementById('toast'); el.textContent = msg; el.className = 'toast show ' + type; clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.className = 'toast ' + type; }, 2600); }
+function toast(msg, type='') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + type;
+    el.style.pointerEvents = 'none';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        el.className = 'toast ' + type;
+        el.style.pointerEvents = 'none';
+        // إجبار إعادة حساب layout للشريط السفلي بعد اختفاء التوست
+        const _bn = document.getElementById('bottomNav');
+        if (_bn && !_bn.classList.contains('hidden')) {
+            _bn.style.pointerEvents = 'auto';
+        }
+    }, 2600);
+}
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function buildTxDateISO(dateStr) {
@@ -2308,21 +2589,26 @@ let statsHidden = true, currentMonth = todayISO().slice(0,7), selectedDate = tod
 let currentRecipientType = 'deposit', _prevRecipientValue = '';
 const SORT_OPTIONS = ['م0','م1','م2','م3','م4','م5','م6','م7','م8'];
 let currentReportType = null, currentReportData = null, selectedReportCustomers = [];
-
-// ============================================
-// ⬆️ نهاية الجزء 3 — يليه دوال الرسم في الجزء 4
-// ============================================
-  /* ===========================
+/* ===========================
    التنقل بين الشاشات
    =========================== */
 function switchView(viewName) {
     const viewMap = { 'today': 'viewToday', 'customers': 'viewCustomers', 'month': 'viewMonth', 'customer': 'viewCustomer', 'archive': 'viewArchive', 'reports': 'viewReports' };
     const id = viewMap[viewName]; if (!id) return;
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active');
-    const showBottomNav = ['today','customers','month'].includes(viewName);
-    document.getElementById('bottomNav').classList.toggle('hidden', !showBottomNav); document.body.classList.toggle('no-bottom-nav', !showBottomNav);
-    document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === viewName));
-    currentView = viewName; window.scrollTo({ top: 0, behavior: 'smooth' });
+   const showBottomNav = ['today','customers','month'].includes(viewName);
+const _bn = document.getElementById('bottomNav');
+_bn.classList.toggle('hidden', !showBottomNav);
+_bn.style.pointerEvents = showBottomNav ? 'auto' : 'none';
+// إجبار إعادة حساب layout
+void _bn.offsetHeight;
+document.body.classList.toggle('no-bottom-nav', !showBottomNav);
+    // تحديث تمييز الشريط السفلي
+document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === viewName);
+});
+
+currentView = viewName; window.scrollTo({ top: 0, behavior: 'smooth' });
     if (viewName === 'today') renderToday();
     if (viewName === 'customers') { renderSortChips(); renderCustomers(); }
     if (viewName === 'month') renderMonth();
@@ -3215,11 +3501,7 @@ function closeDrawer() {
     document.getElementById('drawer').classList.remove('show');
     document.getElementById('drawerOverlay').classList.remove('show');
 }
-
-// ============================================
-// ⬆️ نهاية الجزء 4 — يليه التقارير + المعاينة والاستعادة + الأحداث + init في الجزء 5
-// ============================================
-  /* ===========================
+/* ===========================
    التقارير
    =========================== */
 function openReport(type) {
@@ -3453,17 +3735,12 @@ function openPreviewModal() {
         toast('⚠️ أنت بالفعل في وضع المعاينة', 'error');
         return;
     }
-    const previewFile = document.getElementById('previewFile');
-    if (!previewFile) {
-        toast('خطأ: حقل الملف غير موجود', 'error');
-        return;
-    }
-    // فتح الملف مباشرة بدون تأخير (ضروري ليعمل على الجوال)
-    previewFile.click();
-    
-    // إغلاق القائمة الجانبية بعد لحظة
-    setTimeout(() => closeDrawer(), 300);
+    closeDrawer();
+    setTimeout(() => {
+        document.getElementById('previewFile').click();
+    }, 250);
 }
+
 async function handlePreviewFile(e) {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
@@ -3543,7 +3820,24 @@ function exitPreviewMode() {
     // إخفاء الطبقة
     document.body.classList.remove('preview-mode');
     document.getElementById('previewBanner').style.display = 'none';
+// ====== إصلاح مشكلة اللمس ======
+document.body.classList.remove('no-scroll', 'no-bottom-nav');
+document.body.style.overflow = '';
+document.body.style.paddingTop = '';
 
+const _nav = document.getElementById('bottomNav');
+if (_nav) {
+    _nav.classList.remove('hidden');
+    _nav.style.transform = '';
+    _nav.style.pointerEvents = 'auto';
+}
+
+const _toast = document.getElementById('toast');
+if (_toast) {
+    _toast.style.display = '';
+    _toast.style.pointerEvents = 'none';
+}
+// ====== نهاية الإصلاح ======
     // إعادة الحالة
     currentCustomerId = null;
     currentSearch = '';
@@ -3719,77 +4013,91 @@ function bindEvents() {
         setTimeout(() => { document.getElementById('importFile').click(); }, 350);
     });
 
-   // ====== أزرار القائمة الجانبية ======
-document.querySelectorAll('.drawer-item').forEach(item => {
-    const action = item.dataset.action;
+    // ====== أزرار القائمة الجانبية ======
+    document.querySelectorAll('.drawer-item').forEach(item => {
+        const action = item.dataset.action;
 
-    // 1. زر النسخ الاحتياطي (يجب أن ينفذ مباشرة ليعمل التنزيل على الجوال)
-    if (action === 'backup') {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeDrawer();
-            backup(); // تنفيذ فوري بدون تأخير
-        });
-    }
-    // 2. زر المعاينة (يجب أن ينفذ مباشرة ليفتح المتصفح نافذة الملفات)
-    else if (action === 'preview') {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeDrawer();
-            openPreviewModal(); // تنفيذ فوري بدون تأخير
-        });
-    }
-    // 3. زر الاستيراد (الضغط المطول)
-    else if (action === 'restore') {
-        let pressTimer;
-        let progressBar = document.createElement('div');
-        progressBar.className = 'long-press-progress';
-        item.appendChild(progressBar);
+        // معاينة — ضغط عادي
+        if (action === 'preview') {
+            item.addEventListener('click', () => {
+                openPreviewModal();
+            });
+        }
+        // استيراد — ضغط مطول
+        else if (action === 'restore') {
+            let pressTimer;
+            let progressBar = document.createElement('div');
+            progressBar.className = 'long-press-progress';
+            item.appendChild(progressBar);
 
-        const startPress = (e) => {
-            e.preventDefault();
-            item.classList.add('pressing');
-            let width = 0;
-            progressBar.style.width = '0%';
-            pressTimer = setInterval(() => {
-                width += 2;
-                progressBar.style.width = width + '%';
-                if (width >= 100) {
-                    clearInterval(pressTimer);
-                    item.classList.remove('pressing');
-                    progressBar.style.width = '0%';
-                    if (navigator.vibrate) navigator.vibrate(50);
-                    closeDrawer();
-                    setTimeout(() => restore(), 200);
-                }
-            }, 40);
-        };
-        const cancelPress = () => {
-            clearInterval(pressTimer);
-            item.classList.remove('pressing');
-            progressBar.style.width = '0%';
-        };
-        item.addEventListener('touchstart', startPress, {passive: false});
-        item.addEventListener('mousedown', startPress);
-        item.addEventListener('touchend', cancelPress);
-        item.addEventListener('touchcancel', cancelPress);
-        item.addEventListener('mouseup', cancelPress);
-        item.addEventListener('mouseleave', cancelPress);
-    }
-    // 4. باقي الأزرار (تعمل بشكل عادي)
-    else {
-        item.addEventListener('click', () => {
-            closeDrawer();
-            setTimeout(() => {
-                if (action === 'new-customer') openCustomerModal();
-                else if (action === 'archive') switchView('archive');
-                else if (action === 'reports') switchToReports();
-                else if (action === 'dark-mode') toggleDarkMode();
-            }, 200);
-        });
-    }
-});
+            const startPress = (e) => {
+                e.preventDefault();
+                item.classList.add('pressing');
+                let width = 0;
+                progressBar.style.width = '0%';
+                pressTimer = setInterval(() => {
+                    width += 2;
+                    progressBar.style.width = width + '%';
+                    if (width >= 100) {
+                        clearInterval(pressTimer);
+                        item.classList.remove('pressing');
+                        progressBar.style.width = '0%';
+                        if (navigator.vibrate) navigator.vibrate(50);
+                        closeDrawer();
+                        setTimeout(() => restore(), 200);
+                    }
+                }, 40);
+            };
+            const cancelPress = () => {
+                clearInterval(pressTimer);
+                item.classList.remove('pressing');
+                progressBar.style.width = '0%';
+            };
+            item.addEventListener('touchstart', startPress, {passive: false});
+            item.addEventListener('mousedown', startPress);
+            item.addEventListener('touchend', cancelPress);
+            item.addEventListener('touchcancel', cancelPress);
+            item.addEventListener('mouseup', cancelPress);
+            item.addEventListener('mouseleave', cancelPress);
+        }
+        // باقي الأزرار
+        else {
+            item.addEventListener('click', () => {
+                closeDrawer();
+                setTimeout(() => {
+                    if (action === 'new-customer') openCustomerModal();
+                    else if (action === 'archive') switchView('archive');
+                    else if (action === 'reports') switchToReports();
+                    else if (action === 'backup') backup();
+                    else if (action === 'dark-mode') toggleDarkMode();
+                }, 200);
+            });
+        }
+    });
+// ====== لمعة ذهبية دورية على زر الدليل ======
+const btnGuide = document.getElementById('btnOpenGuide');
+let guideShineTimer = null;
 
+function playGuideShine() {
+    if (!btnGuide) return;
+    btnGuide.classList.remove('shine');
+    void btnGuide.offsetWidth;  // force reflow
+    btnGuide.classList.add('shine');
+    setTimeout(() => btnGuide.classList.remove('shine'), 750);
+}
+
+// بدء التشغيل الدوري (كل 10 ثوانٍ)
+if (btnGuide) {
+    guideShineTimer = setInterval(playGuideShine, 5000);
+    
+    // إيقاف المؤقت عند إغلاق الصفحة (لطف بالأداء)
+    window.addEventListener('beforeunload', () => {
+        if (guideShineTimer) clearInterval(guideShineTimer);
+    });
+    
+    // أول لمعة بعد 1.5 ثانية من تحميل الصفحة (لتجذب الانتباه مبكراً)
+    setTimeout(playGuideShine, 1500);
+}
     // ====== إعدادات الحماية ======
     document.getElementById('btnSetPin').addEventListener('click', () => {
         closeDrawer();
@@ -3826,7 +4134,8 @@ document.querySelectorAll('.drawer-item').forEach(item => {
     document.getElementById('btnCancelPin').addEventListener('click', () => {
         document.getElementById('pinModal').classList.remove('show');
     });
-    document.getElementById('btnSavePin').addEventListener('click', async () => {
+  
+  document.getElementById('btnSavePin').addEventListener('click', async () => {
         const isEnabled = document.getElementById('togglePinEnable').checked;
         const currentPinHash = localStorage.getItem('amanat_pin');
         if (!isEnabled) {
@@ -3853,7 +4162,14 @@ document.querySelectorAll('.drawer-item').forEach(item => {
         document.getElementById('pinModal').classList.remove('show');
     });
 
-    // ====== البحث والتاريخ ======
+   document.getElementById('btnOpenGuide').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeDrawer();
+    setTimeout(() => {
+        window.open('AmanatGuide.html', '_blank');
+    }, 200);
+});
+  // ====== البحث والتاريخ ======
     document.getElementById('searchInput').addEventListener('input', (e) => {
         currentSearch = e.target.value.trim();
         renderCustomers();
@@ -3989,25 +4305,218 @@ function init() {
     if (savedPinHash) {
         lockScreen.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        
+        let enteredPin = '';
+        const dots = document.querySelectorAll('#keypadDots .keypad-dot');
 
-        const unlock = async () => {
-            const val = document.getElementById('lockInput').value;
-            const valHash = await hashPin(val);
+        const updateDots = () => {
+            dots.forEach((dot, index) => {
+                if (index < enteredPin.length) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        };
+
+        const verifyPin = async (pinToVerify) => {
+            const valHash = await hashPin(pinToVerify);
             if (valHash === savedPinHash) {
                 lockScreen.style.display = 'none';
                 document.body.style.overflow = '';
                 startAppCore();
+                return true;
             } else {
                 toast('الرمز غير صحيح', 'error');
-                document.getElementById('lockInput').value = '';
+                enteredPin = '';
+                updateDots();
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                return false;
             }
         };
-        document.getElementById('btnUnlock').onclick = unlock;
-        document.getElementById('lockInput').onkeydown = (e) => { if(e.key === 'Enter') unlock(); };
-        document.getElementById('btnForgotPin').onclick = async () => {
-            const ok = await Dialog.confirmDanger('سيتم مسح جميع البيانات نهائياً! هل أنت متأكد؟', 'نسيت الرمز');
-            if (ok) { localStorage.clear(); indexedDB.deleteDatabase('amanat_db'); location.reload(); }
+
+        document.querySelectorAll('.keypad-btn[data-key]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (enteredPin.length < 4) {
+                    enteredPin += btn.dataset.key;
+                    updateDots();
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    if (enteredPin.length === 4) {
+                        setTimeout(() => verifyPin(enteredPin), 150);
+                    }
+                }
+            });
+        });
+
+        document.getElementById('btnKeypadDelete').addEventListener('click', () => {
+            if (enteredPin.length > 0) {
+                enteredPin = enteredPin.slice(0, -1);
+                updateDots();
+                if (navigator.vibrate) navigator.vibrate(20);
+            }
+        });
+
+        // ====== أزرار الاسترداد ======
+        document.getElementById('btnRecovery').onclick = () => {
+            document.getElementById('recoveryModal').classList.add('show');
+            document.getElementById('recoveryInput').value = '';
+            setTimeout(() => document.getElementById('recoveryInput').focus(), 200);
         };
+
+        document.getElementById('btnCancelRecovery').onclick = () => {
+            document.getElementById('recoveryModal').classList.remove('show');
+        };
+
+        document.getElementById('btnConfirmRecovery').onclick = () => {
+            const inputVal = document.getElementById('recoveryInput').value.trim();
+            const now = new Date();
+            const pin = ((now.getDate() * (now.getMonth() + 1) * 7 + (now.getFullYear() % 100) * 13 + 2026) % 9000 + 1000).toString();
+            
+            if (inputVal === pin) {
+                document.getElementById('recoveryModal').classList.remove('show');
+                document.getElementById('forceNewPinModal').classList.add('show');
+                document.getElementById('forceNewPinInput').value = '';
+                document.getElementById('forceConfirmPinInput').value = '';
+                setTimeout(() => document.getElementById('forceNewPinInput').focus(), 200);
+            } else {
+                toast('❌ الكود غير صحيح، تأكد من ملف مولد PIN', 'error');
+                document.getElementById('recoveryInput').value = '';
+            }
+        };
+
+        document.getElementById('recoveryInput').onkeydown = (e) => {
+            if (e.key === 'Enter') document.getElementById('btnConfirmRecovery').click();
+        };
+
+        document.getElementById('btnSaveForcePin').onclick = async () => {
+            const newPin = document.getElementById('forceNewPinInput').value;
+            const confirmPin = document.getElementById('forceConfirmPinInput').value;
+
+            if (!/^\d{4}$/.test(newPin)) {
+                toast('يجب أن يكون الرمز 4 أرقام', 'error');
+                return;
+            }
+            if (newPin !== confirmPin) {
+                toast('الرمز وتأكيده غير متطابقين', 'error');
+                document.getElementById('forceConfirmPinInput').value = '';
+                document.getElementById('forceConfirmPinInput').focus();
+                return;
+            }
+
+            try {
+                const newPinHash = await hashPin(newPin);
+                localStorage.setItem('amanat_pin', newPinHash);
+                document.getElementById('forceNewPinModal').classList.remove('show');
+                document.getElementById('lockScreen').style.display = 'none';
+                document.body.style.overflow = '';
+                toast('✅ تم تعيين كلمة السر الجديدة والدخول بنجاح', 'success');
+                if (typeof startAppCore === 'function') startAppCore();
+            } catch (err) {
+                toast('حدث خطأ أثناء الحفظ', 'error');
+            }
+        };
+
+        document.getElementById('forceConfirmPinInput').onkeydown = (e) => {
+            if (e.key === 'Enter') document.getElementById('btnSaveForcePin').click();
+        };
+// ====== كود زر مسح البيانات (بالضغط المطول) ======
+const btnWipe = document.getElementById('btnWipeDataFromSettings');
+const wipeProgressBar = document.getElementById('wipeProgressBar');
+const wipeBtnText = document.getElementById('wipeBtnText');
+let wipePressTimer;
+let wipeProgress = 0;
+
+if (btnWipe) {
+    const startWipePress = (e) => {
+        e.preventDefault(); // منع السلوك الافتراضي
+        wipeProgress = 0;
+        wipeProgressBar.style.width = '0%';
+        wipeBtnText.textContent = '⏳ جاري التأكيد... لا ترفع إصبعك';
+        if (navigator.vibrate) navigator.vibrate(50); // اهتزاز خفيف عند البدء
+
+        wipePressTimer = setInterval(() => {
+            wipeProgress += 2; // زيادة 2% كل 60 جزء من الثانية (ليصل 100% في 3 ثوان)
+            wipeProgressBar.style.width = wipeProgress + '%';
+
+            if (wipeProgress >= 100) {
+                clearInterval(wipePressTimer);
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // اهتزاز عند الاكتمال
+                executeWipe(); // تنفيذ المسح
+            }
+        }, 60); // 60 ملي ثانية × 50 خطوة = 3 ثواني
+    };
+
+    const cancelWipePress = () => {
+        clearInterval(wipePressTimer);
+        if (wipeProgress < 100) {
+            // إذا رفع إصبعه قبل الاكتمال، نعيد الزر لحالته الطبيعية
+            wipeProgressBar.style.width = '0%';
+            wipeBtnText.textContent = '🗑️ اضغط باستمرار للمسح (3 ثوان)';
+            if (navigator.vibrate) navigator.vibrate(20); // اهتزاز خفيف عند الإلغاء
+        }
+    };
+
+// دالة تنفيذ المسح بعد اكتمال العداد
+const executeWipe = async () => {
+    wipeBtnText.textContent = 'جاري المسح...';
+    // إغلاق نافذة كلمة السر الجديدة
+    document.getElementById('forceNewPinModal').classList.remove('show');
+    
+    // فتح نافذة التأكيد الجديدة
+    document.getElementById('finalWipeConfirmModal').classList.add('show');
+    document.getElementById('chkFinalWipeConfirm').checked = false;
+    document.getElementById('btnConfirmFinalWipe').disabled = true; // تعطيل زر المسح حتى يتم التحديد
+    document.getElementById('btnConfirmFinalWipe').style.opacity = '0.5';
+    
+    // إعادة الزر لحالته الطبيعية في الخلفية
+    wipeProgressBar.style.width = '0%';
+    wipeBtnText.textContent = '🗑️ اضغط باستمرار للمسح (3 ثوان)';
+};
+
+// ربط أحداث نافذة التأكيد (Checkbox & Buttons)
+const chkFinalWipe = document.getElementById('chkFinalWipeConfirm');
+const btnConfirmFinalWipe = document.getElementById('btnConfirmFinalWipe');
+const btnCancelFinalWipe = document.getElementById('btnCancelFinalWipe');
+
+if (chkFinalWipe) {
+    chkFinalWipe.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            btnConfirmFinalWipe.disabled = false;
+            btnConfirmFinalWipe.style.opacity = '1';
+        } else {
+            btnConfirmFinalWipe.disabled = true;
+            btnConfirmFinalWipe.style.opacity = '0.5';
+        }
+    });
+}
+
+if (btnCancelFinalWipe) {
+    btnCancelFinalWipe.addEventListener('click', () => {
+        document.getElementById('finalWipeConfirmModal').classList.remove('show');
+        // نعيد شاشة الحماية (نافذة كلمة السر الجديدة) لأننا أغلقناها سابقاً
+        document.getElementById('forceNewPinModal').classList.add('show');
+    });
+}
+
+if (btnConfirmFinalWipe) {
+    btnConfirmFinalWipe.addEventListener('click', () => {
+        try {
+            localStorage.clear(); 
+            indexedDB.deleteDatabase('amanat_db'); 
+            toast('تم مسح جميع البيانات نهائياً', 'error');
+            setTimeout(() => location.reload(), 1500);
+        } catch (err) {
+            toast('حدث خطأ أثناء المسح', 'error');
+        }
+    });
+}
+    // ربط الأحداث (اللمس والماوس)
+    btnWipe.addEventListener('touchstart', startWipePress, {passive: false});
+    btnWipe.addEventListener('mousedown', startWipePress);
+    
+    btnWipe.addEventListener('touchend', cancelWipePress);
+    btnWipe.addEventListener('touchcancel', cancelWipePress);
+    btnWipe.addEventListener('mouseup', cancelWipePress);
+    btnWipe.addEventListener('mouseleave', cancelWipePress);
+}
+// ====== نهاية كود المسح ======
     } else {
         startAppCore();
     }
@@ -4064,6 +4573,20 @@ function startAppCore() {
 document.addEventListener('DOMContentLoaded', () => { DB.onReady(init); });
 return { goHome, openCustomer, switchView };
 })();
+</script>
+<script>
+  // تسجيل Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(registration => {
+          console.log('✅ تم تسجيل Service Worker بنجاح:', registration.scope);
+        })
+        .catch(error => {
+          console.log('❌ فشل تسجيل Service Worker:', error);
+        });
+    });
+  }
 </script>
 </body>
 </html>
