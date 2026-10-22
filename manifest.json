@@ -1,12 +1,13 @@
 {
-  "name": "الأمانات - v9.0",
+  "name": "الأمانات - نظام إدارة الودائع",
   "short_name": "الأمانات",
-  "description": "نظام إدارة الودائع والنزلاء - الأمانات",
+  "description": "نظام إدارة الودائع والنزلاء - سهل وآمن",
+  "id": "com.fayizjan.amanat",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0d1b14", 
+  "background_color": "#0d1b14",
   "theme_color": "#f37021",
   "lang": "ar",
   "dir": "rtl",
@@ -24,11 +25,10 @@
       "purpose": "any"
     },
     {
-      "src": "splash-image.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ]
-"description": "نظام إدارة الودائع والنزلاء",
 }
