@@ -1404,6 +1404,80 @@ body.preview-mode #btnDeleteTx {
     0%   { left: -150%; }
     100% { left: 150%; }
 }
+/* ====== حقل المستلم + الاقتراحات ====== */
+.recipient-suggestions {
+    position: absolute;
+    top: calc(100% - 4px);
+    right: 0;
+    left: 0;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    z-index: 50;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 6px;
+    animation: fadeIn 0.15s ease;
+}
+
+.recipient-suggestions::-webkit-scrollbar { width: 5px; }
+.recipient-suggestions::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.recipient-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    transition: background 0.15s ease;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: right;
+    font-family: inherit;
+}
+
+.recipient-chip:hover,
+.recipient-chip.highlighted {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.recipient-chip-icon {
+    font-size: 15px;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.recipient-chip-default {
+    margin-right: auto;
+    font-size: 10px;
+    font-weight: 800;
+    background: var(--primary);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+.recipient-no-results {
+    padding: 14px 12px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+body.dark .recipient-suggestions {
+    background: var(--white);
+    border-color: var(--border);
+}
 </style>
 </head>
 <body>
@@ -1702,10 +1776,11 @@ body.preview-mode #btnDeleteTx {
                         <input type="text" id="inputInvoice">
                     </div>
 
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label for="inputRecipient">المستلم</label>
-                        <select id="inputRecipient"></select>
-                    </div>
+                    <<div class="form-group" style="margin-bottom:12px; position: relative;">
+    <label for="inputRecipient">المستلم</label>
+    <input type="text" id="inputRecipient" placeholder="اكتب أو اختر المستلم..." autocomplete="off">
+    <div id="recipientSuggestions" class="recipient-suggestions" style="display:none;"></div>
+</div>
 
                     <div class="form-group amount-grid">
                         <div>
@@ -2969,68 +3044,242 @@ async function submitCustomer(e) {
     if (currentView === 'customer' && currentCustomerId === id) renderCustomerView();
 }
 
-/* ===========================
-   المستلمون
-   =========================== */
-function populateRecipientDropdown(type, selected) {
-    const sel = document.getElementById('inputRecipient');
-    const list = DataSource.getRecipients(type); currentRecipientType = type;
-    if (list.length === 0) {
-        sel.innerHTML = `<option value="">المستلم الافتراضي</option><option value="__manage__" style="color:#f37021; font-weight:700;">⚙️ إدارة المستلمين</option>`;
-        sel.value = '';
-    } else {
-        sel.innerHTML = list.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('') + `<option value="__manage__" style="color:#f37021; font-weight:700;">⚙️ إدارة المستلمين</option>`;
-        sel.value = (selected && list.includes(selected)) ? selected : list[0];
-    }
-}
-function renderRecipientsList() {
-    const list = DataSource.getRecipients(currentRecipientType);
-    const container = document.getElementById('recipientsList');
-    if (list.length === 0) { container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-light); font-size:13px;">لا يوجد مستلمون بعد</div>`; return; }
-    container.innerHTML = list.map((name, i) => `
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; background:var(--border-soft); border-radius:10px; margin-bottom:6px;">
-            <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0;">
-                <span style="font-weight:800; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(name)}</span>
-                ${i === 0 ? `<span style="font-size:10px; background:var(--primary); color:#fff; padding:2px 8px; border-radius:9999px; font-weight:800; flex-shrink:0;">الافتراضي</span>` : ''}
-            </div>
-            ${i === 0 ? '' : `<button type="button" class="btn btn-ghost btn-icon" data-delete-recipient="${esc(name)}" title="حذف" style="width:32px; height:32px; font-size:14px; color:var(--danger); flex-shrink:0;">🗑️</button>`}
-        </div>
-    `).join('');
-    container.querySelectorAll('[data-delete-recipient]').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            if (!guardEdit()) return;
-            const name = btn.dataset.deleteRecipient;
-            const ok = await Dialog.confirmDanger(`حذف المستلم "${name}"؟`);
-            if (!ok) return;
-            if (!DB.removeRecipient(currentRecipientType, name)) { toast('لا يمكن الحذف', 'error'); return; }
-            toast('تم الحذف', 'success'); renderRecipientsList();
-        });
-    });
-}
-function switchToRecipientManager() {
-    const sel = document.getElementById('inputRecipient'); _prevRecipientValue = sel.value;
-    if (_prevRecipientValue === '__manage__') { const list = DataSource.getRecipients(currentRecipientType); _prevRecipientValue = list[0] || ''; }
-    document.getElementById('txFormNormal').style.display = 'none';
-    document.getElementById('txRecipientManager').style.display = 'block';
-    document.getElementById('newRecipientInput').value = '';
-    document.getElementById('modalTxTitle').textContent = '⚙️ إدارة المستلمين';
-    document.getElementById('modalTxSubtitle').style.display = 'none';
-    renderRecipientsList(); setTimeout(() => document.getElementById('newRecipientInput').focus(), 200);
-}
-function backToTransactionForm() {
-    document.getElementById('txRecipientManager').style.display = 'none';
-    document.getElementById('txFormNormal').style.display = 'block';
-    const type = document.getElementById('inputTxType').value;
-    const isEdit = !!document.getElementById('inputTxId').value;
-    document.getElementById('modalTxTitle').textContent = isEdit ? 'تعديل الحركة' : (type === 'deposit' ? 'إضافة إيداع' : 'إضافة سحب');
-    document.getElementById('modalTxSubtitle').style.display = 'block';
-    document.getElementById('modalTxSubtitle').textContent = type === 'deposit' ? 'استلام أمانات' : 'صرف فاتورة';
-    const list = DataSource.getRecipients(currentRecipientType);
-    let target = _prevRecipientValue;
-    if (!list.includes(target)) target = list[0] || '';
-    populateRecipientDropdown(currentRecipientType, target);
+// ============================================
+// نظام المستلمين الجديد (الاقتراحات الذكية)
+// ============================================
+
+// جلب قائمة المستلمين حسب نوع الحركة
+function getRecipientsList(type) {
+    return DB.getRecipients(type) || [];
 }
 
+// الحصول على المستلم الافتراضي (الأول في القائمة)
+function getDefaultRecipient(type) {
+    const list = getRecipientsList(type);
+    return list.length > 0 ? list[0] : '';
+}
+
+// حفظ مستلم جديد (تلقائي) أو نقله للمقدمة
+function saveRecipientIfNew(type, name) {
+    const trimmed = name.trim();
+    if (!trimmed) return false;
+    const list = DB.getRecipients(type);
+    
+    if (list.includes(trimmed)) {
+        // موجود → انقله للمقدمة (فقط إذا لم يكن أصلاً في المقدمة)
+        if (list[0] !== trimmed) {
+            DB.removeRecipient(type, trimmed);
+            DB.addRecipient(type, trimmed);
+        }
+    } else {
+        // جديد → أضفه (يصبح في المقدمة تلقائياً لأن addRecipient يضيف في النهاية... لذا سنستخدم حيلة)
+        DB.addRecipient(type, trimmed);
+        // نقله للمقدمة
+        if (DB.getRecipients(type)[0] !== trimmed) {
+            DB.removeRecipient(type, trimmed);
+            DB.addRecipient(type, trimmed);
+        }
+    }
+}
+
+// إظهار الاقتراحات
+function showRecipientSuggestions(type, query) {
+    const box = document.getElementById('recipientSuggestions');
+    if (!box) return;
+
+    const q = (query || '').trim().toLowerCase();
+    const all = getRecipientsList(type);
+
+    // لا يوجد مستلمون بعد
+    if (all.length === 0) {
+        if (q) {
+            box.innerHTML = `
+                <button type="button" class="recipient-chip" data-name="${esc(query.trim())}">
+                    <span class="recipient-chip-icon">✅</span>
+                    <span>حفظ "${esc(query.trim())}" كمستلم جديد</span>
+                </button>
+            `;
+        } else {
+            box.innerHTML = '<div class="recipient-no-results">اكتب اسم المستلم (سيُحفظ تلقائياً)</div>';
+        }
+        box.style.display = 'block';
+        bindRecipientClicks(type);
+        return;
+    }
+
+    let results;
+    if (!q) {
+        results = all.slice(0, 5);
+    } else {
+        results = all.filter(r => r.toLowerCase().includes(q)).slice(0, 5);
+    }
+
+    if (results.length === 0 && q) {
+        box.innerHTML = `
+            <button type="button" class="recipient-chip" data-name="${esc(query.trim())}">
+                <span class="recipient-chip-icon">✅</span>
+                <span>حفظ "${esc(query.trim())}" كمستلم جديد</span>
+            </button>
+        `;
+        box.style.display = 'block';
+        bindRecipientClicks(type);
+        return;
+    }
+
+    if (results.length === 0) {
+        box.innerHTML = '<div class="recipient-no-results">لا يوجد مستلمون بعد</div>';
+        box.style.display = 'block';
+        return;
+    }
+
+    const defaultName = all[0] || '';
+    box.innerHTML = results.map(name => {
+        const isDefault = name === defaultName;
+        return `
+            <button type="button" class="recipient-chip" data-name="${esc(name)}">
+                <span class="recipient-chip-icon">👤</span>
+                <span>${esc(name)}</span>
+                ${isDefault ? '<span class="recipient-chip-default">افتراضي</span>' : ''}
+            </button>
+        `;
+    }).join('');
+
+    box.style.display = 'block';
+    bindRecipientClicks(type);
+}
+
+// ربط النقر على الاقتراحات
+function bindRecipientClicks(type) {
+    document.querySelectorAll('#recipientSuggestions .recipient-chip').forEach(btn => {
+        const name = btn.dataset.name;
+        let pressTimer = null;
+        let longPressFired = false;
+
+        // بدء الضغط (ماوس أو لمس)
+        const startPress = () => {
+            longPressFired = false;
+            pressTimer = setTimeout(() => {
+                longPressFired = true;
+                // اهتزاز خفيف (إن كان مدعوماً)
+                if (navigator.vibrate) navigator.vibrate(50);
+                // إظهار تنبيه الحذف
+                askDeleteRecipient(type, name);
+            }, 800);
+        };
+
+        // إلغاء الضغط
+        const cancelPress = () => {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+            }
+        };
+
+        // عند رفع الإصبع أو الماوس
+        btn.addEventListener('mousedown', startPress);
+        btn.addEventListener('touchstart', startPress, { passive: true });
+        btn.addEventListener('mouseup', cancelPress);
+        btn.addEventListener('mouseleave', cancelPress);
+        btn.addEventListener('touchend', cancelPress);
+        btn.addEventListener('touchcancel', cancelPress);
+
+        // عند النقر العادي (اختيار)
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (longPressFired) {
+                // إذا كان ضغطاً مطولاً، لا تفعل شيئاً (الحذف تم بالفعل)
+                longPressFired = false;
+                return;
+            }
+            // اختيار عادي
+            const input = document.getElementById('inputRecipient');
+            input.value = name;
+            document.getElementById('recipientSuggestions').style.display = 'none';
+            saveRecipientIfNew(type, name);
+        });
+
+        // منع قائمة السياق (يمين الماوس / الضغط المطول في بعض المتصفحات)
+        btn.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
+}
+
+ // سؤال المستخدم عن حذف مستلم (يُستدعى عند الضغط المطول)
+async function askDeleteRecipient(type, name) {
+    // إذا كان هذا هو المستلم الوحيد، منعه
+    const list = getRecipientsList(type);
+    if (list.length <= 1) {
+        toast('لا يمكن حذف المستلم الوحيد', 'error');
+        return;
+    }
+
+    // إغلاق اقتراحات المستلم
+    const box = document.getElementById('recipientSuggestions');
+    if (box) box.style.display = 'none';
+
+    // سؤال التأكيد
+    const ok = await Dialog.confirmDanger(`حذف المستلم "${name}" من القائمة؟`);
+    if (!ok) return;
+
+    // محاولة الحذف
+    const success = DB.removeRecipient(type, name);
+    if (!success) {
+        toast('لا يمكن حذف المستلم الافتراضي (الأول في القائمة)', 'error');
+        return;
+    }
+
+    toast(`🗑️ تم حذف المستلم "${name}"`, 'success');
+
+    // إذا كان المحذوف هو الافتراضي، املأ الحقل بالافتراضي الجديد
+    const input = document.getElementById('inputRecipient');
+    if (input && input.value === name) {
+        input.value = getDefaultRecipient(type);
+    }
+} 
+  // إخفاء الاقتراحات عند النقر خارجها
+document.addEventListener('click', (e) => {
+    const box = document.getElementById('recipientSuggestions');
+    const input = document.getElementById('inputRecipient');
+    if (box && input && !box.contains(e.target) && e.target !== input) {
+        box.style.display = 'none';
+    }
+});
+
+// ربط أحداث حقل المستلم
+function setupRecipientInput() {
+    const input = document.getElementById('inputRecipient');
+    if (!input) return;
+
+    input.addEventListener('focus', () => {
+        // مسح النص عند التركيز
+        input.value = '';
+        
+        // إظهار الاقتراحات فوراً (مع الافتراضي في الأعلى)
+        const type = document.getElementById('inputTxType').value || 'deposit';
+        showRecipientSuggestions(type, '');
+    });
+
+    input.addEventListener('input', (e) => {
+        const type = document.getElementById('inputTxType').value || 'deposit';
+        showRecipientSuggestions(type, e.target.value);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.getElementById('recipientSuggestions').style.display = 'none';
+        }
+    });
+
+    // إذا خرج المستخدم من الحقل دون اختيار → يُملأ بالافتراضي
+    input.addEventListener('blur', () => {
+        // تأخير بسيط للسماح للنقر على اقتراح
+        setTimeout(() => {
+            if (!input.value.trim()) {
+                const type = document.getElementById('inputTxType').value || 'deposit';
+                input.value = getDefaultRecipient(type);
+            }
+        }, 200);
+    });
+}
 /* ===========================
    نافذة الحركة (إيداع/سحب)
    =========================== */
@@ -3094,16 +3343,16 @@ function openTransactionModal({ type = 'deposit', editId = null, customerId = nu
         document.getElementById('inputAmount').value = tx.amount;
         document.getElementById('inputDate').value = tx.date.slice(0, 10);
         document.getElementById('inputTxNotes').value = tx.notes || '';
-        selectCurrency(tx.currency);
-        populateRecipientDropdown(type, tx.recipient || '');
+      selectCurrency(tx.currency);
+document.getElementById('inputRecipient').value = tx.recipient || getDefaultRecipient(type);
     } else {
         document.getElementById('inputDepositor').value = '';
         document.getElementById('inputInvoice').value = '';
         document.getElementById('inputAmount').value = '';
         document.getElementById('inputDate').value = (currentView === 'today' && selectedDate) ? selectedDate : todayISO();
         document.getElementById('inputTxNotes').value = '';
-        selectCurrency('SYP');
-        populateRecipientDropdown(type, '');
+      selectCurrency('SYP');
+document.getElementById('inputRecipient').value = getDefaultRecipient(type);
     }
 
     document.getElementById('txModalActions').style.display = editing ? 'none' : 'flex';
@@ -3154,6 +3403,11 @@ async function submitTransaction(e) {
     const depositor = document.getElementById('inputDepositor').value.trim();
     const invoice = document.getElementById('inputInvoice').value.trim();
     const recipient = document.getElementById('inputRecipient').value.trim();
+
+// حفظ المستلم تلقائياً (إذا كان جديداً أو نقله للمقدمة)
+if (recipient) {
+    saveRecipientIfNew(type, recipient);
+}
     const dateStr = document.getElementById('inputDate').value;
     const notes = document.getElementById('inputTxNotes').value.trim();
 
@@ -4225,23 +4479,7 @@ if (btnGuide) {
     document.getElementById('txCustomerSearch').addEventListener('input', (e) => { searchTxCustomer(e.target.value); });
 
     // ====== المستلمون ======
-    document.getElementById('inputRecipient').addEventListener('change', (e) => {
-        if (e.target.value === '__manage__') switchToRecipientManager();
-    });
-    document.getElementById('btnAddRecipient').addEventListener('click', () => {
-        if (!guardEdit()) return;
-        const inp = document.getElementById('newRecipientInput');
-        const name = inp.value.trim();
-        if (!name) { toast('أدخل الاسم', 'error'); return; }
-        if (!DB.addRecipient(currentRecipientType, name)) { toast('الاسم موجود مسبقاً', 'error'); return; }
-        toast('تم الإضافة ✅', 'success');
-        inp.value = '';
-        renderRecipientsList();
-    });
-    document.getElementById('newRecipientInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnAddRecipient').click(); }
-    });
-    document.getElementById('btnBackToTx').addEventListener('click', backToTransactionForm);
+ 
 
     // ====== الأرشفة ======
     document.getElementById('formArchive').addEventListener('submit', submitArchive);
@@ -4254,16 +4492,11 @@ if (btnGuide) {
     document.getElementById('tabVacated').addEventListener('click', () => switchArchiveTab('إخلاء'));
 
     // ====== إغلاق النوافذ ======
-    document.querySelectorAll('[data-close]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const manager = document.getElementById('txRecipientManager');
-            if (btn.dataset.close === 'modalTransaction' && manager.style.display === 'block') {
-                e.preventDefault(); e.stopPropagation(); backToTransactionForm();
-            } else {
-                closeModal(btn.dataset.close);
-            }
-        });
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        closeModal(btn.dataset.close);
     });
+});
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
@@ -4273,17 +4506,14 @@ if (btnGuide) {
             }
         });
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            document.querySelectorAll('.modal-overlay.show').forEach(m => {
-                const manager = document.getElementById('txRecipientManager');
-                if (m.id === 'modalTransaction' && manager.style.display === 'block') { backToTransactionForm(); }
-                else { m.classList.remove('show'); }
-            });
-            closeDrawer();
-        }
-    });
-
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.show').forEach(m => {
+            m.classList.remove('show');
+        });
+        closeDrawer();
+    }
+});
     // ====== حول و الاستيراد ======
     document.getElementById('btnAbout').addEventListener('click', () => { closeDrawer(); setTimeout(() => openModal('modalAbout'), 250); });
     document.getElementById('importFile').addEventListener('change', handleImport);
@@ -4554,6 +4784,7 @@ function startAppCore() {
 
     // ربط الأحداث
     bindEvents();
+setupRecipientInput();  // ← أضف هذا السطر
 
     // الرسم الأولي
     renderDashboard();
