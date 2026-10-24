@@ -1,43 +1,51 @@
-const CACHE_NAME = 'amanat-cache-v10'; // تم تغيير الرقم لإجبار المتصفح على التحديث
+const CACHE_NAME = 'amanat-cache-v11'; // رقم جديد لإجبار التحديث
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/AmanatGuide.html' // أضفنا دليل الاستخدام ليعمل أوفلاين
-  // إذا كان لديك ملفات أخرى تريدها أن تعمل أوفلاين، أضفها هنا بنفس الطريقة
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './AmanatGuide.html'
 ];
 
-// تثبيت الـ Service Worker وتخزين الملفات
+// تثبيت الـ Service Worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting(); // إجبار المتصفح على استخدام الكاش الجديد فوراً
+  self.skipWaiting();
 });
 
-// تفعيل وتنظيف الكاش القديم (إذا وجد)
+// تفعيل وتنظيف الكاش القديم
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName); // حذف الكاشات القديمة
+            return caches.delete(cacheName);
           }
         })
       );
     })
   );
-  self.clients.claim(); // السيطرة على الصفحات المفتوحة فوراً
+  self.clients.claim();
 });
 
 // جلب الملفات
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // تجاهل طلبات Firebase و Google APIs
+  const url = event.request.url;
+  if (url.includes('firebaseio.com') || 
+      url.includes('googleapis.com') || 
+      url.includes('gstatic.com') ||
+      url.includes('cloudinary.com')) {
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
@@ -55,8 +63,8 @@ self.addEventListener('fetch', (event) => {
         return response;
       });
     }).catch(() => {
-        // صفحة احتياطية في حال فشل كل شيء وانقطاع النت
-        return caches.match('/index.html'); 
+      // صفحة احتياطية
+      return caches.match('./index.html');
     })
   );
 });
