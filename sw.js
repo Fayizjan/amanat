@@ -1,4 +1,4 @@
-const CACHE_NAME = 'amanat-cache-v11'; // رقم جديد لإجبار التحديث
+const CACHE_NAME = 'amanat-cache-v12'; // رقم جديد لإجبار التحديث
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
