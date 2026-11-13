@@ -2850,19 +2850,25 @@ function renderCustomers() {
         return;
     }
     emptyEl.style.display = 'none';
-    listEl.innerHTML = list.map(c => {
+    
+    listEl.innerHTML = list.map((c, index) => {
         const bal = DataSource.getCustomerBalance(c.id);
         const sortLabel = (!c.sort || c.sort === 'م0') ? 'م0' : c.sort;
         return `
             <div class="expandable-card" data-cid="${c.id}" style="cursor:pointer;">
                 <div class="card-summary neutral" style="border-radius:var(--radius);">
                     <div class="card-summary-info">
-                        <div class="card-summary-title">👤 ${esc(c.name)}<span class="tag-sort">${esc(sortLabel)}</span></div>
+                        <div class="card-summary-title">
+                            <span style="display:inline-flex; align-items:center; justify-content:center; min-width:24px; height:24px; padding:0 6px; background:var(--primary-light); color:var(--primary); border-radius:50%; font-size:12px; font-weight:900; margin-left:8px;">${index + 1}</span>
+                            👤 ${esc(c.name)}
+                            <span class="tag-sort">${esc(sortLabel)}</span>
+                        </div>
                         <div class="card-summary-sub"><span>ل.س ${formatNumber(bal.SYP)}</span><span>$ ${formatNumber(bal.USD)}</span></div>
                     </div>
                 </div>
             </div>`;
     }).join('');
+    
     listEl.querySelectorAll('.expandable-card').forEach(card => { card.addEventListener('click', () => openCustomer(card.dataset.cid)); });
 }
 
@@ -3647,12 +3653,51 @@ function printCustomer(customerId) {
     <div style="background:#fff3ec; padding:12px; border-radius:8px; margin-bottom:10px;">
         <h2 style="margin:0 0 5px; font-size:17px;">${esc(c.name)}${c.sort ? ` <span style="font-size:12px; color:#f37021;">(${esc(c.sort)})</span>` : ''}</h2>
     </div>
-    <table style="margin-bottom:12px; border:none;">
-        <tr>
-            <td style="width:50%; padding:0 4px 0 0; border:none;"><div style="background:#fff3ec; padding:10px; border-radius:8px; text-align:center;"><div style="color:#6b7280; font-size:11px;">ل.س رصيد الليرة</div><div style="color:#f37021; font-size:18px; font-weight:900; direction:ltr;">${formatNumber(t.balSYP)}</div></div></td>
-            <td style="width:50%; padding:0 0 0 4px; border:none;"><div style="background:#ecfdf5; padding:10px; border-radius:8px; text-align:center;"><div style="color:#6b7280; font-size:11px;">$ رصيد الدولار</div><div style="color:#10b981; font-size:18px; font-weight:900; direction:ltr;">${formatNumber(t.balUSD)}</div></div></td>
-        </tr>
-    </table>
+   <table style="margin-bottom:12px; border:none; width:100%;">
+    <tr>
+        <!-- رصيد الليرة -->
+        <td style="width:50%; padding:0 4px 0 0; border:none; vertical-align:top;">
+            <div style="background:#fff3ec; padding:12px; border-radius:8px; text-align:center; height:100%;">
+                <div style="color:#6b7280; font-size:11px; margin-bottom:4px;">ل.س رصيد الليرة</div>
+                <div style="color:#f37021; font-size:18px; font-weight:900; direction:ltr; margin-bottom:8px;">${formatNumber(t.balSYP)}</div>
+                
+                <!-- تفاصيل الليرة -->
+                <div style="border-top:1px dashed #ffd8b8; padding-top:6px; display:flex; justify-content:space-around; font-size:11px;">
+                    <div style="text-align:center;">
+                        <div style="color:#059669; font-weight:800;">إيداع</div>
+                        <div style="color:#059669; font-weight:700; direction:ltr;">${formatNumber(t.depSYP)}</div>
+                    </div>
+                    <div style="border-right:1px solid #ffd8b8;"></div>
+                    <div style="text-align:center;">
+                        <div style="color:#dc2626; font-weight:800;">سحب</div>
+                        <div style="color:#dc2626; font-weight:700; direction:ltr;">${formatNumber(t.wdSYP)}</div>
+                    </div>
+                </div>
+            </div>
+        </td>
+        
+        <!-- رصيد الدولار -->
+        <td style="width:50%; padding:0 0 0 4px; border:none; vertical-align:top;">
+            <div style="background:#ecfdf5; padding:12px; border-radius:8px; text-align:center; height:100%;">
+                <div style="color:#6b7280; font-size:11px; margin-bottom:4px;">$ رصيد الدولار</div>
+                <div style="color:#10b981; font-size:18px; font-weight:900; direction:ltr; margin-bottom:8px;">${formatNumber(t.balUSD)}</div>
+                
+                <!-- تفاصيل الدولار -->
+                <div style="border-top:1px dashed #a7f3d0; padding-top:6px; display:flex; justify-content:space-around; font-size:11px;">
+                    <div style="text-align:center;">
+                        <div style="color:#059669; font-weight:800;">إيداع</div>
+                        <div style="color:#059669; font-weight:700; direction:ltr;">${formatNumber(t.depUSD)}</div>
+                    </div>
+                    <div style="border-right:1px solid #a7f3d0;"></div>
+                    <div style="text-align:center;">
+                        <div style="color:#dc2626; font-weight:800;">سحب</div>
+                        <div style="color:#dc2626; font-weight:700; direction:ltr;">${formatNumber(t.wdUSD)}</div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
     <table>
         <thead><tr><th>التاريخ</th><th>النوع</th><th>العملة</th><th>المبلغ</th><th>المودع</th><th>الفاتورة</th><th>المستلم</th></tr></thead>
         <tbody>${rows}</tbody>
@@ -3783,7 +3828,6 @@ function calcSummary(txs) {
 }
 function buildSummaryBoxes(s) {
     return [
-        { label: 'عدد الحركات', value: s.count, color: 'primary' },
         { label: 'إيداع ل.س', value: formatNumber(s.depSYP), color: 'success' },
         { label: 'إيداع $', value: formatNumber(s.depUSD), color: 'success' },
         { label: 'سحب ل.س', value: formatNumber(s.wdSYP), color: 'danger' },
@@ -3959,14 +4003,25 @@ function renderBalancesFilterForReport() {
 function renderReportBalances() {
     const list = DataSource.getCustomers().filter(c => selectedReportCustomers.includes(c.id)).sort((a, b) => a.name.localeCompare(b.name, 'ar'));
     let totalSYP = 0, totalUSD = 0;
-    const rows = list.map(c => {
+    const rows = list.map((c, index) => {   // ← أضفنا index
         const bal = DataSource.getCustomerBalance(c.id);
         totalSYP += bal.SYP; totalUSD += bal.USD;
         const sortLabel = (!c.sort || c.sort === 'م0') ? 'م0' : c.sort;
-        return [esc(c.name), sortLabel, formatNumber(bal.SYP), formatNumber(bal.USD)];
+        return [index + 1, esc(c.name), sortLabel, formatNumber(bal.SYP), formatNumber(bal.USD)];  // ← أضفنا index + 1
     });
-    if (rows.length > 0) { rows.push(['<strong>الإجمالي</strong>', '—', '<strong>' + formatNumber(totalSYP) + '</strong>', '<strong>' + formatNumber(totalUSD) + '</strong>']); }
-    showReportPreview({ title: '💰 أرصدة نزلاء محددين', subtitle: `عدد النزلاء: ${list.length}`, summary: [{ label: 'عدد النزلاء', value: list.length, color: 'primary' }, { label: 'إجمالي ل.س', value: formatNumber(totalSYP), color: 'success' }, { label: 'إجمالي $', value: formatNumber(totalUSD), color: 'success' }], headers: ['النزيل', 'الفرز', 'رصيد ل.س', 'رصيد $'], rows });
+    if (rows.length > 0) { 
+        rows.push(['', '<strong>الإجمالي</strong>', '—', '<strong>' + formatNumber(totalSYP) + '</strong>', '<strong>' + formatNumber(totalUSD) + '</strong>']); 
+        // ↑ أضفنا '' في البداية لخانة الترقيم في صف الإجمالي
+    }
+    showReportPreview({ 
+        title: '💰 أرصدة نزلاء محددين', 
+        summary: [ 
+            { label: 'إجمالي ل.س', value: formatNumber(totalSYP), color: 'success' }, 
+            { label: 'إجمالي $', value: formatNumber(totalUSD), color: 'success' }
+        ], 
+        headers: ['#', 'النزيل', 'الفرز', 'رصيد ل.س', 'رصيد $'],  // ← أضفنا '#'
+        rows 
+    });
 }
 function renderArchiveReport(reason) {
     const all = DataSource.getArchive();
@@ -3978,7 +4033,7 @@ function renderArchiveReport(reason) {
         return [esc(a.customer.name), sortLabel, formatDate(a.archived_at), reason === 'نقل' ? esc(a.transfer_to || '—') : '—', formatNumber(a.balance_syp), formatNumber(a.balance_usd)];
     });
     if (rows.length > 0) { rows.push(['<strong>الإجمالي</strong>', '—', '—', '—', '<strong>' + formatNumber(totalSYP) + '</strong>', '<strong>' + formatNumber(totalUSD) + '</strong>']); }
-    showReportPreview({ title: reason === 'نقل' ? '📦 قائمة نقل نزلاء' : '🚪 قائمة إخلاء سبيل', subtitle: `عدد: ${list.length}`, summary: [{ label: 'العدد', value: list.length, color: 'primary' }, { label: 'إجمالي ل.س', value: formatNumber(totalSYP), color: 'success' }, { label: 'إجمالي $', value: formatNumber(totalUSD), color: 'success' }], headers: reason === 'نقل' ? ['النزيل', 'الفرز', 'تاريخ النقل', 'إلى', 'رصيد ل.س', 'رصيد $'] : ['النزيل', 'الفرز', 'تاريخ الإخلاء', '—', 'رصيد ل.س', 'رصيد $'], rows });
+    showReportPreview({ title: reason === 'نقل' ? '📦 قائمة نقل نزلاء' : '🚪 قائمة إخلاء سبيل',  summary: [ { label: 'إجمالي ل.س', value: formatNumber(totalSYP), color: 'success' }, { label: 'إجمالي $', value: formatNumber(totalUSD), color: 'success' }], headers: reason === 'نقل' ? ['النزيل', 'الفرز', 'تاريخ النقل', 'إلى', 'رصيد ل.س', 'رصيد $'] : ['النزيل', 'الفرز', 'تاريخ الإخلاء', '—', 'رصيد ل.س', 'رصيد $'], rows });
 }
 
 /* ===========================
